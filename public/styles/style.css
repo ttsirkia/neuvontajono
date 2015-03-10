@@ -1,0 +1,132 @@
+html {
+	position: relative;
+	min-height: 100%;
+}
+
+body {
+	font-family: "Open Sans", sans-serif;
+	margin-bottom: 60px;
+}
+
+h2 {
+	margin-top: 0;
+}
+
+h3 {
+	margin-bottom: 30px;
+}
+
+ul.nav {
+	margin-bottom: 30px;
+}
+
+.navbar-right {
+	float: right;
+}
+
+.navbar-header {
+	float: left;
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+	padding: 10px;
+}
+
+.author {
+	color: #CCCCCC;
+}
+
+ul.nav-tabs {
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.form-horizontal .control-label {
+	text-align: left !important;
+}
+
+.inactive-session {
+	text-decoration: line-through;
+	background-color: #eeeeee;
+}
+
+p+table {
+	margin-top: 30px;
+}
+
+.first-in-queue {
+	font-size: 130%;
+	background-color: #dff0d8;
+}
+
+#queue-length {
+	margin-top: 30px;
+	margin-bottom: 30px;
+	font-size: 16px;
+}
+
+#queue-length span {
+	font-weight: bold;
+}
+
+#session-selector {
+	font-size: 130%
+}
+
+.statistics-table td {
+  padding: 10px;
+  text-align: center;
+}
+
+.statistics-table tr td:first-child {
+  text-align: left;
+  font-weight: bold;
+  border-right: 1px solid #dddddd;
+}
+
+.statistics-table tr:first-child {
+  font-weight: bold;
+  border-bottom: 1px solid #dddddd;
+}
+
+.statistics-green {
+  color: #267F00;
+}
+
+.statistics-yellow {
+  color:  #F28D09;
+}
+
+.statistics-red {
+  color: #FF0000;
+}
+
+.statistics-level-input {
+  display: inline;
+  width: 100px;
+}
+
+.container .jumbotron {
+	padding-left: 35px;
+	padding-right: 35px;
+	padding-top: 35px;
+	padding-bottom: 35px;
+	margin-top: 20px;
+}
+
+.container .jumbotron p:last-child {
+	margin-bottom: 0
+}
+
+.change-session {
+	margin-top: 60px;
+	font-size: 85%;
+}
+
+.change-session select {
+	margin-right: 10px;
+}
