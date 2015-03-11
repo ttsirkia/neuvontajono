@@ -10,7 +10,7 @@ exports.initLocals = function(req, res, next) {
   locals.user = req.user;
 
   if (locals.user) {
-    locals.teacher = req.session.teacher || locals.user.isAdmin;
+    locals.teacher = req.session.teacher || locals.user.isAdmin;    
     locals.staff = req.session.staff || locals.user.isAdmin;
   }
 
@@ -76,7 +76,7 @@ exports.requireCourse = function(req, res, next) {
 // ************************************************************************************************
 
 exports.requireStaff = function(req, res, next) {
-  if (!req.user || !res.locals.course || !req.session.staff) {
+  if (!req.user || !res.locals.course || !res.locals.staff) {
     if (!req.xhr) {
       req.flash('error', 'Et ole henkilökuntaa.');
       res.redirect('/neuvontajono');
@@ -91,7 +91,7 @@ exports.requireStaff = function(req, res, next) {
 // ************************************************************************************************
 
 exports.requireTeacher = function(req, res, next) {
-  if (!req.user || !res.locals.course || !req.session.teacher) {
+  if (!req.user || !res.locals.course || !res.locals.teacher) {
     if (!req.xhr) {
       req.flash('error', 'Et ole opettaja.');
       res.redirect('/neuvontajono');
