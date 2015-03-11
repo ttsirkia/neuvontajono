@@ -17,7 +17,7 @@
           }
         }
 
-        if (value[0] != '<') {
+        if (value[0] == '<') {
           $(this).addClass('statistics-green');
         }
 
