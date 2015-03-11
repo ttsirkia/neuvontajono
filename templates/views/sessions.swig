@@ -34,5 +34,8 @@ Tarkempia tietoja harjoitusryhmistä löytyy <a href="{{course.url}}">täältä<
   {% endfor %}
 </table>
 
+{% if teacher %}
+<p>Harjoitusryhmiä voi muokata <a href="/neuvontajono/settings">kurssin asetuksista</a>.</p>
+{% endif %}
  
 {% endblock %}
