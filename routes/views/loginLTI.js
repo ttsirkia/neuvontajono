@@ -24,7 +24,7 @@ exports = module.exports = function(req, res) {
   // Checks the course and if it doesn't exist, create a new course
   var checkCourse = function(next) {
 
-    var courseId = req.body.context_label;
+    var courseId = req.body.context_id;
     var courseName = req.body.context_title;
 
     if (req.session.teacher) {
