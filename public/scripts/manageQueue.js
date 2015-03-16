@@ -60,6 +60,10 @@ $(function() {
   $(document.body).on('click', 'form#remove button.remove', function(e) {
     e.preventDefault();
 
+    if ($(this).hasClass('btn-xs') && !confirm('Haluatko varmasti poistaa opiskelijan keskeltä jonoa?')) {
+      return;
+    }
+
     var form = $(this).parents('form#remove');
     var postData = form.serializeArray();
     var formURL = $(this).attr("action");
@@ -79,6 +83,14 @@ $(function() {
       $('div#content div#alerts').prepend($('<div class="alert alert-danger">Poistaminen epäonnistui.</div>'));
     });
 
+  });
+
+  // **********************************************************************************************
+
+  $('button#clear-queue').click(function(event) {
+    if (!confirm('Haluatko varmasti tyhjentää jonon?')) {
+      event.preventDefault();
+    }
   });
 
 });

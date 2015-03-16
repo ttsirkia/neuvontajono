@@ -54,7 +54,7 @@
 
 <form style="display: none;" data-bind="visible: (users().length > 0)" action="#" method="post">
   <input type="hidden" name="_csrf" value="{{ csrf_token_value }}">
-  <button type="submit" class="btn btn-danger" name="action" value="clear">Tyhjennä jono</button>
+  <button id="clear-queue" type="submit" class="btn btn-danger" name="action" value="clear">Tyhjennä jono</button>
 </form>
 
 {% endblock %}
