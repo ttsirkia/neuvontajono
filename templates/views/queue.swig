@@ -54,32 +54,41 @@ Kun tarvitset apua, voit lisätä itsesi neuvontajonoon. Jonossa olevia neuvotaa
     </div>
     
     <div class="form-group" data-bind="visible: sessions().length > 1">
-      <label for="location" class="col-sm-2 control-label">Harjoitusryhmä:</label>
+      <label for="location" class="col-sm-3 control-label">Harjoitusryhmä:</label>
       <div class="col-sm-6">
         <select id="session-selector" data-bind="options: sessions, optionsText: function(item){ return item.name() + ' (' + item.location() + ')'}, value: selectedSession"></select>
       </div>
     </div>
     
     <div class="form-group" data-bind="visible: sessions().length == 1">
-      <label for="location" class="col-sm-2 control-label">Harjoitusryhmä:</label>
-      <div data-bind="with: selectedSession" class="col-sm-6">
+      <label for="location" class="col-sm-3 control-label">Harjoitusryhmä:</label>
+      <div class="col-sm-6" data-bind="with: selectedSession">
         <span id="session-selector" data-bind="text: (name() + ' (' + location() + ')')"></span>
       </div>
     </div>  
     
     <hr>
     
-    <div data-bind="with: selectedSession">
-     <p data-bind="visible: (assistants().length > 0)">Tässä harjoitusryhmässä neuvomassa: <span style="font-weight: bold;" data-bind="text: assistants"></span></p>
-     <p>Jonon pituus tällä hetkellä: <span style="font-weight: bold;" data-bind="text: queueLength"></span></p>
-     <input type="hidden" name="sessionId" data-bind="value: _id">
-     <input type="hidden" name="location" data-bind="value: location">
+    <div class="form-group" data-bind="with: selectedSession">
+      <label class="col-sm-3 control-label">Paikalla neuvomassa:</label>
+      <div data-bind="visible: (assistants().length > 0)" class="col-sm-6">
+        <p class="form-control-static" data-bind="text: assistants"></p>
+      </div>
+    </div>
+     
+    <div class="form-group" data-bind="with: selectedSession">
+      <label class="col-sm-3 control-label">Jonon pituus tällä hetkellä:</label>
+      <div class="col-sm-6">
+          <p class="form-control-static" data-bind="text: queueLength"></p>
+        </div>
+      <input type="hidden" name="sessionId" data-bind="value: _id">
+      <input type="hidden" name="location" data-bind="value: location">
     </div>
     
     <hr>
     
     <div class="form-group">
-      <label for="row" class="col-sm-2 control-label">Istun rivillä:</label>
+      <label for="row" class="col-sm-3 control-label">Istun rivillä:</label>
       <div class="col-sm-6">
         <select name="row" data-bind="value: user.previousRow">
           {% for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] %}
