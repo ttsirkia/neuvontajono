@@ -86,13 +86,13 @@ Queue.schema.static('addToQueue', function(course, session, user, location, row,
           // Already in queue, update session, location and row
           var oldSession = result.session;
           var oldLocation = result.location;
-          
+
           result.session = session._id;
           result.location = location;
           result.row = row;
           result.save(function(err) {
             callback(err, result);
-            
+
             var Session = keystone.list('Session');
             Session.model.findById(oldSession, function(err, oldSession) {
               // Notify old and new sessions
@@ -100,7 +100,7 @@ Queue.schema.static('addToQueue', function(course, session, user, location, row,
                 sockets(oldSession, oldLocation);
               }
               sockets(session, location);
-            });            
+            });
 
           });
 
@@ -111,16 +111,7 @@ Queue.schema.static('addToQueue', function(course, session, user, location, row,
 
         // Register participant for statistics
         var Participant = keystone.list('Participant');
-        var minutes = new Date().getHours() * 60 + new Date().getMinutes();
-        var today = moment(new Date()).startOf('day');
-
-        Participant.model.findOrCreate({user: user._id, session: session._id, course: course._id, date: today},
-            {enteredAt: []}, function(err, res) {
-              if (res) {
-                res.enteredAt.push(minutes);
-                res.save();
-              }
-            });
+        Participant.model.addParticipant(course, session, user._id);
 
       });
 
@@ -159,6 +150,32 @@ Queue.schema.static('removeFromQueue', function(course, session, queueId, callba
     callback(err, result);
 
     if (result) {
+
+      var Session = keystone.list('Session');
+      Session.model.getCurrentSessions(course, function(err, sessions) {
+        
+        var selected = null;
+        var saved = false;
+        
+        sessions.forEach(function(curSession) {
+
+          var foundCorrect = curSession._id == session._id;
+          var foundInSameLocation = selected == null && curSession.getLocationsAsList().indexOf(result.location) >= 0;
+          if (foundCorrect || foundInSameLocation) {
+            selected = curSession;
+          }
+
+          // User did not get assistance in the session in which originally
+          // entered => participant in two sessions
+          if (selected && selected._id != result && !saved) {
+            var Participant = keystone.list('Participant');
+            Participant.model.addParticipant(course, selected, result.user);
+            saved = true;
+          }
+
+        });
+      });
+
       Queue.model.getUsersInQueue(course, session, function(err, users) {
         socketHandler.sendQueueStaffStatus(course._id, result.location, {users: users});
       });
