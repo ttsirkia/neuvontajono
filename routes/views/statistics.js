@@ -44,12 +44,12 @@ exports = module.exports = function(req, res) {
           stats[session._id] = {};
           sessionIdList.push(session._id);
 
-          var week = moment(session.startDate);
-          var endWeek = moment(session.endDate).format('W/YYYY');
+          var startTime = moment(session.startDate).startOf('day').add(session.startTime, 'm');
+          var week = moment.max(startTime, moment(startTime).day(session.weekday));
+          var endWeek = moment(session.endDate).startOf('day').add(session.endTime, 'm');
 
           // Generate all weeks when session is organized
-
-          while (week.format('W/YYYY') != endWeek && week.isBefore(moment())) {
+          while (week.isBefore(endWeek) && moment().isAfter(week)) {
             stats[session._id][week.format('W/YYYY')] = 0;
             week.add(1, 'w');
           }
