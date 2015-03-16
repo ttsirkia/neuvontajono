@@ -38,17 +38,31 @@ exports = module.exports = function(req, res) {
 
         sessions.forEach(function(session) {
 
-          startDates.push(moment(session.startDate));
-          endDates.push(moment(session.endDate));
+          // Find the actual first and last date for sessions
+          var startTime = moment(session.startDate).startOf('day').add(session.queueOpenTime, 'm');
+          startTime.day(session.weekday);
+
+          if (startTime.isBefore(moment(session.startDate).startOf('day'))) {
+            startTime.add(1, 'w');
+          }
+
+          var endTime = moment(session.endDate).startOf('day').add(session.endTime, 'm');
+          endTime.day(session.weekday);
+
+          if (endTime.isAfter(moment(session.endDate).startOf('day'))) {
+            endTime.subtract(1, 'w');
+          }
+
+          startDates.push(startTime);
+          endDates.push(moment(endTime));
           names[session._id] = session.name;
           stats[session._id] = {};
           sessionIdList.push(session._id);
 
-          var startTime = moment(session.startDate).startOf('day').add(session.startTime, 'm');
-          var week = moment.max(startTime, moment(startTime).day(session.weekday));
-          var endWeek = moment(session.endDate).startOf('day').add(session.endTime, 'm');
+          var week = moment(startTime);
+          var endWeek = endTime;
 
-          // Generate all weeks when session is organized
+          // Generate all weeks when this session is organized
           while (week.isBefore(endWeek) && moment().isAfter(week)) {
             stats[session._id][week.format('W/YYYY')] = 0;
             week.add(1, 'w');
