@@ -69,10 +69,12 @@ Kun tarvitset apua, voit lisätä itsesi neuvontajonoon. Jonossa olevia neuvotaa
     
     <hr>
     
-    <div class="form-group" data-bind="with: selectedSession">
-      <label class="col-sm-3 control-label">Paikalla neuvomassa:</label>
-      <div data-bind="visible: (assistants().length > 0)" class="col-sm-6">
-        <p class="form-control-static" data-bind="text: assistants"></p>
+    <div data-bind="with: selectedSession">
+      <div class="form-group" data-bind="visible: (assistants().length > 0)">
+        <label class="col-sm-3 control-label">Paikalla neuvomassa:</label>
+        <div class="col-sm-6">
+          <p class="form-control-static" data-bind="text: assistants"></p>
+        </div>
       </div>
     </div>
      
