@@ -111,8 +111,8 @@ exports = module.exports = function(req, res) {
     if (isValid) {
 
       checkUser(function() {
-        req.session.teacher = /Instructor/.test(req.body.roles);
-        req.session.assistant = /TeachingAssistant|TA/.test(req.body.roles);
+        req.session.teacher = /Instructor/.test(req.body.roles) || req.user.isAdmin;
+        req.session.assistant = /TeachingAssistant|TA/.test(req.body.roles) || req.user.isAdmin;
         req.session.staff = req.session.teacher || req.session.assistant;
         checkCourse(loginOK);
       });

@@ -10,8 +10,8 @@ exports.initLocals = function(req, res, next) {
   locals.user = req.user;
 
   if (locals.user) {
-    locals.teacher = req.session.teacher || locals.user.isAdmin;    
-    locals.staff = req.session.staff || locals.user.isAdmin;
+    locals.teacher = req.session.teacher;
+    locals.staff = req.session.staff;
   }
 
   // Attach Course object to req
