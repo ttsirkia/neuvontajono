@@ -56,8 +56,8 @@ socketHandler.sendUserStatus = function(course) {
     User.model.findById(userId, function(err, user) {
       if (user) {
         course.createSummary(user, function(err, summary) {
-          if (!err) {
-            socketHandler.queueNsp.connected[socketId].emit('userQueue', summary);
+          if (!err && socketHandler.queueNsp.connected.socketId) {
+            socketHandler.queueNsp.connected.socketId.emit('userQueue', summary);
           }
         });
       }
