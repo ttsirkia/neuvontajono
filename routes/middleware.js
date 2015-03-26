@@ -54,6 +54,7 @@ exports.requireUser = function(req, res, next) {
       res.json({error: true});
     }
   } else {
+    res.setHeader('Cache-Control', 'private');
     next();
   }
 };
@@ -69,6 +70,7 @@ exports.requireCourse = function(req, res, next) {
       res.json({error: true});
     }
   } else {
+    res.setHeader('Cache-Control', 'private');
     next();
   }
 };
@@ -84,6 +86,7 @@ exports.requireStaff = function(req, res, next) {
       res.json({error: true});
     }
   } else {
+    res.setHeader('Cache-Control', 'private');
     next();
   }
 };
@@ -99,6 +102,7 @@ exports.requireTeacher = function(req, res, next) {
       res.json({error: true});
     }
   } else {
+    res.setHeader('Cache-Control', 'private');
     next();
   }
 };
