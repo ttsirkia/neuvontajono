@@ -6,6 +6,8 @@ var Course = keystone.list('Course');
 
 exports.initLocals = function(req, res, next) {
 
+  res.setHeader('Cache-Control', 'private');
+
   var locals = res.locals;
   locals.user = req.user;
 
@@ -54,7 +56,6 @@ exports.requireUser = function(req, res, next) {
       res.json({error: true});
     }
   } else {
-    res.setHeader('Cache-Control', 'private');
     next();
   }
 };
@@ -70,7 +71,6 @@ exports.requireCourse = function(req, res, next) {
       res.json({error: true});
     }
   } else {
-    res.setHeader('Cache-Control', 'private');
     next();
   }
 };
@@ -86,7 +86,6 @@ exports.requireStaff = function(req, res, next) {
       res.json({error: true});
     }
   } else {
-    res.setHeader('Cache-Control', 'private');
     next();
   }
 };
@@ -101,8 +100,7 @@ exports.requireTeacher = function(req, res, next) {
     } else {
       res.json({error: true});
     }
-  } else {
-    res.setHeader('Cache-Control', 'private');
+  } else {    
     next();
   }
 };
