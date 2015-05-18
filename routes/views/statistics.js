@@ -49,7 +49,7 @@ exports = module.exports = function(req, res) {
           var endTime = moment(session.endDate).startOf('day').add(session.endTime, 'm');
           endTime.day(session.weekday);
 
-          if (endTime.isAfter(moment(session.endDate).startOf('day'))) {
+          if (endTime.isAfter(moment(session.endDate).startOf('day').add(1, 'd')) {
             endTime.subtract(1, 'w');
           }
 
