@@ -112,12 +112,13 @@ Session.schema.static('getSessionsToday', function(course, callback) {
 Session.schema.static('getCurrentSessions', function(course, callback) {
 
   var weekday = new Date().getDay();
-  var today = new Date();
+  var now = new Date();
   var minutes = new Date().getHours() * 60 + new Date().getMinutes();
+  var today = momentJS().startOf('day').toDate();
 
   Session.model.find(
       {course: course._id, weekday: weekday, active: true, queueOpenTime: {$lte: minutes}, endTime: {$gt: minutes},
-        startDate: {$lte: today}, endDate: {$gte: today}}).sort({weekday: 'asc', startTime: 'asc'}).exec(callback);
+        startDate: {$lte: now}, endDate: {$gte: today}}).sort({weekday: 'asc', startTime: 'asc'}).exec(callback);
 
 });
 
