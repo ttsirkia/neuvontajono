@@ -98,11 +98,11 @@ Session.schema.method('getLocationsAsList', function() {
 Session.schema.static('getSessionsToday', function(course, callback) {
 
   var weekday = new Date().getDay();
-  var today = new Date();
-  var tomorrow = momentJS().add(1, 'd').toDate();
+  var now = new Date();
+  var today = momentJS().startOf('day').toDate();
 
   Session.model.find(
-      {course: course._id, weekday: weekday, active: true, startDate: {$lte: today}, endDate: {$lt: tomorrow}}).sort(
+      {course: course._id, weekday: weekday, active: true, startDate: {$lte: now}, endDate: {$gte: today}}).sort(
       {weekday: 'asc', startTime: 'asc'}).exec(callback);
 
 });

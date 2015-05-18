@@ -1,5 +1,6 @@
 var keystone = require('keystone');
 var io = require('../../sockets/socket');
+var moment = require('moment');
 
 exports = module.exports = function(req, res) {
 
@@ -11,9 +12,10 @@ exports = module.exports = function(req, res) {
   locals.sessions = [];
   locals.today = new Date().getDay();
 
-  var today = new Date();
+  var now = new Date();
+  var today = moment().startOf('day').toDate();
 
-  Session.model.find({active: true, course: locals.course._id, startDate: {$lte: today}, endDate: {$gte: today}}).sort(
+  Session.model.find({active: true, course: locals.course._id, startDate: {$lte: now}, endDate: {$gte: today}}).sort(
       {weekday: 'asc', startTime: 'asc'}).exec(function(err, sessions) {
 
     if (sessions) {
