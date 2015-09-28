@@ -6,10 +6,10 @@
 <script src="/neuvontajono/scripts/knockout.mapping.js"></script>
 <script>
   $(function() {
-    var formData = {{ formDataJSON|safe }};  
+    var formData = {{ formDataJSON|safe }};
     var koViewModel = ko.mapping.fromJS(formData);
     ko.applyBindings(koViewModel);
-  });  
+  });
 </script>
 {% endblock %}
 
@@ -29,7 +29,14 @@
       <input type="text" class="form-control" name="name" id="courseName" value="{{ formData.name }}">
     </div>
   </div>
-  
+
+  <div class="form-group">
+    <label for="courseId" class="col-sm-2 control-label">Kurssin tunniste:</label>
+    <div class="col-sm-6">
+      <p id="courseId" class="form-control-static">{{ formData.courseId }}</p>
+    </div>
+  </div>
+
   <div class="form-group">
     <label for="courseURL" class="col-sm-2 control-label">URL:</label>
     <div class="col-sm-6">
@@ -37,7 +44,19 @@
       <p class="help-block small">Kirjoita tähän osoite, jossa on lisätietoja harjoitusryhmistä. Kentän voi jättää tyhjäksi.</p>
     </div>
   </div>
-  
+
+  <div class="form-group">
+    <label for="combined" class="col-sm-2 control-label">Yhdistä toiseen:</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" name="combined" id="combined" value="{{ formData.combined }}">
+      <p class="help-block small">
+        Jos haluat yhdistää useamman kurssin harjoitusjonon, kirjoita tähän sen kurssin tunniste, johon tämä
+        kurssi liitetään. Tällöin kaikki muut paitsi kurssin opettaja ohjataan annetulle kurssille, kun neuvontajono
+        avataan, eikä tämän kurssin neuvontajono ole käytössä.
+      </p>
+    </div>
+  </div>
+
   <div class="form-group">
     <label for="statisticsLevel" class="col-sm-2 control-label">Tilastojen näkyvyys:</label>
     <div class="col-sm-6">
@@ -57,13 +76,13 @@
       <p class="help-block small">Kirjoita ensimmäiseen kenttään keltaisen ja toiseen punaisen raja.</p>
     </div>
   </div>
-  
+
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button type="submit" name="action" value="saveSettings" class="btn btn-primary">Tallenna</button>
     </div>
   </div>
-  
+
 </form>
 
 <hr>
@@ -86,7 +105,7 @@
     <tr>
     {% else %}
     <tr class="inactive-session">
-    {% endif %}    
+    {% endif %}
       <td>{{ session.name }}</td>
       <td>{{ session.datespan }}</td>
       <td>{{ session.timespan }}</td>

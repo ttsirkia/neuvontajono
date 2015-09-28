@@ -9,6 +9,7 @@ var Course = new keystone.List('Course');
 Course.add({name: {type: Types.Text, required: true, initial: true, index: true},
   courseId: {type: Types.Text, required: true, initial: true, index: true}, pin: {type: Types.Number},
   url: {type: Types.Url}, adhoc: {type: Types.Boolean, 'default': false},
+  combined: {type: Types.Text},
   createdBy: {type: Types.Relationship, ref: 'User'}, createdAt: {type: Types.Datetime, 'default': Date.now},
   statisticsLevel: {type: Types.Number, required: true, 'default': 0},
   yellowLimit: {type: Types.Number, required: true, 'default': 15, min: 1},

@@ -58,6 +58,7 @@ exports = module.exports = function(req, res) {
         course.statisticsLevel = req.body.statisticsLevel;
         course.yellowLimit = req.body.yellowLimit;
         course.redLimit = req.body.redLimit;
+        course.combined = req.body.combined;
 
         course.save(function(err) {
           if (!err) {

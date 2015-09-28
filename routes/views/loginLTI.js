@@ -56,9 +56,27 @@ exports = module.exports = function(req, res) {
 
         if (!err && course) {
 
-          req.session.courseId = course._id;
-          req.course = course;
-          next();
+          // Is this a combined queue and we should redirect user to another course?
+          if (!course.combined) {
+
+            req.session.courseId = course._id;
+            req.course = course;
+            next();
+
+          } else {
+
+            Course.model.findOne({'courseId': course.combined}, function(err, course) {
+              if (err || !course) {
+                req.flash('error', 'Neuvontajono ei ole käytössä tällä kurssilla.');
+                res.redirect('/neuvontajono');
+              } else {
+                req.session.courseId = course._id;
+                req.course = course;
+                next();
+              }
+            });
+            
+          }
 
         } else if (!err && !course) {
 
