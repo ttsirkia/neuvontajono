@@ -75,7 +75,7 @@ exports = module.exports = function(req, res) {
                 next();
               }
             });
-            
+
           }
 
         } else if (!err && !course) {

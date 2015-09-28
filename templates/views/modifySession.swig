@@ -4,9 +4,14 @@
 {% block js %}
 <script src="/neuvontajono/scripts/knockout-3.3.0.js"></script>
 <script src="/neuvontajono/scripts/knockout.mapping.js"></script>
+<script src="/neuvontajono/scripts/moment.min.js"></script>
+<script src="/neuvontajono/scripts/bootstrap.transitions.min.js"></script>
+<script src="/neuvontajono/scripts/bootstrap-datetimepicker.min.js"></script>
+
 <script>
   $(function() {
-    var formData = {{ formDataJSON|safe }};  
+    $('.calendar').datetimepicker({locale: 'fi', format: 'D.M.YYYY'});
+    var formData = {{ formDataJSON|safe }};
     var koViewModel = ko.mapping.fromJS(formData);
     ko.applyBindings(koViewModel);
 
@@ -18,8 +23,12 @@
 
     });
 
-  });  
+  });
 </script>
+{% endblock %}
+
+{% block css %}
+  <link href="/neuvontajono/styles/bootstrap-datetimepicker.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -55,9 +64,9 @@
       <p class="help-block small">Erottele nimet pilkulla. Kentän voi jättää myös tyhjäksi.</p>
     </div>
   </div>
-  
+
   <hr>
-  
+
   <div class="form-group">
     <label for="weekday" class="col-sm-2 control-label">Viikonpäivä:</label>
     <div class="col-sm-6">
@@ -72,20 +81,20 @@
       </select>
     </div>
   </div>
-  
+
   <hr>
-  
+
   <div class="form-group">
     <label for="startDate" class="col-sm-2 control-label">Alkamispäivä:</label>
     <div class="col-sm-3">
-      <input type="text" class="form-control" name="startDate" id="startDate" value="{{formData.startDate}}">
+      <input type="text" class="form-control calendar" name="startDate" id="startDate" value="{{formData.startDate}}">
       <p class="help-block small">Anna päivämäärä muodossa 1.3.2015.</p>
     </div>
   </div>
   <div class="form-group">
     <label for="endDate" class="col-sm-2 control-label">Päättymispäivä:</label>
     <div class="col-sm-3">
-      <input type="text" class="form-control" name="endDate" id="endDate" value="{{formData.endDate}}">
+      <input type="text" class="form-control calendar" name="endDate" id="endDate" value="{{formData.endDate}}">
     </div>
   </div>
   <div class="form-group">
@@ -99,7 +108,7 @@
     </div>
   </div>
   <hr>
-  
+
   <div class="form-group">
     <label for="startTime" class="col-sm-2 control-label">Alkamisaika:</label>
     <div class="col-sm-3">
@@ -122,7 +131,7 @@
       <input type="text" class="form-control" name="queueOpenTime" id="queueOpenTime" value="{{formData.queueOpenTime}}">
     </div>
   </div>
-  
+
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button type="submit" name="action" value="save" class="btn btn-primary">Tallenna</button>
