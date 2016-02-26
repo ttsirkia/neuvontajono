@@ -106,6 +106,12 @@ exports = module.exports = function(req, res) {
           if (!err && user) {
             req.session.userId = user._id;
             req.user = user;
+            
+            if (user.name.full !== name) {
+                user.name.full = name;
+                user.save();
+            }
+            
             next();
 
           } else {
