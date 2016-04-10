@@ -119,9 +119,17 @@
 
 <form action="#" method="post">
   <input type="hidden" name="_csrf" value="{{ csrf_token_value }}">
-  <a href="/neuvontajono/sessions/create" class="btn btn-success">Luo uusi</a>
-  <button name="action" value="disableAll" class="btn btn-primary">Poista kaikki käytöstä</button>
-  <button name="action" value="enableAll" class="btn btn-primary">Ota kaikki käyttöön</button>
+  <p>
+    <a href="/neuvontajono/sessions/create" class="btn btn-success">Luo uusi</a>
+  </p>
+  <p>
+    Kaikki harjoitusryhmät voi ottaa tilapäisesti pois käytöstä esimerkiksi tenttiviikon ajaksi
+    alla olevalla painikkeella. Ryhmät voi ottaa käyttöön uudelleen milloin hyvänsä.
+  </p>
+  <p>
+    <button name="action" value="disableAll" class="btn btn-primary">Poista kaikki käytöstä</button>
+    <button name="action" value="enableAll" class="btn btn-primary">Ota kaikki käyttöön</button>
+  </p>
 </form>
 
 {% endblock %}
