@@ -10,22 +10,19 @@ exports = module.exports = function(req, res) {
   var locals = res.locals;
   locals.weeks = [];
 
-  view
-      .on(
-          'init',
-          function(next) {
+  view.on('init', function(next) {
 
-            if ((locals.course.statisticsLevel == 2 && !locals.teacher) || (locals.course.statisticsLevel == 1 && !locals.staff)) {
-              req.flash('error', 'Sinulla ei ole oikeutta nähdä tilastoja.');
-              res.redirect('/neuvontajono/queue');
-            } else {
-              next();
-            }
+    if ((locals.course.statisticsLevel == 2 && !locals.teacher) || (locals.course.statisticsLevel == 1 && !locals.staff)) {
+      req.flash('error', 'Sinulla ei ole oikeutta nähdä tilastoja.');
+      res.redirect('/neuvontajono/queue');
+    } else {
+      next();
+    }
 
-          });
+  });
 
   view.on('get', function(next) {
-    Session.model.find({course: locals.course._id}).sort({'weekday': 1, 'startTime': 1}).exec(function(err, sessions) {
+    Session.model.find({ course: locals.course._id }).sort({ 'weekday': 1, 'startTime': 1 }).exec(function(err, sessions) {
 
       if (!err) {
 
@@ -85,7 +82,7 @@ exports = module.exports = function(req, res) {
           currentWeek.add(1, 'w');
         } while (currentWeekFormat != maxWeek);
 
-        Participant.model.find({course: locals.course._id}, function(err, participants) {
+        Participant.model.find({ course: locals.course._id }, function(err, participants) {
 
           if (!err) {
 
@@ -139,14 +136,16 @@ exports = module.exports = function(req, res) {
             req.flash('error', 'Tilastojen lataaminen epäonnistui.');
           }
 
-          next();
+          Participant.model.getMostFrequentUsers(locals.course, function(err, result) {
+            locals.mostFrequent = result || [];
+            next();
+          });
 
         });
 
       } else {
 
         req.flash('error', 'Tilastojen lataaminen epäonnistui.');
-        next();
 
       }
 
