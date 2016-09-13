@@ -30,5 +30,41 @@ mutta niiden perusteella voit katsoa, mitkä ryhmät ovat yleensä ruuhkaisia ja
 {% endfor %}
 
 </table>
- 
+
+{% if teacher %}
+
+<hr>
+
+<h3>Aktiivisimmat opiskelijat</h3>
+
+<div class="alert alert-info">
+  Tämä tilasto näkyy aina vain kurssin opettajille.
+</div>
+
+<p>
+  Taulukossa näkyy, kuinka monta kertaa kukin opiskelija on käynyt
+  kurssin aikana eri harjoitusryhmissä.
+</p>
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Sija</th>
+      <th>Opiskelija</th>
+      <th>Käyntejä</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for participant in mostFrequent %}
+    <tr>
+      <td>{{ participant[0] }}.</td>
+      <td>{{ participant[1] }}</td>
+      <td>{{ participant[2] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endif %}
+
 {% endblock %}
