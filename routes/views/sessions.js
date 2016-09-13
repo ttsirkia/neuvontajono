@@ -16,7 +16,7 @@ exports = module.exports = function(req, res) {
   var today = moment().startOf('day').toDate();
   var endOfWeek = moment().startOf('isoWeek').add(7, 'd').toDate();
 
-  Session.model.find({active: true, course: locals.course._id, startDate: {$lte: endOfWeek}, endDate: {$gte: today}}).sort(
+  Session.model.find({active: true, course: locals.course._id, startDate: {$lt: endOfWeek}, endDate: {$gte: today}}).sort(
       {weekday: 'asc', startTime: 'asc'}).exec(function(err, sessions) {
 
     if (sessions) {

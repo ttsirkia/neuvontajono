@@ -10,13 +10,13 @@
 {{ Tabs.renderTabs() }}
 
 
-<p>Alla olevassa taulukossa on kaikki kurssin harjoitusryhmät. Vihreällä merkityt
-harjoitusryhmät ovat tänään.
+<p>Alla olevassa taulukossa on kaikki kurssin tällä viikolla pidettävät harjoitusryhmät.
+Vihreällä merkityt harjoitusryhmät ovat tänään.
 {%if course.url %}
 Tarkempia tietoja harjoitusryhmistä löytyy <a href="{{course.url}}">täältä</a>.
 {% endif %}
 </p>
-  
+
 <table class="table">
   <tr>
     <th>Nimi</th>
@@ -37,5 +37,5 @@ Tarkempia tietoja harjoitusryhmistä löytyy <a href="{{course.url}}">täältä<
 {% if teacher %}
 <p>Harjoitusryhmiä voi muokata <a href="/neuvontajono/settings">kurssin asetuksista</a>.</p>
 {% endif %}
- 
+
 {% endblock %}

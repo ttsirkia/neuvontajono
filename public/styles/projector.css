@@ -1,0 +1,49 @@
+body {
+    background-color: black;
+    color: white;
+}
+#header {
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    margin: 15px;
+    height: 30px;
+}
+@media (min-width:1900px) {
+    #header {
+        font-size: 24px;
+        margin: 40px;
+        margin-bottom: 30px;
+    }
+}
+#time {
+    text-align: right;
+    float: right;
+    width: 20%;
+}
+#queue {
+    float: left;
+    width: 20%;
+}
+#length {
+    font-weight: bold;
+}
+#next {
+    text-align: center;
+    float: left;
+    width: 60%;
+    display: none;
+}
+#name {
+    font-weight: bold;
+    cursor: pointer;
+}
+#content {
+    margin-left: auto;
+    margin-right: auto;
+    clear: both;
+}
+#img, #img1 {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

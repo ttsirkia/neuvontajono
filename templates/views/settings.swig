@@ -9,6 +9,14 @@
     var formData = {{ formDataJSON|safe }};
     var koViewModel = ko.mapping.fromJS(formData);
     ko.applyBindings(koViewModel);
+
+
+    $('button.delete-session').click(function(event) {
+      if (!confirm('Haluatko varmasti poistaa tämän harjoitusryhmän kokonaan?')) {
+        event.preventDefault();
+      }
+    });
+
   });
 </script>
 {% endblock %}
@@ -54,6 +62,14 @@
         kurssi liitetään. Tällöin kaikki muut paitsi kurssin opettaja ohjataan annetulle kurssille, kun neuvontajono
         avataan, eikä tämän kurssin neuvontajono ole käytössä.
       </p>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="projectorConf" class="col-sm-2 control-label">Video&shy;projektori&shy;näkymä:</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" name="projectorConf" id="projectorConf" value="{{ formData.projectorConf }}">
+      <p class="help-block small">Jos videoprojektorinäkymä on käytössä, kirjoita tähän asetustiedoston URL.</p>
     </div>
   </div>
 
@@ -111,7 +127,7 @@
       <td>{{ session.timespan }}</td>
       <td>{{ session.location }}</td>
       <td>{{ session.assistants }}</td>
-      <td><a href="/neuvontajono/sessions/{{session.id}}/edit" class="btn btn-xs btn-primary">Muokkaa</a> <button name="sessionId" value="{{session.id}}" class="btn btn-xs btn-danger">Poista</button></td>
+      <td><a href="/neuvontajono/sessions/{{session.id}}/edit" class="btn btn-xs btn-primary">Muokkaa</a> <button name="sessionId" value="{{session.id}}" class="btn btn-xs btn-danger delete-session">Poista</button></td>
     </tr>
     {% endfor %}
   </table>

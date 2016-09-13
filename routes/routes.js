@@ -31,6 +31,7 @@ exports = module.exports = function(app) {
   // For staff
   app.all('/selectSession', middleware.requireStaff, routes.views.selectSession);
   app.all('/sessions/:sessionId/manage', middleware.requireStaff, routes.views.manageQueue);
+  app.all('/sessions/:sessionId/manage/projector', middleware.requireStaff, routes.views.manageQueue);
 
   // For teacher
   app.all('/settings', middleware.requireTeacher, routes.views.settings);

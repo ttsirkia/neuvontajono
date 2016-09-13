@@ -8,7 +8,7 @@ exports = module.exports = function(req, res) {
 
   var view = new keystone.View(req, res);
   var locals = res.locals;
-  locals.queueData = {users: []};
+  locals.queueData = {users: [], open: false, sessionName: ''};
   var errors = false;
 
   // **********************************************************************************************
@@ -17,15 +17,33 @@ exports = module.exports = function(req, res) {
   var getUsersInQueue = function(next) {
     Queue.model.getUsersInQueue(locals.course, locals.session, function(err, usersInQueue) {
 
-      if (usersInQueue) {
-        locals.queueData.users = usersInQueue;
-        next();
-      }
-
       if (err) {
         errors = true;
         next();
+        return;
       }
+
+      Session.model.getCurrentSessions(locals.course, function(err, sessions) {
+
+        if (sessions) {
+          sessions.forEach(function(session) {
+            locals.queueData.sessionName = session.name;
+            if (session.location === locals.session.location) {
+              locals.queueData.open = true;
+            }
+          });
+        }
+
+        if (usersInQueue) {
+          locals.queueData.users = usersInQueue;
+          next();
+        }
+
+        if (err) {
+          errors = true;
+          next();
+        }
+      });
 
     });
   };
@@ -128,6 +146,10 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  view.render('manageQueue', locals);
+  if (!/projector/.test(req.path)) {
+    view.render('manageQueue', locals);
+  } else {
+    view.render('manageQueueProjector', locals);
+  }
 
 };

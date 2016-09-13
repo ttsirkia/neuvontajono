@@ -14,7 +14,7 @@ $(function() {
 
   // **********************************************************************************************
 
-  var socket = io.connect('/queue', {path: '/neuvontajono/socket.io'});
+  var socket = io.connect('/queue', {path: '/neuvontajono/socket.io', forceNew: true});
 
   socket.on('connect', function() {
     socket.emit('staffQueue', {'sessionId': $('input[name="sessionId"]').val()});

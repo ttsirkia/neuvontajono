@@ -7,7 +7,7 @@
 <script src="/neuvontajono/scripts/knockout.mapping.js"></script>
 
 <script type="text/javascript">
-   var queueData = {{ queueData|safe }}; 
+   var queueData = {{ queueData|safe }};
 </script>
 
 <script src="/neuvontajono/scripts/manageQueue.js"></script>
@@ -23,6 +23,13 @@
 
 <input type="hidden" name="courseId" value="{{ course._id.toString() }}">
 <input type="hidden" name="sessionId" value="{{ session._id.toString() }}">
+
+{% if course.projectorConf %}
+<p>
+  <a href="/neuvontajono/sessions/{{ session._id.toString() }}/manage/projector" target="_blank" class="btn btn-success">Avaa videoprojektorinäkymä</a><br/>
+  <span style="font-size: 13px;">Useimmissa selaimissa saa näkymän koko ruutuun painamalla F11-painiketta.</span>
+</p>
+{% endif%}
 
 <p id="queue-length">Jonon pituus tällä hetkellä: <span data-bind="text: (users().length)"></span></p>
 <form id="remove" action="#" method="post">

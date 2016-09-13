@@ -93,6 +93,16 @@ Session.schema.method('getLocationsAsList', function() {
 
 });
 
+Session.schema.method('isOpen', function() {
+
+  return new Date().getDay() === this.weekday &&
+    momentJS().isAfter(momentJS(this.startDate).startOf('day')) &&
+    momentJS().isBefore(momentJS(this.endDate).add(1, 'd').startOf('day')) &&
+    momentJS().isAfter(momentJS().startOf('day').add(this.queueOpenTime, 'm')) &&
+    momentJS().isBefore(momentJS().startOf('day').add(this.endTime, 'm'));
+
+});
+
 // ************************************************************************************************
 
 Session.schema.static('getSessionsToday', function(course, callback) {

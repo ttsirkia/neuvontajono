@@ -59,6 +59,7 @@ exports = module.exports = function(req, res) {
         course.yellowLimit = req.body.yellowLimit;
         course.redLimit = req.body.redLimit;
         course.combined = req.body.combined;
+        course.projectorConf = req.body.projectorConf;
 
         course.save(function(err) {
           if (!err) {
