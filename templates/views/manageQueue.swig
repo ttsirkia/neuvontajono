@@ -26,10 +26,13 @@
 
 {% if course.projectorConf %}
 <p>
-  <a href="/neuvontajono/sessions/{{ session._id.toString() }}/manage/projector" target="_blank" class="btn btn-success">Avaa videoprojektorinäkymä</a><br/>
-  <span style="font-size: 13px;">Projektorinäkymässä seuraavaksi vuorossa oleva poistetaan jonosta painamalla välilyöntiä tai
-  napsauttamalla nimeä. Useimmissa selaimissa saa näkymän koko ruutuun painamalla F11-painiketta.</span>
+  <a href="/neuvontajono/sessions/{{ session._id.toString() }}/manage/projector" target="_blank" class="btn btn-success">Avaa videoprojektorinäkymä</a>
 </p>
+<p>
+  Projektorinäkymässä seuraavaksi vuorossa oleva poistetaan jonosta painamalla välilyöntiä tai
+  napsauttamalla nimeä. Useimmissa selaimissa saa näkymän koko ruutuun painamalla F11-painiketta.
+</p>
+<hr>
 {% endif%}
 
 <p id="queue-length">Jonon pituus tällä hetkellä: <span data-bind="text: (users().length)"></span></p>
