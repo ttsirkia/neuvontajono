@@ -157,7 +157,7 @@ $(function() {
       newImage = projectorConf.sessions[sessionName];
     }
 		
-    if (isOpen && projectorConf.pictures && !(moment().minute() % 15 === 0 && (moment().hour() % 2 !== 0 || moment.minute() !== 0))) {
+    if (isOpen && projectorConf.pictures && !(moment().minute() % 15 === 0 && (moment().hour() % 2 !== 0 || moment().minute() !== 0))) {
       var foundImages = [];
       projectorConf.pictures.forEach(function(picture) {
         if (moment().isAfter(moment(picture.start)) && moment().isBefore(moment(picture.end))) {
