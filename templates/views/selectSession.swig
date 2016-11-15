@@ -12,7 +12,7 @@
 {% if sessions.length > 0 %}
 
   <p>Valitse harjoitusryhmä. Alla olevassa taulukossa on kaikki tänään pidettävät harjoitusryhmät.</p>
-  
+
   <table class="table">
     <tr>
       <th>Nimi</th>
@@ -22,7 +22,7 @@
       <th>&nbsp;</th>
     </tr>
     {% for session in sessions %}
-    <tr>
+    <tr class="{{ session.status }}">
       <td>{{ session.name }}</td>
       <td>{{ session.timespan }}</td>
       <td>{{ session.location }}</td>
@@ -31,11 +31,11 @@
     </tr>
     {% endfor %}
   </table>
-  
+
 {% else %}
 
     <p>Ei harjoitusryhmiä tänään.</p>
 
 {% endif %}
- 
+
 {% endblock %}

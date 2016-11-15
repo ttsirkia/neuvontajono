@@ -1,5 +1,5 @@
 require('dotenv').load();
-var keystone = require('keystone'), swig = require('swig');
+var keystone = require('keystone'), swig = require('swig'), moment = require('moment');
 
 // Disable swig's bulit-in template caching, express handles it
 swig.setDefaults({
@@ -44,6 +44,13 @@ keystone.set('routes', require('./routes/routes.js'));
 
 keystone.start({
   onHttpServerCreated : function() {
+
+    var Queue = keystone.list('Queue');
+
+    // Clean first possible old users away
+    var cleanLimit = moment().subtract(5, 'h').toDate();
+    Queue.model.remove({enteredAt: {$lt: cleanLimit}}, function() {
+    });
 
     var io = require('socket.io');
     var socketHandler = require('./sockets/socket');

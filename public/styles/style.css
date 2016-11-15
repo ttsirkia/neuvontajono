@@ -130,3 +130,7 @@ p+table {
 .change-session select {
 	margin-right: 10px;
 }
+
+.session-starting {
+	background-color: #F2FFED;
+}

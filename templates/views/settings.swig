@@ -138,7 +138,7 @@
   <p>
     <a href="/neuvontajono/sessions/create" class="btn btn-success">Luo uusi</a>
   </p>
-  <p>
+  <p style="margin-top: 25px;">
     Kaikki harjoitusryhmät voi ottaa tilapäisesti pois käytöstä esimerkiksi tenttiviikon ajaksi
     alla olevalla painikkeella. Ryhmät voi ottaa käyttöön uudelleen milloin hyvänsä.
   </p>

@@ -16,7 +16,17 @@ exports = module.exports = function(req, res) {
         var sess = session.toJSON();
         sess.id = session._id.toString();
         sess.timespan = session.getTimespan();
+        sess.status = '';
+
+        // CSS class
+        if (session.isOpen()) {
+          sess.status = 'success';
+        } else if (session.isOpening()) {
+          sess.status = 'session-starting';
+        }
+
         locals.sessions.push(sess);
+
       });
     }
 

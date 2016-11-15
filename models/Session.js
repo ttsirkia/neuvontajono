@@ -95,10 +95,20 @@ Session.schema.method('getLocationsAsList', function() {
 
 Session.schema.method('isOpen', function() {
 
-  return new Date().getDay() === this.weekday &&
+  return new Date().getDay() === this.weekday && this.active &&
     momentJS().isAfter(momentJS(this.startDate).startOf('day')) &&
     momentJS().isBefore(momentJS(this.endDate).add(1, 'd').startOf('day')) &&
     momentJS().isAfter(momentJS().startOf('day').add(this.queueOpenTime, 'm')) &&
+    momentJS().isBefore(momentJS().startOf('day').add(this.endTime, 'm'));
+
+});
+
+Session.schema.method('isOpening', function() {
+
+  return new Date().getDay() === this.weekday && this.active &&
+    momentJS().isAfter(momentJS(this.startDate).startOf('day')) &&
+    momentJS().isBefore(momentJS(this.endDate).add(1, 'd').startOf('day')) &&
+    momentJS().isAfter(momentJS().startOf('day').add(this.queueOpenTime - 15, 'm')) &&
     momentJS().isBefore(momentJS().startOf('day').add(this.endTime, 'm'));
 
 });

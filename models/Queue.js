@@ -153,10 +153,10 @@ Queue.schema.static('removeFromQueue', function(course, session, queueId, callba
 
       var Session = keystone.list('Session');
       Session.model.getCurrentSessions(course, function(err, sessions) {
-        
+
         var selected = null;
         var saved = false;
-        
+
         sessions.forEach(function(curSession) {
 
           var foundCorrect = curSession._id == session._id;
@@ -219,7 +219,7 @@ Queue.schema.static('getUserPosition', function(course, user, callback) {
         } else if (queue) {
 
           Queue.model.find(
-              {$or: [{session: queue.session}, {location: queue.location}], enteredAt: {$lte: queue.enteredAt}})
+              {course: course._id, $or: [{session: queue.session}, {location: queue.location}], enteredAt: {$lte: queue.enteredAt}})
               .count().exec(function(err, position) {
 
                 if (err) {
