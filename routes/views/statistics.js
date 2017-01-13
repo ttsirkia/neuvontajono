@@ -88,6 +88,10 @@ exports = module.exports = function(req, res) {
 
             participants.forEach(function(participant) {
 
+              if (!stats[participant.session]) {
+                return;   // Session does not exist anymore
+              }
+
               var week = moment(participant.date).format('W/YYYY');
 
               if (!stats[participant.session][week]) {
