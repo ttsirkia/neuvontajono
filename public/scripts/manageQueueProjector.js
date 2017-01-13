@@ -2,11 +2,11 @@ $(function() {
 
   /*
   Format for the projector configuration file (JSONP):
-  
+
   projector({
     "course":"http://pathtocourse/course.png",
     "sessions": {"sessionA":"http://pathtocourse/sessionA.png"},
-    "pictures": [{start:"2016-09-01 08:00", end:"2016-09-42 16:00", picture:"http://pathtocourse/hints.png"}]
+    "pictures": [{start:"2016-09-01 08:00", end:"2016-09-12 16:00", picture:"http://pathtocourse/hints.png"}]
   });
 
   */
@@ -156,7 +156,7 @@ $(function() {
     if (isOpen && projectorConf.sessions && projectorConf.sessions[sessionName]) {
       newImage = projectorConf.sessions[sessionName];
     }
-		
+
     if (isOpen && projectorConf.pictures && !(moment().minute() % 15 === 0 && (moment().hour() % 2 !== 0 || moment().minute() !== 0))) {
       var foundImages = [];
       projectorConf.pictures.forEach(function(picture) {
