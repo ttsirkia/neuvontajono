@@ -1,12 +1,17 @@
 # Neuvontajono
 
-Neuvontajono is an interactive queueing system for lab sessions (*neuvontajono* in Finnish) where students can ask help from course assistants. Students see their position in the queue and assistants see the students in the queue, both in real time.
+Neuvontajono is an interactive queueing system for lab sessions (*neuvontajono* in Finnish) where students can ask
+help from course assistants. Students see their position in the queue and assistants see the students in the queue,
+both in real time.
 
-This was originally a hobby project to get familiar with modern web technologies such as [Node.js](https://nodejs.org/), [Express](http://expressjs.com/), [MongoDB](http://www.mongodb.org), [Mongoose](http://mongoosejs.com/), [KeystoneJS](http://keystonejs.com/), [Socket.io](http://socket.io) and [React](https://reactjs.org/).
+This was originally a hobby project to get familiar with modern web technologies such as [Node.js](https://nodejs.org/), [Express](http://expressjs.com/), [MongoDB](http://www.mongodb.org), [Mongoose](http://mongoosejs.com/),
+[KeystoneJS](http://keystonejs.com/), [Socket.io](http://socket.io) and [React](https://reactjs.org/).
 
-The tool supports multiple courses and multiple exercise sessions per course. Also some statistics is provided about the number of students in each exercise session.
+The tool supports multiple courses and multiple exercise sessions per course. Also some statistics is provided about
+the number of students in each exercise session.
 
-Currently, only way to login is to use LTI. Course management systems such as [A+](https://github.com/Aalto-LeTech/a-plus) support this mechanism to launch external tools and provide the user information.
+Currently, only way to login is to use LTI. Course management systems such as [A+](https://github.com/Aalto-LeTech/a-plus)
+support this mechanism to launch external tools and provide the user information.
 
 ## Version 2.0
 
@@ -59,13 +64,16 @@ Use `upstart`, `systemd`, or such mechanism to launch the application (`node ser
 operating system starts. Make sure that the environment variable `NODE_ENV` is set to `production`. The mechanism
 must also restart the application if it crashes for some reason.
 
-If the MongoDB configuration requires a password, use the environment variable `MONGODB_URI` to provide the required connection string.
+If the MongoDB configuration requires a password, use the environment variable `MONGODB_URI` to provide the required
+connection string.
 
 ## Projector Configuration
 
-In the lab sessions, a video projector can be used to show the queue length and course-specific images which may contain hints etc.
+In the lab sessions, a video projector can be used to show the queue length and course-specific images which may
+contain hints etc.
 
-To enable this feature, you have to create a projector configuration JSON and make it available online.
+To enable this feature, you have to create a projector configuration JSON and make it available online. Define the
+URL in the course settings.
 
 The configuration file looks like this:
 ```
@@ -79,6 +87,8 @@ The JSON data must be inside a function called `projector` to allow loading the 
 
 The `course` setting defines the image that will be shown when the queue is not open.
 
-The `sessions` object define a image for each lab session identified by its name. This image will be visible every 15 minutes. A session image may contain, for example, the names and pictures of the course staff members.
+The `sessions` object defines an image for each lab session identified by its name. This image will be visible every
+15 minutes. A session image may contain, for example, the names and pictures of the course staff members.
 
-The `pictures` array contain a list of images that will be shown during the given period. These may contain hints for each week etc. If there are multiple images found, the shown image will be changed every minute.
+The `pictures` array contains a list of images that will be shown during the given period. These may contain hints for
+each week etc. If there are multiple images shown at the same time, the shown image will be changed every minute.
