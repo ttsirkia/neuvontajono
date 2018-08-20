@@ -1,17 +1,21 @@
-var keystone = require('keystone');
-var middleware = require('./middleware');
-var importRoutes = keystone.importer(__dirname);
+'use strict';
+
+const keystone = require('keystone');
+const middleware = require('./middleware');
+const importRoutes = keystone.importer(__dirname);
 
 // Common Middleware
 keystone.pre('routes', middleware.initLocals);
+keystone.pre('routes', middleware.initReactData);
 keystone.pre('routes', keystone.security.csrf.middleware.init);
 keystone.pre('routes', middleware.CSRFValidate);
 keystone.pre('render', middleware.flashMessages);
+keystone.pre('render', middleware.transformReactData);
 
 // Import Route Controllers
-var routes = {views: importRoutes('./views')};
+const routes = {views: importRoutes('./views')};
 
-keystone.set('404', 'errors/404');
+keystone.set('404', middleware.handle404);
 keystone.set('500', middleware.handle500);
 
 // Setup Route Bindings

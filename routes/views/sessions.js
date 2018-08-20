@@ -1,41 +1,54 @@
-var keystone = require('keystone');
-var io = require('../../sockets/socket');
-var moment = require('moment');
+'use strict';
+
+const keystone = require('keystone');
+const moment = require('moment');
 
 exports = module.exports = function(req, res) {
 
-  var Session = keystone.list('Session');
+  const Session = keystone.list('Session');
 
-  var view = new keystone.View(req, res);
-  var locals = res.locals;
+  const view = new keystone.View(req, res);
+  const locals = res.locals;
 
-  locals.sessions = [];
-  locals.today = new Date().getDay();
+  locals.reactData.app.view = 'sessions';
+  locals.reactData.view.sessions = [];
+  locals.reactData.view.today = new Date().getDay();
+  locals.reactData.view.isTeacher = locals.teacher === true;
+  locals.reactData.view.url = locals.course.url;
 
-  var now = new Date();
-  var today = moment().startOf('day').toDate();
-  var endOfWeek = moment().startOf('isoWeek').add(7, 'd').toDate();
+  view.on('init', function(next) {
 
-  Session.model.find({active: true, course: locals.course._id, startDate: {$lt: endOfWeek}, endDate: {$gte: today}}).sort(
-      {weekday: 'asc', startTime: 'asc'}).exec(function(err, sessions) {
+    const weekday = moment().day();
+    const today = moment().startOf('day').toDate();
+    const endOfWeek = moment().startOf('isoWeek').add(7, 'd').toDate();
 
-    if (sessions) {
-      sessions.forEach(function(session) {
-        var sess = session.toJSON();
-        sess.id = session._id.toString();
-        sess.timespan = session.getTimespan();
-        sess.datespan = session.getDatespan();
-        sess.weekdayString = session.weekdayString;
-        locals.sessions.push(sess);
-      });
-    }
+    const query = {
+      active: true,
+      course: locals.course._id,
+      startDate: { $lt: endOfWeek },
+      endDate: { $gte: today }
+    };
+    Session.model.find(query).sort({ weekday: 'asc', startTime: 'asc' }).exec(function(err, sessions) {
 
-    if (err) {
-      req.flash('error', 'Harjoitusryhmien hakeminen epäonnistui.');
-    }
+      if (sessions) {
+        sessions.forEach(function(session) {
+          const sess = session.toJSON();
+          sess.id = session._id.toString();
+          sess.today = weekday === session.weekday;
+          locals.reactData.view.sessions.push(sess);
+        });
+      }
 
-    view.render('sessions', locals);
+      if (err) {
+        req.flash('error', 'alert-getting-sessions-failed');
+      }
+
+      next();
+
+    });
 
   });
+
+  view.render('reactView', locals);
 
 };

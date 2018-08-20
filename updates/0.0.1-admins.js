@@ -2,7 +2,6 @@
 
 exports.create = {
 	User: [
-		{ 'name.first': 'Admin', 'name.last': 'User', email: 'admin@example.com', password: 'password', isAdmin: true }
+		{ 'name.first': 'Admin', 'name.last': 'User', email: 'admin@example.com', password: 'password', isAdmin: true, ltiId: 'admin' }
 	]
 };
-

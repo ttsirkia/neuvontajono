@@ -1,13 +1,14 @@
-var keystone = require('keystone');
+'use strict';
 
-var socketHandler = function() {
-};
+const keystone = require('keystone');
+
+const socketHandler = function() {};
 
 // ************************************************************************************************
 
 socketHandler.initialize = function(io) {
 
-  var Session = keystone.list('Session');
+  const Session = keystone.list('Session');
   socketHandler.io = io;
 
   socketHandler.queueNsp = io.of('/queue');
@@ -16,7 +17,7 @@ socketHandler.initialize = function(io) {
     socket.on('staffQueue', function(data) {
       if (data.sessionId && socket.request.session.staff) {
 
-        Session.model.findOne({course: socket.request.session.courseId, _id: data.sessionId}, function(err, session) {
+        Session.model.findOne({ course: socket.request.session.courseId, _id: data.sessionId }, function(err, session) {
 
           if (!err && session) {
             session.location.split(',').forEach(function(location) {
@@ -31,7 +32,7 @@ socketHandler.initialize = function(io) {
     });
 
     socket.on('userQueue', function(data) {
-      if (data.courseId) {
+      if (data.courseId === socket.request.session.courseId) {
         socket.join('Users|' + socket.request.session.courseId);
       }
     });
@@ -50,9 +51,9 @@ socketHandler.sendQueueStaffStatus = function(courseId, location, status) {
 
 socketHandler.sendUserStatus = function(course) {
 
-  var User = keystone.list('User');
+  const User = keystone.list('User');
 
-  var handleUser = function(userId, socketId) {
+  const handleUser = function(userId, socketId) {
     User.model.findById(userId, function(err, user) {
       if (user) {
         course.createSummary(user, function(err, summary) {
@@ -64,14 +65,14 @@ socketHandler.sendUserStatus = function(course) {
     });
   };
 
-  var iterateSockets = function(room) {
-    Object.keys(room).forEach(function(socketId) {
-      var userId = socketHandler.queueNsp.connected[socketId].request.session.userId;
+  const iterateSockets = function(room) {
+    Object.keys(room.sockets).forEach(function(socketId) {
+      const userId = socketHandler.queueNsp.connected[socketId].request.session.userId;
       handleUser(userId, socketId);
     });
   };
 
-  var room = socketHandler.queueNsp.adapter.rooms['Users|' + course._id];
+  const room = socketHandler.queueNsp.adapter.rooms['Users|' + course._id];
   if (room) {
     iterateSockets(room);
   }

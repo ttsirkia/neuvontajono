@@ -1,20 +1,29 @@
-var keystone = require('keystone');
-var moment = require('moment');
+'use strict';
 
-var Session = keystone.list('Session');
-var Participant = keystone.list('Participant');
+const keystone = require('keystone');
+const moment = require('moment');
+
+const Session = keystone.list('Session');
+const Participant = keystone.list('Participant');
 
 exports = module.exports = function(req, res) {
 
-  var view = new keystone.View(req, res);
-  var locals = res.locals;
+  const view = new keystone.View(req, res);
+  const locals = res.locals;
+
   locals.weeks = [];
+  locals.reactData.app.view = 'statistics';
+  locals.reactData.view.stats = [];
+  locals.reactData.view.mostFrequent = [];
+  locals.reactData.view.yellowLimit = locals.course.yellowLimit;
+  locals.reactData.view.redLimit = locals.course.redLimit;
+  locals.reactData.view.teacher = locals.teacher === true;
 
   view.on('init', function(next) {
 
-    if ((locals.course.statisticsLevel == 2 && !locals.teacher) || (locals.course.statisticsLevel == 1 && !locals.staff)) {
-      req.flash('error', 'Sinulla ei ole oikeutta nähdä tilastoja.');
-      res.redirect('/neuvontajono/queue');
+    if (locals.course.statisticsLevel < 0 || (locals.course.statisticsLevel === 2 && !locals.teacher) || (locals.course.statisticsLevel === 1 && !locals.staff)) {
+      req.flash('error', 'alert-statistics-no-permission');
+      res.redirect('/neuvontajono');
     } else {
       next();
     }
@@ -26,24 +35,24 @@ exports = module.exports = function(req, res) {
 
       if (!err) {
 
-        var startDates = [];
-        var endDates = [];
-        var names = {};
-        var stats = {};
-        var weeks = [];
-        var sessionIdList = [];
+        const startDates = [];
+        const endDates = [];
+        const names = {};
+        const stats = {};
+        const weeks = [];
+        const sessionIdList = [];
 
         sessions.forEach(function(session) {
 
           // Find the actual first and last date for sessions
-          var startTime = moment(session.startDate).startOf('day').add(session.queueOpenTime, 'm');
+          const startTime = moment(session.startDate).startOf('day').add(session.queueOpenTime, 'm');
           startTime.day(session.weekday);
 
           if (startTime.isBefore(moment(session.startDate).startOf('day'))) {
             startTime.add(1, 'w');
           }
 
-          var endTime = moment(session.endDate).startOf('day').add(session.endTime, 'm');
+          const endTime = moment(session.endDate).startOf('day').add(session.endTime, 'm');
           endTime.day(session.weekday);
 
           if (endTime.isAfter(moment(session.endDate).startOf('day').add(1, 'd'))) {
@@ -56,8 +65,8 @@ exports = module.exports = function(req, res) {
           stats[session._id] = {};
           sessionIdList.push(session._id);
 
-          var week = moment(startTime);
-          var endWeek = endTime;
+          const week = moment(startTime);
+          const endWeek = endTime;
 
           // Generate all weeks when this session is organized
           while (week.isBefore(endWeek) && moment().isAfter(week)) {
@@ -67,20 +76,20 @@ exports = module.exports = function(req, res) {
 
         });
 
-        var minDay = moment.min(startDates);
-        var maxDay = moment.max(endDates);
-        var maxWeek = maxDay.format('W/YYYY');
+        const minDay = moment.min(startDates);
+        const maxDay = moment.max(endDates);
+        const maxWeek = maxDay.format('W/YYYY');
 
-        var currentWeek = moment(minDay);
+        const currentWeek = moment(minDay);
 
         // Generate all possible weeks
 
-        var currentWeekFormat;
+        let currentWeekFormat;
         do {
           currentWeekFormat = currentWeek.format('W/YYYY');
           weeks.push(currentWeekFormat);
           currentWeek.add(1, 'w');
-        } while (currentWeekFormat != maxWeek);
+        } while (currentWeekFormat !== maxWeek);
 
         Participant.model.find({ course: locals.course._id }, function(err, participants) {
 
@@ -89,10 +98,10 @@ exports = module.exports = function(req, res) {
             participants.forEach(function(participant) {
 
               if (!stats[participant.session]) {
-                return;   // Session does not exist anymore
+                return; // Session does not exist anymore
               }
 
-              var week = moment(participant.date).format('W/YYYY');
+              const week = moment(participant.date).format('W/YYYY');
 
               if (!stats[participant.session][week]) {
                 stats[participant.session][week] = 0;
@@ -102,23 +111,21 @@ exports = module.exports = function(req, res) {
 
             });
 
-            locals.stats = [];
-            var weekNames = [''];
+            let weekNames = [''];
             Array.prototype.push.apply(weekNames, weeks);
 
-            if (minDay.year() == maxDay.year()) {
-              weekNames = weekNames.map(function(item) {
-                return item.split('/')[0];
-              });
-            }
+            weekNames = weekNames.map(function(item) {
+              return item.split('/')[0];
+            });
 
-            locals.stats.push(weekNames);
+
+            locals.reactData.view.stats.push(weekNames);
 
             // Collect data
 
             sessionIdList.forEach(function(id) {
 
-              var participantsTotal = [names[id]];
+              const participantsTotal = [names[id]];
 
               weeks.forEach(function(week) {
                 if (stats[id][week] !== undefined) {
@@ -132,30 +139,34 @@ exports = module.exports = function(req, res) {
                 }
               });
 
-              locals.stats.push(participantsTotal);
+              locals.reactData.view.stats.push(participantsTotal);
 
             });
 
           } else {
-            req.flash('error', 'Tilastojen lataaminen epäonnistui.');
+            req.flash('error', 'alert-statistics-load-failed');
           }
 
-          Participant.model.getMostFrequentUsers(locals.course, function(err, result) {
-            locals.mostFrequent = result || [];
+          if (locals.teacher) {
+            Participant.model.getMostFrequentUsers(locals.course, function(err, result) {
+              locals.reactData.view.mostFrequent = result || [];
+              next();
+            });
+          } else {
             next();
-          });
+          }
 
         });
 
       } else {
 
-        req.flash('error', 'Tilastojen lataaminen epäonnistui.');
+        req.flash('error', 'alert-statistics-load-failed');
 
       }
 
     });
   });
 
-  view.render('statistics', locals);
+  view.render('reactView', locals);
 
 };

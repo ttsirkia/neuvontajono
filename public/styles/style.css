@@ -134,3 +134,7 @@ p+table {
 .session-starting {
 	background-color: #F2FFED;
 }
+
+.btn + .btn, input + input, label + select {
+	margin-left: 5px;
+}

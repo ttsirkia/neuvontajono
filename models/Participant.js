@@ -1,9 +1,11 @@
-var keystone = require('keystone');
-var findOrCreate = require('mongoose-findorcreate');
-var moment = require('moment');
+'use strict';
 
-var Types = keystone.Field.Types;
-var Participant = new keystone.List('Participant');
+const keystone = require('keystone');
+const findOrCreate = require('mongoose-findorcreate');
+const moment = require('moment');
+
+const Types = keystone.Field.Types;
+const Participant = new keystone.List('Participant');
 
 // ************************************************************************************************
 
@@ -18,15 +20,22 @@ Participant.add({
 // ************************************************************************************************
 
 Participant.schema.static('addParticipant', function(course, session, userId) {
-  var minutes = new Date().getHours() * 60 + new Date().getMinutes();
-  var today = moment(new Date()).startOf('day');
+  const minutes = new Date().getHours() * 60 + new Date().getMinutes();
+  const today = moment(new Date()).startOf('day');
 
-  Participant.model.findOrCreate({ user: userId, session: session._id, course: course._id, date: today }, { enteredAt: [] }, function(err, res) {
+  if (course.statisticsLevel < 0) {
+    return;
+  }
+
+  Participant.model.findOrCreate({ user: userId, session: session._id, course: course._id, date: today }, {}, function(err, res) {
 
     // If this fails, we don't care
 
     if (res) {
-      res.enteredAt.push(minutes);
+      // Direct push fails in Mongoose ($pushAll removed)
+      const newArray = res.enteredAt.slice(0);
+      newArray.push(minutes);
+      res.enteredAt = newArray;
       res.save();
     }
   });
@@ -37,8 +46,8 @@ Participant.schema.static('addParticipant', function(course, session, userId) {
 
 Participant.schema.static('getMostFrequentUsers', function(course, cb) {
 
-  var User = keystone.list('User');
-  var users = {};
+  const User = keystone.list('User');
+  const users = {};
 
   Participant.model.aggregate([
       { $match: { course: course._id } },
@@ -49,20 +58,20 @@ Participant.schema.static('getMostFrequentUsers', function(course, cb) {
       if (err) {
         return cb(err, null);
       } else {
-        var userList = [];
+        const userList = [];
 
         aggregateResult.forEach(function(row) {
           userList.push(row._id);
         });
 
-        User.model.find({_id: {$in: userList}}).exec(function(err, result) {
+        User.model.find({ _id: { $in: userList } }).exec(function(err, result) {
           if (result) {
             result.forEach(function(user) {
               users[user._id] = user.name.full;
             });
 
-            var participants = [];
-            var i = 1;
+            const participants = [];
+            let i = 1;
             aggregateResult.forEach(function(row) {
               participants.push([i, users[row._id], row.c]);
               i += 1;

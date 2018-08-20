@@ -1,21 +1,24 @@
-var keystone = require('keystone');
-var io = require('../../sockets/socket');
+'use strict';
+
+const keystone = require('keystone');
 
 exports = module.exports = function(req, res) {
 
-  var Session = keystone.list('Session');
+  const Session = keystone.list('Session');
 
-  var view = new keystone.View(req, res);
-  var locals = res.locals;
-  locals.sessions = [];
+  const view = new keystone.View(req, res);
+  const locals = res.locals;
+
+  locals.reactData.app.view = 'selectSession';
+  locals.reactData.view.sessions = [];
 
   Session.model.getSessionsToday(locals.course, function(err, sessions) {
 
     if (sessions) {
       sessions.forEach(function(session) {
-        var sess = session.toJSON();
+        
+        const sess = session.toJSON();
         sess.id = session._id.toString();
-        sess.timespan = session.getTimespan();
         sess.status = '';
 
         // CSS class
@@ -25,16 +28,16 @@ exports = module.exports = function(req, res) {
           sess.status = 'session-starting';
         }
 
-        locals.sessions.push(sess);
+        locals.reactData.view.sessions.push(sess);
 
       });
     }
 
     if (err) {
-      req.flash('error', 'Harjoitusryhmien hakeminen epäonnistui.');
+      req.flash('error', 'alert-getting-sessions-failed');
     }
 
-    view.render('selectSession', locals);
+    view.render('reactView', locals);
 
   });
 

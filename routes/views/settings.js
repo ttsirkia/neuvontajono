@@ -1,54 +1,57 @@
-var keystone = require('keystone');
+'use strict';
+
+const keystone = require('keystone');
+const moment = require('moment');
 
 exports = module.exports = function(req, res) {
 
-  var Course = keystone.list('Course');
-  var Session = keystone.list('Session');
+  const Course = keystone.list('Course');
+  const Session = keystone.list('Session');
+  const Participant = keystone.list('Participant');
 
-  var view = new keystone.View(req, res);
-  var locals = res.locals;
+  const view = new keystone.View(req, res);
+  const locals = res.locals;
 
-  locals.formData = locals.course;
-  locals.sessions = [];
-
-  locals.formDataJSON = {statisticsLevel: locals.course.statisticsLevel};
-  locals.formDataJSON = JSON.stringify(locals.formData);
+  locals.reactData.app.view = 'settings';
 
   // **********************************************************************************************
 
-  view.on('render', function(next) {
-
-    Session.model.find({course: locals.course._id}).sort({weekday: 'asc', startTime: 'asc'}).exec(
-        function(err, sessions) {
-
-          if (sessions) {
-            sessions.forEach(function(session) {
-              var sess = session.toJSON();
-              var queueOpen = '';
-
-              if (session.queueOpenTime < session.startTime) {
-                queueOpen = '(' + session.queueOpenTimeString + ') - ';
-              }
-
-              sess.id = session._id.toString();
-              sess.datespan = session.getDatespan();
-              sess.timespan = session.weekdayString + ' ' + queueOpen + session.getTimespan();
-              locals.sessions.push(sess);
-            });
-          }
-
-          next();
-        });
-
+  view.on('init', function(next) {
+    locals.reactData.view = {
+      csrf: locals.csrf_token_value,
+      course: {
+        name: locals.course.name,
+        combined: locals.course.combined,
+        courseId: locals.course.courseId,
+        url: locals.course.url,
+        projectorConf: locals.course.projectorConf,
+        redLimit: locals.course.redLimit,
+        yellowLimit: locals.course.yellowLimit,
+        statisticsLevel: locals.course.statisticsLevel
+      },
+      sessions: []
+    };
+    next();
   });
 
   // **********************************************************************************************
 
-  view.on('post', {'action': 'saveSettings'}, function(next) {
+  view.on('post', { 'action': 'saveSettings' }, function(next) {
 
-    locals.formData = req.body;
-    locals.formDataJSON = {statisticsLevel: req.body.statisticsLevel};
-    locals.formDataJSON = JSON.stringify(locals.formData);
+    locals.reactData.view = {
+      csrf: locals.csrf_token_value,
+      course: {
+        name: req.body.name,
+        combined: req.body.combined,
+        courseId: locals.course.courseId,
+        url: req.body.url,
+        projectorConf: req.body.projectorConf,
+        redLimit: req.body.redLimit,
+        yellowLimit: req.body.yellowLimit,
+        statisticsLevel: req.body.statisticsLevel
+      },
+      sessions: []
+    };
 
     Course.model.findById(req.session.courseId).exec(function(err, course) {
       if (course) {
@@ -65,10 +68,19 @@ exports = module.exports = function(req, res) {
           if (!err) {
 
             locals.course = course;
-            req.flash('success', 'Kurssin asetukset on tallennettu.');
+            locals.reactData.course.name = course.name;
+
+            // Remove collected statistics if statistics will be disabled
+            if (course.statisticsLevel === -1) {
+              Participant.model.remove({course: locals.course._id}).exec(function() {
+
+              });
+            }
+
+            req.flash('success', 'alert-settings-saved');
 
           } else {
-            req.flash('error', 'Kurssin asetusten tallentaminen ei onnistunut.');
+            req.flash('error', 'alert-settings-save-failed');
           }
 
           next();
@@ -76,7 +88,7 @@ exports = module.exports = function(req, res) {
         });
 
       } else {
-        req.flash('error', 'Kurssin asetusten tallentaminen ei onnistunut.');
+        req.flash('error', 'alert-settings-save-failed');
         next();
       }
 
@@ -86,12 +98,12 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  view.on('post', {'action': 'remove'}, function(next) {
-    Session.model.findOneAndRemove({course: locals.course._id, _id: req.body.sessionId}, function(err, session) {
+  view.on('post', { 'action': 'remove' }, function(next) {
+    Session.model.findOneAndRemove({ course: locals.course._id, _id: req.body.sessionId }, function(err, session) {
       if (session) {
-        req.flash('success', 'Harjoitusryhmä on poistettu.');
+        req.flash('success', 'alert-session-deleted');
       } else {
-        req.flash('error', 'Harjoitusryhmän poistaminen ei onnistunut.');
+        req.flash('error', 'alert-session-delete-failed');
       }
       next();
     });
@@ -99,12 +111,12 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  view.on('post', {'action': 'disableAll'}, function(next) {
-    Session.model.update({course: locals.course}, {active: false}, {multi: true}, function(err, result) {
+  view.on('post', { 'action': 'disableAll' }, function(next) {
+    Session.model.update({ course: locals.course }, { active: false }, { multi: true }, function(err) {
       if (!err) {
-        req.flash('success', 'Harjoitusryhmät on poistettu käytöstä.');
+        req.flash('success', 'alert-sessions-disabled');
       } else {
-        req.flash('error', 'Harjoitusryhmien poistaminen käytöstä ei onnistunut.');
+        req.flash('error', 'alert-sessions-disable-failed');
       }
       next();
     });
@@ -112,17 +124,48 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  view.on('post', {'action': 'enableAll'}, function(next) {
-    Session.model.update({course: locals.course}, {active: true}, {multi: true}, function(err, session) {
+  view.on('post', { 'action': 'enableAll' }, function(next) {
+    Session.model.update({ course: locals.course }, { active: true }, { multi: true }, function(err) {
       if (!err) {
-        req.flash('success', 'Harjoitusryhmät on otettu käyttöön.');
+        req.flash('success', 'alert-sessions-enabled');
       } else {
-        req.flash('error', 'Harjoitusryhmien ottaminen käyttöön ei onnistunut.');
+        req.flash('error', 'alert-sessions-enable-failed');
       }
       next();
     });
   });
 
-  view.render('settings', locals);
+  // **********************************************************************************************
+
+  view.on({}, function(next) {
+
+    Session.model.find({ course: locals.course._id }).sort({ weekday: 'asc', startTime: 'asc' }).exec(
+      function(err, sessions) {
+
+        if (sessions) {
+          sessions.forEach(function(session) {
+            var sess = session.toJSON();
+            var queueOpen = '';
+
+            if (session.queueOpenTime < session.startTime) {
+              queueOpen = '(' + session.queueOpenTimeString + ') - ';
+            }
+
+            sess.id = session._id.toString();
+            sess.startDate = moment(session.startDate).format('YYYY-MM-DD');
+            sess.endDate = moment(session.endDate).format('YYYY-MM-DD');
+            locals.reactData.view.sessions.push(sess);
+          });
+        }
+
+        next();
+      });
+
+  });
+
+  // **********************************************************************************************
+
+
+  view.render('reactView', locals);
 
 };

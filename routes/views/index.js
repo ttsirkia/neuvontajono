@@ -1,15 +1,18 @@
-var keystone = require('keystone');
+'use strict';
+
+const keystone = require('keystone');
 
 exports = module.exports = function(req, res) {
 
-  var view = new keystone.View(req, res);
-  var locals = res.locals;
+  const view = new keystone.View(req, res);
+  const locals = res.locals;
+  locals.reactData.app.view = 'index';
 
   if (locals.course) {
     res.redirect('/neuvontajono/queue');
     return;
   }
 
-  view.render('index', locals);
+  view.render('reactView', locals);
 
 };

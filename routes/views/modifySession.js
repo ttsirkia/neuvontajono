@@ -1,37 +1,55 @@
-var keystone = require('keystone');
+'use strict';
+
+const keystone = require('keystone');
+const moment = require('moment');
 
 exports = module.exports = function(req, res) {
 
-  var Session = keystone.list('Session');
+  const Session = keystone.list('Session');
 
-  var view = new keystone.View(req, res);
-  var locals = res.locals;
+  const view = new keystone.View(req, res);
+  const locals = res.locals;
 
-  locals.formData = {weekday: 1, active: true};
-  locals.formDataJSON = JSON.stringify(locals.formData);
+  locals.reactData.view = { weekday: 1, active: true, session: null };
+  locals.reactData.view.language = locals.reactData.app.language;
+
+  locals.reactData.app.view = 'modifySession';
+  locals.reactData.app.selectedTab = 'settings';
+
+  locals.additionalResources = `
+<script src="/neuvontajono/scripts/jquery-2.2.4.min.js"></script>
+<script src="/neuvontajono/scripts/moment.min.js"></script>
+<script src="/neuvontajono/scripts/bootstrap.transitions.min.js"></script>
+<script src="/neuvontajono/scripts/bootstrap-datetimepicker.min.js"></script>
+<link href="/neuvontajono/styles/bootstrap-datetimepicker.min.css" rel="stylesheet">
+`;
 
   // **********************************************************************************************
 
   view.on('get', function(next) {
+
+    locals.reactData.view.csrf = locals.csrf_token_value;
+
     if (!req.params.sessionId) {
-      locals.createNew = true;
+      locals.reactData.view.createNew = true;
       next();
     } else {
-      Session.model.findOne({course: locals.course._id, _id: req.params.sessionId}).exec(function(err, session) {
+      Session.model.findOne({ course: locals.course._id, _id: req.params.sessionId }).exec(function(err, session) {
         if (session) {
-
-          locals.formData = session.toJSON();
-          locals.formData.startDate = session._.startDate.format();
-          locals.formData.endDate = session._.endDate.format();
-          locals.formData.startTime = session.startTimeString;
-          locals.formData.endTime = session.endTimeString;
-          locals.formData.queueOpenTime = session.queueOpenTimeString;
-          locals.formDataJSON = JSON.stringify(locals.formData);
-
+          locals.reactData.view.sessionId = session._id.toString();
+          locals.reactData.view.name = session.name;
+          locals.reactData.view.assistants = session.assistants;
+          locals.reactData.view.location = session.location;
+          locals.reactData.view.weekday = session.weekday;
+          locals.reactData.view.startDate = moment(session.startDate).format('YYYY-MM-DD');
+          locals.reactData.view.endDate = moment(session.endDate).format('YYYY-MM-DD');
+          locals.reactData.view.startTime = session.startTime;
+          locals.reactData.view.endTime = session.endTime;
+          locals.reactData.view.queueOpenTime = session.queueOpenTime;
+          locals.reactData.view.active = session.active === true;
           next();
-
         } else {
-          req.flash('error', 'Tuntematon harjoitusryhmä.');
+          req.flash('error', 'alert-session-not-found');
           res.redirect('/neuvontajono/settings');
         }
       });
@@ -41,38 +59,40 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  view.on('post', {'action': 'save'}, function(next) {
+  view.on('post', { 'action': 'save' }, function(next) {
 
-    locals.formData = req.body;
-    locals.formDataJSON = JSON.stringify(req.body);
+    locals.reactData.view.name = req.body.name;
+    locals.reactData.view.assistants = req.body.assistants;
+    locals.reactData.view.location = req.body.location;
+    locals.reactData.view.weekday = req.body.weekday;
+    locals.reactData.view.startDate = req.body.startDate;
+    locals.reactData.view.endDate = req.body.endDate;
+    locals.reactData.view.startTime = req.body.startTime;
+    locals.reactData.view.endTime = req.body.endTime;
+    locals.reactData.view.queueOpenTime = req.body.queueOpenTime;
+    locals.reactData.view.active = req.body.active === 'active';
 
-    var save = function(session, next) {
+    const save = function(session, next) {
 
       session.name = req.body.name;
       session.weekday = req.body.weekday;
       session.location = req.body.location;
       session.assistants = req.body.assistants;
 
-      session.startDate = session._.startDate.parse(req.body.startDate, 'D.M.YYYY');
-      session.endDate = session._.endDate.parse(req.body.endDate, 'D.M.YYYY');
-
-      // TODO: Waiting PR to be accepted
-      // session._.startDate.update(req.body);
-      // session._.endDate.update(req.body);
-
-      session.startTimeString = req.body.startTime;
-      session.endTimeString = req.body.endTime;
-      session.queueOpenTimeString = req.body.queueOpenTime;
-      session._.active.update(req.body);
+      session.startDate = moment(req.body.startDate, [req.body.dateFormat, 'D.M.YYYY']);
+      session.endDate = moment(req.body.endDate, [req.body.dateFormat, 'D.M.YYYY']);
+      session.startTime = moment(req.body.startTime, [req.body.timeFormat, 'H:mm']).diff(moment().startOf('day'), 'minutes');
+      session.endTime = moment(req.body.endTime, [req.body.timeFormat, 'H:mm']).diff(moment().startOf('day'), 'minutes');
+      session.queueOpenTime = req.body.queueOpenTime ? moment(req.body.queueOpenTime, [req.body.timeFormat, 'H:mm']).diff(moment().startOf('day'), 'minutes') : '';
+      session.active = req.body.active === 'active';
 
       session.save(function(err) {
         if (!err) {
-
-          req.flash('success', 'Harjoitusryhmän tiedot on tallennettu.');
+          req.flash('success', 'alert-session-saved');
           res.redirect('/neuvontajono/settings');
 
         } else {
-          req.flash('error', 'Harjoitusryhmän tallentaminen ei onnistunut.');
+          req.flash('error', 'alert-session-save-failed');
           next();
         }
 
@@ -81,24 +101,24 @@ exports = module.exports = function(req, res) {
 
     if (req.params.sessionId) {
 
-      Session.model.findOne({course: locals.course._id, _id: req.params.sessionId}).exec(function(err, session) {
+
+      Session.model.findOne({ course: locals.course._id, _id: req.params.sessionId }).exec(function(err, session) {
+
         if (session) {
-
+          locals.reactData.view.sessionId = req.params.sessionId;
           save(session, next);
-
         } else {
-
-          req.flash('error', 'Harjoitusryhmän tallentaminen ei onnistunut.');
+          locals.reactData.view.sessionId = req.params.sessionId;
+          req.flash('error', 'alert-session-save-failed');
           next();
-
         }
 
       });
 
     } else {
 
-      var session = new Session.model({course: locals.course._id});
-
+      locals.reactData.view.createNew = true;
+      const session = new Session.model({ course: locals.course._id });
       save(session, next);
 
     }
@@ -107,6 +127,6 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  view.render('modifySession', locals);
+  view.render('reactView', locals);
 
 };

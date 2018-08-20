@@ -1,41 +1,56 @@
-var keystone = require('keystone');
-var io = require('../../sockets/socket');
+'use strict';
+
+const keystone = require('keystone');
 
 exports = module.exports = function(req, res) {
 
-  var Session = keystone.list('Session');
-  var Queue = keystone.list('Queue');
+  const Session = keystone.list('Session');
+  const Queue = keystone.list('Queue');
 
-  var view = new keystone.View(req, res);
-  var locals = res.locals;
-  locals.queueData = {users: [], open: false, sessionName: ''};
-  var errors = false;
+  const view = new keystone.View(req, res);
+  const locals = res.locals;
+  let errors = false;
+
+  if (/projector/.test(req.path)) {
+    locals.reactData.app.view = 'manageQueueProjector';
+    locals.additionalResources = `
+<script src="/neuvontajono/scripts/jquery-2.2.4.min.js"></script>
+<link href="/neuvontajono/styles/projector.css" rel="stylesheet">`;
+
+  } else {
+    locals.reactData.app.view = 'manageQueue';
+    locals.additionalResources = '<script src="/neuvontajono/scripts/jquery-2.2.4.min.js"></script>';
+  }
+
+  locals.reactData.app.selectedTab = 'selectSession';
+  locals.reactData.view.queueData = { users: [], open: false, sessionName: '' };
+  locals.reactData.view.csrf = locals.csrf_token_value;
 
   // **********************************************************************************************
   // Helper functions
 
-  var getUsersInQueue = function(next) {
+  const getUsersInQueue = function(next) {
     Queue.model.getUsersInQueue(locals.course, locals.session, function(err, usersInQueue) {
 
       if (err) {
         errors = true;
-        next();
-        return;
+        return next();
       }
 
       Session.model.getCurrentSessions(locals.course, function(err, sessions) {
 
         if (sessions) {
           sessions.forEach(function(session) {
-            locals.queueData.sessionName = session.name;
+            locals.reactData.view.queueData.sessionName = session.name;
             if (session.location === locals.session.location) {
-              locals.queueData.open = true;
+              locals.reactData.view.queueData.open = true;
+              locals.reactData.view.multipleLocations = session.location.indexOf(',') >= 0;
             }
           });
         }
 
         if (usersInQueue) {
-          locals.queueData.users = usersInQueue;
+          locals.reactData.view.queueData.users = usersInQueue;
           next();
         }
 
@@ -52,14 +67,20 @@ exports = module.exports = function(req, res) {
 
   view.on('init', function(next) {
 
-    Session.model.findOne({course: locals.course._id, _id: req.params.sessionId}).exec(function(err, session) {
+    Session.model.findOne({ course: locals.course._id, _id: req.params.sessionId }).exec(function(err, session) {
       if (session) {
 
         locals.session = session;
+        locals.reactData.view.sessionId = session._id.toString();
+        locals.reactData.view.courseId = locals.course._id.toString();
+        locals.reactData.view.sessionLocation = session.location;
+        locals.reactData.view.projectorConf = locals.course.projectorConf;
+        locals.reactData.view.multipleLocations = session.location.indexOf(',') >= 0;
+
         next();
 
       } else {
-        req.flash('error', 'Harjoitusryhmää ei löydy.');
+        req.flash('error', 'alert-session-not-found');
         res.redirect('/neuvontajono/selectSession');
       }
 
@@ -72,42 +93,33 @@ exports = module.exports = function(req, res) {
   view.on('get', function(next) {
 
     getUsersInQueue(function() {
-
       if (!req.xhr) {
-
         if (errors) {
-          req.flash('error', 'Jonottajien hakeminen epäonnistui.');
+          req.flash('error', 'alert-getting-queue-failed');
         }
-
-        locals.queueData = JSON.stringify(locals.queueData);
         next();
-
       } else {
-
         if (errors) {
-          res.json({error: true});
+          res.json({ error: true });
         } else {
-          res.json(locals.queueData);
+          res.json(locals.reactData.view.queueData);
         }
-
       }
-
     });
 
   });
 
   // **********************************************************************************************
 
-  view.on('post', {action: 'clear'}, function(next) {
+  view.on('post', { action: 'clear' }, function(next) {
 
-    Queue.model.clearQueue(locals.course, locals.session, function(err, result) {
+    Queue.model.clearQueue(locals.course, locals.session, function(err) {
 
       if (err) {
-        req.flash('error', 'Jonon tyhjentäminen epäonnistui.');
+        req.flash('error', 'alert-clearing-queue-failed');
       }
 
       getUsersInQueue(function() {
-        locals.queueData = JSON.stringify(locals.queueData);
         next();
       });
     });
@@ -116,28 +128,15 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  view.on('post', {action: 'remove'}, function(next) {
+  view.on('post', { action: 'remove' }, function() {
 
-    Queue.model.removeFromQueue(locals.course, locals.session, req.body.queueId, function(err, result) {
+    Queue.model.removeFromQueue(locals.course, locals.session, req.body.queueId, function(err) {
 
       getUsersInQueue(function() {
-        if (!req.xhr) {
-
-          if (errors || err) {
-            req.flash('error', 'Poistaminen epäonnistui.');
-          }
-
-          locals.queueData = JSON.stringify(locals.queueData);
-          next();
-
+        if (errors || err) {
+          res.json({ error: true });
         } else {
-
-          if (errors || err) {
-            res.json({error: true});
-          } else {
-            res.json(locals.queueData);
-          }
-
+          res.json(locals.reactData.view.queueData);
         }
       });
     });
@@ -147,9 +146,9 @@ exports = module.exports = function(req, res) {
   // **********************************************************************************************
 
   if (!/projector/.test(req.path)) {
-    view.render('manageQueue', locals);
+    view.render('reactView', locals);
   } else {
-    view.render('manageQueueProjector', locals);
+    view.render('reactView', locals);
   }
 
 };
