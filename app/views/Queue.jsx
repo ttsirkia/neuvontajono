@@ -78,8 +78,8 @@ const EnterQueue = function(props) {
       return <div>
         <div className="alert alert-warning">
           <FormattedMessage id="queue-multiple-locations"/>
-
         </div>
+
         <div className="form-group">
           <label htmlFor="location" className="col-sm-3 control-label"><FormattedMessage id="queue-group"/></label>
           <div className="col-sm-6">
@@ -133,6 +133,32 @@ const EnterQueue = function(props) {
 
   // **********************************************************************************************
 
+  const LanguageSelection = function(props) {
+
+    if (props.languages.length < 2) {
+      return null;
+    }
+
+    return <div>
+      <div className="alert alert-info">
+        <FormattedMessage id="queue-multiple-languages"/>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="language" className="col-sm-3 control-label"><FormattedMessage id="queue-language"/></label>
+        <div className="col-sm-6">
+          <select name="language" defaultValue={props.previousLanguage}>
+            {props.languages.map((language) => <option key={language} value={language}>{language}</option>)}
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+  };
+
+  // **********************************************************************************************
+
   if (props.sessions.length > 0 && props.user.position === 0) {
 
     return <div>
@@ -180,6 +206,8 @@ const EnterQueue = function(props) {
             <p className="help-block small"><FormattedMessage id="queue-row-direction-help"/></p>
           </div>
         </div>
+
+        <LanguageSelection languages={props.selectedSession.language} previousLanguage={props.user.previousLanguage}/>
 
         <hr/>
 

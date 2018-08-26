@@ -27,12 +27,18 @@ const AdditionalInformation = function(props) {
 const SessionRow = function(props) {
   return <tr className={props.session.today ? 'success' : ''}>
     <td>{props.session.name}</td>
-    <td><Timespan
-      weekday={props.session.weekday}
-      start={props.session.startTime}
-      end={props.session.endTime}/></td>
+    <td><Timespan weekday={props.session.weekday} start={props.session.startTime} end={props.session.endTime}/></td>
     <td>{props.session.location}</td>
-    <td>{props.session.assistants}</td>
+    {
+      props.showAssistants && (<td>
+        {props.session.assistants}
+      </td>)
+    }
+    {
+      props.showLanguage && (<td>
+        {props.session.language}
+      </td>)
+    }
   </tr>;
 };
 
@@ -63,11 +69,28 @@ export function Sessions(props) {
           <th><FormattedMessage id="select-th-name"/></th>
           <th><FormattedMessage id="select-th-time"/></th>
           <th><FormattedMessage id="select-th-location"/></th>
-          <th><FormattedMessage id="select-th-staff"/></th>
+          {
+            props.view.showAssistants && (<th>
+              <FormattedMessage id="select-th-staff"/>
+            </th>)
+          }
+          {
+            props.view.showLanguage && (<th>
+              <FormattedMessage id="select-th-language"/>
+            </th>)
+          }
         </tr>
       </thead>
       <tbody>
-        {props.view.sessions.map((session) => <SessionRow key={session._id} session={session}/>)}
+        {
+          props.view.sessions.map(
+            (session) => <SessionRow
+              key={session._id}
+              session={session}
+              showAssistants={props.view.showAssistants}
+              showLanguage={props.view.showLanguage}/>
+          )
+        }
       </tbody>
     </table>
 

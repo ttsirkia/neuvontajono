@@ -11,7 +11,7 @@ exports = module.exports = function(req, res) {
   const locals = res.locals;
 
   locals.reactData.view = { weekday: 1, active: true, session: null };
-  locals.reactData.view.language = locals.reactData.app.language;
+  locals.reactData.view.UILanguage = locals.reactData.app.language;
 
   locals.reactData.app.view = 'modifySession';
   locals.reactData.app.selectedTab = 'settings';
@@ -47,6 +47,7 @@ exports = module.exports = function(req, res) {
           locals.reactData.view.endTime = session.endTime;
           locals.reactData.view.queueOpenTime = session.queueOpenTime;
           locals.reactData.view.active = session.active === true;
+          locals.reactData.view.language = session.language;
           next();
         } else {
           req.flash('error', 'alert-session-not-found');
@@ -71,6 +72,7 @@ exports = module.exports = function(req, res) {
     locals.reactData.view.endTime = req.body.endTime;
     locals.reactData.view.queueOpenTime = req.body.queueOpenTime;
     locals.reactData.view.active = req.body.active === 'active';
+    locals.reactData.view.language = req.body.language;
 
     const save = function(session, next) {
 
@@ -78,6 +80,7 @@ exports = module.exports = function(req, res) {
       session.weekday = req.body.weekday;
       session.location = req.body.location;
       session.assistants = req.body.assistants;
+      session.language = req.body.language;
 
       session.startDate = moment(req.body.startDate, [req.body.dateFormat, 'D.M.YYYY']);
       session.endDate = moment(req.body.endDate, [req.body.dateFormat, 'D.M.YYYY']);

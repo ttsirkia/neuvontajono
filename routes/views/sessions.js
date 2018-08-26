@@ -14,6 +14,8 @@ exports = module.exports = function(req, res) {
   locals.reactData.view.sessions = [];
   locals.reactData.view.today = new Date().getDay();
   locals.reactData.view.isTeacher = locals.teacher === true;
+  locals.reactData.view.showLanguage = false;
+  locals.reactData.view.showAssistants = false;
   locals.reactData.view.url = locals.course.url;
 
   view.on('init', function(next) {
@@ -35,6 +37,8 @@ exports = module.exports = function(req, res) {
           const sess = session.toJSON();
           sess.id = session._id.toString();
           sess.today = weekday === session.weekday;
+          locals.reactData.view.showLanguage = locals.reactData.view.showLanguage || session.getItemAsList('language').length > 0;
+          locals.reactData.view.showAssistants = locals.reactData.view.showAssistants || session.getItemAsList('assistants').length > 0;
           locals.reactData.view.sessions.push(sess);
         });
       }

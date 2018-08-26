@@ -10,7 +10,7 @@ import {Time} from '../components/Time';
 /********************************************************************
  *  ManageQueue is the assistant view for managing the queue.
  *******************************************************************/
- 
+
 const clickHandler = function(event, props, successText, failText) {
   props.clearAlertMessages();
   const form = $(event.target).closest('form');
@@ -77,7 +77,9 @@ const UserRow = function(props) {
   };
 
   return <tr className={props.position === 1 ? 'first-in-queue' : ''}>
-    <td><FormattedMessage id="ordinal-value" values={{position: props.position}}/></td>
+    <td><FormattedMessage id="ordinal-value" values={{
+      position: props.position
+    }}/></td>
     <td>{`${props.user.user.name.first} ${props.user.user.name.last}`}</td>
     <td><Time value={props.user.enteredAt}/></td>
     <td><FormattedMessage
@@ -86,6 +88,7 @@ const UserRow = function(props) {
       location: props.user.location,
       row: props.user.row
     }}/></td>
+    {props.showLanguage && <td>{props.user.language}</td>}
     <td>
       <button onClick={handleClick} className={cName} name="queueId" value={props.user._id}>
         <FormattedMessage id="manage-remove"/>
@@ -121,6 +124,14 @@ const ClearQueue = function(props) {
 const UsersInQueue = function(props) {
 
   if (props.length > 0) {
+
+    let showLanguage = false;
+    props.users.forEach(function(user) {
+      if (user.language) {
+        showLanguage = true;
+      }
+    });
+
     return <form id="remove" action="#" method="post">
       <input type="hidden" name="action" value="remove"/>
       <input type="hidden" name="_csrf" value={props.csrf}/>
@@ -131,6 +142,7 @@ const UsersInQueue = function(props) {
             <th><FormattedMessage id='manage-th-name'/></th>
             <th><FormattedMessage id='manage-th-entered-at'/></th>
             <th><FormattedMessage id='manage-th-location'/></th>
+            {showLanguage && <th><FormattedMessage id='select-th-language'/></th>}
             <th></th>
           </tr>
         </thead>
@@ -144,7 +156,8 @@ const UsersInQueue = function(props) {
                 key={user._id}
                 user={user}
                 position={index + 1}
-                intl={props.intl}/>
+                intl={props.intl}
+                showLanguage={showLanguage}/>
             )
           }
         </tbody>
@@ -209,12 +222,16 @@ class ManageQueue_ extends React.Component {
         self.props.addAlertMessage('error', 'alert-page-update-failed');
       });
     }, 60000);
+
+    document.title = this.props.intl.formatMessage({id: 'title'}) + ' (' + this.state.queueData.users.length + ')';
+
   }
 
   // **********************************************************************************************
 
   updateQueueData(data) {
     this.setState({queueData: data});
+    document.title = this.props.intl.formatMessage({id: 'title'}) + ' (' + data.users.length + ')';
   }
 
   // **********************************************************************************************

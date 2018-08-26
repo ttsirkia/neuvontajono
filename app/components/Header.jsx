@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
+import {injectIntl} from 'react-intl';
 
 /********************************************************************
  *  Header renders the application name and user name
@@ -16,7 +17,10 @@ const UserName = (props) => {
   }
 };
 
-export function Header(props) {
+const Header_ = function(props) {
+
+  document.title = props.intl.formatMessage({id: 'title'});
+
   return <nav className="navbar navbar-default navbar-static-top">
     <div className="container">
       <div className="navbar-header">
@@ -26,3 +30,9 @@ export function Header(props) {
     </div>
   </nav>;
 }
+
+const Header = injectIntl(Header_);
+
+export {
+  Header
+};

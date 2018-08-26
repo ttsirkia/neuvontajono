@@ -13,12 +13,18 @@ import {Timespan} from '../components/Timespan';
 const SessionRow = function(props) {
   return <tr className={props.session.status}>
     <td>{props.session.name}</td>
-    <td><Timespan
-      preStart={props.session.queueOpenTime}
-      start={props.session.startTime}
-      end={props.session.endTime}/></td>
+    <td><Timespan preStart={props.session.queueOpenTime} start={props.session.startTime} end={props.session.endTime}/></td>
     <td>{props.session.location}</td>
-    <td>{props.session.assistants}</td>
+    {
+      props.showAssistants && (<td>
+        {props.session.assistants}
+      </td>)
+    }
+    {
+      props.showLanguage && (<td>
+        {props.session.language}
+      </td>)
+    }
     <td>
       <a href={`/neuvontajono/sessions/${props.session.id}/manage`} className="btn btn-primary"><FormattedMessage id="select"/></a>
     </td>
@@ -39,12 +45,25 @@ const Sessions = function(props) {
             <th><FormattedMessage id="select-th-name"/></th>
             <th><FormattedMessage id="select-th-time"/></th>
             <th><FormattedMessage id="select-th-location"/></th>
-            <th><FormattedMessage id="select-th-staff"/></th>
+            {
+              props.showAssistants && (<th>
+                <FormattedMessage id="select-th-staff"/>
+              </th>)
+            }
+            {
+              props.showLanguage && (<th>
+                <FormattedMessage id="select-th-language"/>
+              </th>)
+            }
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {props.sessions.map((session) => <SessionRow session={session} key={session.id}/>)}
+          {
+            props.sessions.map(
+              (session) => <SessionRow session={session} key={session.id} showAssistants={props.showAssistants} showLanguage={props.showLanguage}/>
+            )
+          }
         </tbody>
       </table>
 
@@ -56,6 +75,9 @@ const Sessions = function(props) {
 
 export function SelectSession(props) {
   return <div>
-    <Sessions sessions={props.view.sessions}/>
+    <Sessions
+      sessions={props.view.sessions}
+      showAssistants={props.view.showAssistants}
+      showLanguage={props.view.showLanguage}/>
   </div>;
 }

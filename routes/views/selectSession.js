@@ -11,12 +11,14 @@ exports = module.exports = function(req, res) {
 
   locals.reactData.app.view = 'selectSession';
   locals.reactData.view.sessions = [];
+  locals.reactData.view.showLanguage = false;
+  locals.reactData.view.showAssistants = false;
 
   Session.model.getSessionsToday(locals.course, function(err, sessions) {
 
     if (sessions) {
       sessions.forEach(function(session) {
-        
+
         const sess = session.toJSON();
         sess.id = session._id.toString();
         sess.status = '';
@@ -27,6 +29,9 @@ exports = module.exports = function(req, res) {
         } else if (session.isOpening()) {
           sess.status = 'session-starting';
         }
+
+        locals.reactData.view.showLanguage = locals.reactData.view.showLanguage || session.getItemAsList('language').length > 0;
+        locals.reactData.view.showAssistants = locals.reactData.view.showAssistants || session.getItemAsList('assistants').length > 0;
 
         locals.reactData.view.sessions.push(sess);
 

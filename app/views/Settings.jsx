@@ -60,7 +60,9 @@ const GeneralSettings = function(props) {
           name="projectorConf"
           id="projectorConf"
           defaultValue={props.course.projectorConf}/>
-        <p className="help-block small"><FormattedHTMLMessage id="settings-projector-help" values={{
+        <p className="help-block small"><FormattedHTMLMessage
+          id="settings-projector-help"
+          values={{
       url: 'https://github.com/ttsirkia/neuvontajono/blob/master/README.md#projector-configuration'
     }}/></p>
       </div>
@@ -121,9 +123,7 @@ const SessionRow = function(props) {
 
   return <tr className={cName}>
     <td>{props.session.name}</td>
-    <td><Datespan
-      start={props.session.startDate}
-      end={props.session.endDate}/></td>
+    <td><Datespan start={props.session.startDate} end={props.session.endDate}/></td>
     <td><Timespan
       weekday={props.session.weekday}
       preStart={props.session.queueOpenTime}
@@ -131,6 +131,7 @@ const SessionRow = function(props) {
       end={props.session.endTime}/></td>
     <td>{props.session.location}</td>
     <td>{props.session.assistants}</td>
+    <td>{props.session.language}</td>
     <td>
       <a href={`/neuvontajono/sessions/${props.session.id}/edit`} className="btn btn-xs btn-primary"><FormattedMessage id="edit"/></a>
       <button
@@ -157,6 +158,7 @@ const Sessions = function(props) {
           <th><FormattedMessage id="select-th-time"/></th>
           <th><FormattedMessage id="select-th-location"/></th>
           <th><FormattedMessage id="select-th-staff"/></th>
+          <th><FormattedMessage id="select-th-language"/></th>
           <th></th>
         </tr>
       </thead>

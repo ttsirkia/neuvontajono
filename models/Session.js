@@ -20,7 +20,8 @@ Session.add({
   weekday: { type: Types.Number, initial: true, required: true, min: 0, max: 6 },
   location: { type: Types.Text, initial: true, required: true },
   active: { type: Types.Boolean, 'default': true },
-  assistants: { type: Types.Text, initial: true, 'default': '' }
+  assistants: { type: Types.Text, initial: true, 'default': '' },
+  language: { type: Types.Text, initial: true, 'default': '' }
 });
 
 
@@ -33,14 +34,11 @@ Session.schema.method('getQueueLength', function(course, callback) {
   Queue.model.getQueueLength(course, this, callback);
 });
 
-Session.schema.method('getLocationsAsList', function() {
-
-  const locations = this.location.split(',').map(function(item) {
+Session.schema.method('getItemAsList', function(item) {
+  const items = this[item].split(',').map(function(item) {
     return item.trim();
   });
-
-  return locations;
-
+  return items;
 });
 
 Session.schema.method('isOpen', function() {
@@ -121,6 +119,7 @@ Session.schema.pre('save', function(next) {
 
   this.assistants = tidy(this.assistants);
   this.location = tidy(this.location);
+  this.language = tidy(this.language);
 
   next();
 
@@ -130,7 +129,7 @@ Session.schema.pre('save', function(next) {
 
 Session.schema.pre('validate', function(next) {
 
-  const result = this.endDate < this.startDate || this.endTime <= this.startTime || this.startTime < this.queueOpenTime;
+  const result = !this.location || this.endDate < this.startDate || this.endTime <= this.startTime || this.startTime < this.queueOpenTime;
 
   if (result) {
     next(new Error('Validation failed'));

@@ -15,6 +15,8 @@ export default {
   'queue-group': 'Harjoitusryhmä:',
   'queue-assistants': 'Paikalla neuvomassa:',
   'queue-current-length': 'Jonon pituus tällä hetkellä:',
+  'queue-multiple-languages': 'Tässä harjoitusryhmässä on mahdollista saada neuvontaa useammalla kielellä. Valitse alta, mitä kieltä haluat käyttää.',
+  'queue-language': 'Kieli:',
   'queue-my-row': 'Istun rivillä:',
   'queue-row-direction-help': 'Rivit lasketaan edestä taaksepäin.',
   'queue-join': 'Jonota',
@@ -60,6 +62,8 @@ export default {
   'modify-location-help': 'Jos harjoitusryhmä on useammassa sijainnissa samaan aikaan, erottele sijainnit pilkulla, mikäli kaikissa näissä sijainneissa on yhteinen jono.',
   'modify-staff': 'Henkilökunta:',
   'modify-staff-help': 'Erottele nimet pilkulla. Kentän voi jättää myös tyhjäksi.',
+  'modify-language': 'Kieli',
+  'modify-language-help': 'Erottele kielet pilkulla. Kentän voi jättää myös tyhjäksi, mutta jos kieliä on vähintään kaksi, on käyttäjän valittava, millä kielellä hän haluaa neuvontaa.',
   'modify-weekday': 'Viikonpäivä:',
   'modify-start-date': 'Alkamispäivä:',
   'modify-date-help': 'Anna päivämäärä muodossa 1.3.2018.',
@@ -77,6 +81,7 @@ export default {
   'select-th-time': 'Kello',
   'select-th-staff': 'Henkilökunta',
   'select-th-location': 'Sijainti',
+  'select-th-language': 'Kieli',
 
   'sessions-additional-info': 'Tarkempia tietoja harjoitusryhmistä löytyy <a href="{url}">täältä</a>.',
   'sessions-modify-link': 'Harjoitusryhmiä voi muokata <a href="{url}">kurssin asetuksista</a>.',
@@ -126,8 +131,8 @@ export default {
   'weekdays-long': 'sunnuntai,maanantai,tiistai,keskiviikko,torstai,perjantai,lauantai',
   'time-output-format': 'H:mm',
   'date-output-format': 'D.M.YYYY',
-  'time-input-format': 'h:mm a',
-  'date-input-format': 'YYYY-MM-DD',
+  'time-input-format': 'H:mm',
+  'date-input-format': 'D.M.YYYY',
 
   'ordinal-value': '{position, number}.',
 
@@ -155,7 +160,6 @@ export default {
   'alert-sessions-enable-failed': 'Harjoitusryhmien ottaminen käyttöön ei onnistunut.',
   'alert-statistics-load-failed': 'Tilastojen lataaminen epäonnistui.',
   'alert-statistics-no-permission': 'Sinulla ei ole oikeutta nähdä tilastoja.',
-
 
   'tabs-queue': 'Jonotus',
   'tabs-sessions': 'Harjoitusryhmät',

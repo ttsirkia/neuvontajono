@@ -29,7 +29,7 @@ exports = module.exports = function(req, res) {
 
         if (session && session.isOpen()) {
 
-          Queue.model.addToQueue(locals.course, session, locals.user, req.body.location, req.body.row,
+          Queue.model.addToQueue(locals.course, session, locals.user, req.body.location, req.body.row, req.body.language,
             function(err) {
 
               if (err) {

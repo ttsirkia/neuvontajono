@@ -72,7 +72,7 @@ class ManageQueueProjector_ extends React.Component {
     $('#time').text(closed + time);
 
     $('#length').text(this.queueLength);
-    document.title = 'Neuvontajono (' + this.queueLength + ')';
+    document.title = this.props.intl.formatMessage({id: 'title'}) + ' (' + this.queueLength + ')';
 
   }
 

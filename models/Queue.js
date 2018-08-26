@@ -16,7 +16,8 @@ Queue.add({
   session: { type: Types.Relationship, initial: true, required: true, ref: 'Session' },
   location: { type: Types.Text, initial: true, required: true },
   row: { type: Types.Number, initial: true, required: true },
-  enteredAt: { type: Types.Datetime, initial: true, required: true, 'default': Date.now }
+  enteredAt: { type: Types.Datetime, initial: true, required: true, 'default': Date.now },
+  language: { type: Types.Text },
 });
 
 // **********************************************************************************************
@@ -34,7 +35,7 @@ Queue.schema.static('getUsersInQueue', function(course, session, callback) {
       course: course._id,
       $or: [
         { session: session._id },
-        { location: { $in: session.getLocationsAsList() } }
+        { location: { $in: session.getItemAsList('location') } }
       ]
     };
     Queue.model.find(query).sort('enteredAt').populate('user', 'name').exec(function(err, users) {
@@ -66,7 +67,7 @@ Queue.schema.static('getQueueLength', function(course, session, callback) {
     course: course._id,
     $or: [
       { session: session._id },
-      { location: { $in: session.getLocationsAsList() } }
+      { location: { $in: session.getItemAsList('location') } }
     ]
   };
   Queue.model.find(query).count().exec(function(err, count) {
@@ -77,13 +78,16 @@ Queue.schema.static('getQueueLength', function(course, session, callback) {
 
 // **********************************************************************************************
 
-Queue.schema.static('addToQueue', function(course, session, user, location, row, callback) {
+Queue.schema.static('addToQueue', function(course, session, user, location, row, language, callback) {
 
   user.previousRow = row;
   user.previousLocation = location;
+  if (language) {
+    user.previousLanguage = language;
+  }
   user.save();
 
-  Queue.model.findOrCreate({ course: course._id, user: user._id }, { session: session._id, location: location, row: row },
+  Queue.model.findOrCreate({ course: course._id, user: user._id }, { session: session._id, location: location, row: row, language: language },
     function(err, result, created) {
 
       const sockets = function(session, location) {
@@ -95,13 +99,14 @@ Queue.schema.static('addToQueue', function(course, session, user, location, row,
 
       if (!created) {
 
-        // Already in queue, update session, location and row
+        // Already in queue, update session, location, and row
         const oldSession = result.session;
         const oldLocation = result.location;
 
         result.session = session._id;
         result.location = location;
         result.row = row;
+
         result.save(function(err) {
           callback(err, result);
 
@@ -133,7 +138,13 @@ Queue.schema.static('addToQueue', function(course, session, user, location, row,
 
 Queue.schema.static('clearQueue', function(course, session, callback) {
 
-  Queue.model.remove({ course: course._id, $or: [{ session: session._id }, { location: { $in: session.getLocationsAsList() } }] }).exec(
+  const query = {
+    course: course._id,
+    $or: [{ session: session._id },
+      { location: { $in: session.getItemAsList('location') } }
+    ]
+  };
+  Queue.model.remove(query).exec(
     function(err, result) {
 
       callback(err, result);
@@ -172,7 +183,7 @@ Queue.schema.static('removeFromQueue', function(course, session, queueId, callba
         sessions.forEach(function(curSession) {
 
           const foundCorrect = curSession._id === session._id;
-          const foundInSameLocation = selected === null && curSession.getLocationsAsList().indexOf(result.location) >= 0;
+          const foundInSameLocation = selected === null && curSession.getItemAsList('location').indexOf(result.location) >= 0;
           if (foundCorrect || foundInSameLocation) {
             selected = curSession;
           }

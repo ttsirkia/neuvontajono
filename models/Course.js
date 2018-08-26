@@ -33,7 +33,7 @@ Course.schema.method('createSummary', function(user, callback) {
 
   const summary = {
     course: { name: self.name },
-    user: { previousRow: user.previousRow, previousLocation: user.previousLocation },
+    user: { previousRow: user.previousRow, previousLocation: user.previousLocation, previousLanguage: user.previousLanguage },
     sessions: [],
     locations: []
   };
@@ -46,6 +46,7 @@ Course.schema.method('createSummary', function(user, callback) {
 
       const sess = session.toJSON();
       sess.id = session._id.toString();
+      sess.language = session.getItemAsList('language');
       convertedSessions.push(sess);
 
       session.getQueueLength(self, function(err, count) {

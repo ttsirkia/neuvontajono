@@ -58,7 +58,10 @@ export class ModifySession_ extends React.Component {
   // **********************************************************************************************
 
   componentDidMount() {
-    $('.calendar').datetimepicker({locale: this.props.view.language, format: this.props.intl.formatMessage({id: 'date-input-format'})});
+    $('.calendar').datetimepicker({
+      locale: this.props.view.UILanguage,
+      format: this.props.intl.formatMessage({id: 'date-input-format'})
+    });
   }
 
   // **********************************************************************************************
@@ -118,6 +121,13 @@ export class ModifySession_ extends React.Component {
               id="assistants"
               defaultValue={this.props.view.assistants}/>
             <p className="help-block small"><FormattedMessage id="modify-staff-help"/></p>
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="language" className="col-sm-2 control-label"><FormattedMessage id="modify-language"/></label>
+          <div className="col-sm-6">
+            <input type="text" className="form-control" name="language" id="language" defaultValue={this.props.view.language}/>
+            <p className="help-block small"><FormattedMessage id="modify-language-help"/></p>
           </div>
         </div>
 
@@ -186,7 +196,12 @@ export class ModifySession_ extends React.Component {
         <div className="form-group">
           <label htmlFor="endTime" className="col-sm-2 control-label"><FormattedMessage id="modify-end-time"/></label>
           <div className="col-sm-3">
-            <input type="text" className="form-control" name="endTime" id="endTime" defaultValue={this.transformTime(this.props.view.endTime)}/>
+            <input
+              type="text"
+              className="form-control"
+              name="endTime"
+              id="endTime"
+              defaultValue={this.transformTime(this.props.view.endTime)}/>
           </div>
         </div>
 
