@@ -13,7 +13,7 @@ export function Footer() {
         <span>Aalto-yliopisto, </span>
         <a href="http://research.cs.aalto.fi/LeTech/">Learning + Technology</a>
         <br/>
-        <span className="author">v 2.1.0 | Teemu Sirkiä, 2018</span>
+        <span className="author">v 2.1.1 | Teemu Sirkiä, 2018</span>
       </p>
     </div>
   </footer>;

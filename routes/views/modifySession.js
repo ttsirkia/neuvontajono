@@ -12,6 +12,7 @@ exports = module.exports = function(req, res) {
 
   locals.reactData.view = { weekday: 1, active: true, session: null };
   locals.reactData.view.UILanguage = locals.reactData.app.language;
+  locals.reactData.view.csrf = locals.csrf_token_value;
 
   locals.reactData.app.view = 'modifySession';
   locals.reactData.app.selectedTab = 'settings';
@@ -27,8 +28,6 @@ exports = module.exports = function(req, res) {
   // **********************************************************************************************
 
   view.on('get', function(next) {
-
-    locals.reactData.view.csrf = locals.csrf_token_value;
 
     if (!req.params.sessionId) {
       locals.reactData.view.createNew = true;

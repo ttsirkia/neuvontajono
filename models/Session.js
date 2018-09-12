@@ -35,7 +35,7 @@ Session.schema.method('getQueueLength', function(course, callback) {
 });
 
 Session.schema.method('getItemAsList', function(item) {
-  const items = this[item].split(',').map(function(item) {
+  const items = (this[item] || '').split(',').map(function(item) {
     return item.trim();
   });
   return items;

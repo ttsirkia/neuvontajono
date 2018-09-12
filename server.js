@@ -49,29 +49,32 @@ keystone.set('locals', {
 
 keystone.set('routes', require('./routes/routes.js'));
 
+const socketHandler = function() {
+
+  const Queue = keystone.list('Queue');
+  const moment = require('moment');
+
+  // Clean first possible old users away
+  const cleanLimit = moment().subtract(5, 'h').toDate();
+  Queue.model.remove({ enteredAt: { $lt: cleanLimit } }, function() {});
+
+  let io = require('socket.io');
+  const socketHandler = require('./sockets/socket');
+
+  // Initialize sockets
+
+  io = io.listen(keystone.httpServer);
+
+  // Attach session to incoming socket
+  io.use(function(socket, next) {
+    keystone.expressSession(socket.request, socket.request.res, next);
+  });
+
+  socketHandler.initialize(io);
+
+};
+
 keystone.start({
-  onHttpServerCreated: function() {
-
-    const Queue = keystone.list('Queue');
-    const moment = require('moment');
-
-    // Clean first possible old users away
-    const cleanLimit = moment().subtract(5, 'h').toDate();
-    Queue.model.remove({ enteredAt: { $lt: cleanLimit } }, function() {});
-
-    let io = require('socket.io');
-    const socketHandler = require('./sockets/socket');
-
-    // Initialize sockets
-
-    io = io.listen(keystone.httpServer);
-
-    // Attach session to incoming socket
-    io.use(function(socket, next) {
-      keystone.expressSession(socket.request, socket.request.res, next);
-    });
-
-    socketHandler.initialize(io);
-
-  }
+  onHttpServerCreated: socketHandler,
+  onSocketServerCreated: socketHandler
 });
