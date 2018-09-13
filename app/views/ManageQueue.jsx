@@ -40,7 +40,11 @@ const ProjectorMode = function(props) {
   if (props.projectorConf) {
     return <div>
       <p>
-        <a href={`/neuvontajono/sessions/${props.sessionId}/manage/projector`} target="_blank" className="btn btn-success">
+        <a
+          href={`/neuvontajono/sessions/${props.sessionId}/manage/projector`}
+          target="_blank"
+          className="btn btn-success"
+          onClick={props.disableNotifications}>
           <FormattedMessage id="manage-open-projector"/>
         </a>
       </p>
@@ -171,15 +175,37 @@ const UsersInQueue = function(props) {
 
 // ********************************************************************************************************************
 
+const NotificationPanel = function(props) {
+
+  if (props.permission && props.enabled) {
+    return <p><FormattedMessage id="notification-enabled"/>{' '}
+      <a href="#" onClick={props.disableNotifications}><FormattedMessage id="notification-disable"/></a>
+    </p>;
+  } else if (props.permission && !props.enabled) {
+    return <p><FormattedMessage id="notification-disabled"/>{' '}
+      <a href="#" onClick={props.enableNotifications}><FormattedMessage id="notification-activate"/></a>
+    </p>;
+  } else {
+    return <p><FormattedMessage id="notification-no-permission"/></p>;
+  }
+
+};
+
+// ********************************************************************************************************************
+
 class ManageQueue_ extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      queueData: this.props.view.queueData
+      queueData: this.props.view.queueData,
+      notificationPermission: false,
+      nofificationsEnabled: false
     };
 
     this.updateQueueData = this.updateQueueData.bind(this);
+    this.disableNotifications = this.disableNotifications.bind(this);
+    this.enableNotifications = this.enableNotifications.bind(this);
 
   }
 
@@ -223,13 +249,47 @@ class ManageQueue_ extends React.Component {
       });
     }, 60000);
 
+    if (window.Notification) {
+      window.Notification.requestPermission(function(permission) {
+        if (permission === 'granted') {
+          self.setState({notificationPermission: true, notificationsEnabled: true});
+        }
+      });
+    }
+
     document.title = this.props.intl.formatMessage({id: 'title'}) + ' (' + this.state.queueData.users.length + ')';
 
   }
 
   // **********************************************************************************************
 
+  disableNotifications() {
+    this.setState({notificationsEnabled: false});
+  }
+
+  enableNotifications(e) {
+    e.preventDefault();
+    this.setState({notificationsEnabled: true});
+  }
+
+  // **********************************************************************************************
+
   updateQueueData(data) {
+
+    if (this.state.notificationsEnabled && this.state.queueData.users.length === 0 && data.users.length > 0) {
+      const options = {
+        body: this.props.intl.formatMessage({
+          id: 'notification-joined-queue'
+        }, {
+          name: data.users[0].user.name.first,
+          row: data.users[0].row,
+          location: data.users[0].location
+        })
+      };
+      const notification = new Notification(this.props.intl.formatMessage({id: 'title'}), options);
+      setTimeout(notification.close.bind(notification), 4000);
+    }
+
     this.setState({queueData: data});
     document.title = this.props.intl.formatMessage({id: 'title'}) + ' (' + data.users.length + ')';
   }
@@ -241,7 +301,18 @@ class ManageQueue_ extends React.Component {
 
       <h3>{this.props.view.sessionLocation}</h3>
 
-      <ProjectorMode projectorConf={this.props.view.projectorConf} sessionId={this.props.view.sessionId}/>
+      <NotificationPanel
+        enabled={this.state.notificationsEnabled}
+        permission={this.state.notificationPermission}
+        disableNotifications={this.disableNotifications}
+        enableNotifications={this.enableNotifications}/>
+
+      <hr/>
+
+      <ProjectorMode
+        projectorConf={this.props.view.projectorConf}
+        sessionId={this.props.view.sessionId}
+        disableNotifications={this.disableNotifications}/>
 
       <p id="queue-length">
         <FormattedMessage

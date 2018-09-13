@@ -160,6 +160,13 @@ export default {
   'alert-statistics-load-failed': 'Loading the statistics failed.',
   'alert-statistics-no-permission': 'You do not have permission to see the statistics.',
 
+  'notification-joined-queue': '{name} ({location}, row {row}) joined the queue.',
+  'notification-no-permission': 'Desktop notifications are not in use. Give permission to activate notifications.',
+  'notification-enabled': 'Desktop notifications are enabled. You will get a notification when somebody joins the queue if it was empty.',
+  'notification-disabled': 'Desktop notifications are temporarily disabled.',
+  'notification-activate': 'Click here to activate.',
+  'notification-disable': 'Click here to disable.',
+
   'tabs-queue': 'Join Queue',
   'tabs-sessions': 'Lab Sessions',
   'tabs-statistics': 'Statistics',

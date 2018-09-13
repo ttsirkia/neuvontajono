@@ -161,6 +161,13 @@ export default {
   'alert-statistics-load-failed': 'Tilastojen lataaminen epäonnistui.',
   'alert-statistics-no-permission': 'Sinulla ei ole oikeutta nähdä tilastoja.',
 
+  'notification-joined-queue': '{name} ({location}, rivi {row}) on jonossa.',
+  'notification-no-permission': 'Työpöytäilmoitukset eivät ole käytössä. Anna lupa ilmoituksille, jos haluat ottaa ne käyttöön.',
+  'notification-enabled': 'Työpöytäilmoitukset ovat käytössä. Saat ilmoituksen, kun joku pyytää apua jonon ollessa tyhjä.',
+  'notification-disabled': 'Työpöytäilmoitukset ovat tilapäisesti pois käytöstä.',
+  'notification-activate': 'Napsauta tästä aktivoidaksesi ne uudelleen.',
+  'notification-disable': 'Napsauta tästä poistaaksesi ilmoitukset käytöstä.',
+
   'tabs-queue': 'Jonotus',
   'tabs-sessions': 'Harjoitusryhmät',
   'tabs-statistics': 'Tilastot',
