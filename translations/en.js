@@ -96,6 +96,8 @@ export default {
   'settings-combine-help': 'If you want to combine multiple Lab Session Queues, write here the course id of the queue that will be used instead of this. All users except the course teacher will be redirected to that Lab Session Queue.',
   'settings-projector': 'Video projector URL:',
   'settings-projector-help': 'Enable the video projector view by typing here the URL of the <a target="_blank" href="{url}">configuration file</a>.',
+  'settings-default-language': 'Default UI language:',
+  'settings-default-language-help': 'This UI language will be used if the LTI authentication does not provide the user language.',
   'settings-statistics-visibility': 'Statistics visibility:',
   'settings-statistics-help': 'Disabling the statistics will permanently remove all the statistics which may be already collected.',
   'settings-statistics--1': 'Disable statistics',

@@ -69,6 +69,16 @@ const GeneralSettings = function(props) {
     </div>
 
     <div className="form-group">
+      <label htmlFor="defaultLanguage" className="col-sm-2 control-label"><FormattedMessage id="settings-default-language"/></label>
+      <div className="col-sm-6">
+        <select name="defaultLanguage" defaultValue={props.course.defaultLanguage}>
+          {props.languages.map((language) => <option key={language} value={language}>{language}</option>)}
+        </select>
+        <p className="help-block small"><FormattedHTMLMessage id="settings-default-language-help"/></p>
+      </div>
+    </div>
+
+    <div className="form-group">
       <label htmlFor="statisticsLevel" className="col-sm-2 control-label"><FormattedMessage id="settings-statistics-visibility"/></label>
       <div className="col-sm-6">
         <select name="statisticsLevel" defaultValue={props.course.statisticsLevel}>
@@ -193,7 +203,7 @@ const SessionActions = function(props) {
 
 function Settings_(props) {
   return <div>
-    <GeneralSettings course={props.view.course} csrf={props.view.csrf} intl={props.intl}/>
+    <GeneralSettings course={props.view.course} csrf={props.view.csrf} intl={props.intl} languages={props.view.languages}/>
     <Sessions intl={props.intl} csrf={props.view.csrf} sessions={props.view.sessions}/>
     <SessionActions csrf={props.view.csrf}/>
   </div>;

@@ -27,9 +27,11 @@ exports = module.exports = function(req, res) {
         projectorConf: locals.course.projectorConf,
         redLimit: locals.course.redLimit,
         yellowLimit: locals.course.yellowLimit,
-        statisticsLevel: locals.course.statisticsLevel
+        statisticsLevel: locals.course.statisticsLevel,
+        defaultLanguage: locals.course.defaultLanguage || keystone.get('default language')
       },
-      sessions: []
+      sessions: [],
+      languages: keystone.get('languages available')
     };
     next();
   });
@@ -48,9 +50,11 @@ exports = module.exports = function(req, res) {
         projectorConf: req.body.projectorConf,
         redLimit: req.body.redLimit,
         yellowLimit: req.body.yellowLimit,
-        statisticsLevel: req.body.statisticsLevel
+        statisticsLevel: req.body.statisticsLevel,
+        defaultLanguage: req.body.defaultLanguage
       },
-      sessions: []
+      sessions: [],
+      languages: keystone.get('languages available')
     };
 
     Course.model.findById(req.session.courseId).exec(function(err, course) {
@@ -63,6 +67,7 @@ exports = module.exports = function(req, res) {
         course.redLimit = req.body.redLimit;
         course.combined = req.body.combined;
         course.projectorConf = req.body.projectorConf;
+        course.defaultLanguage = req.body.defaultLanguage;
 
         course.save(function(err) {
           if (!err) {

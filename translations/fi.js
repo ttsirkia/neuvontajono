@@ -97,6 +97,8 @@ export default {
   'settings-combine-help': 'Jos haluat yhdistää useamman kurssin harjoitusjonon, kirjoita tähän sen kurssin tunniste, johon tämä kurssi liitetään. Tällöin kaikki muut paitsi kurssin opettaja ohjataan annetulle kurssille, kun neuvontajono avataan, eikä tämän kurssin neuvontajono ole käytössä.',
   'settings-projector': 'Projektori\u00adnäkymän URL:',
   'settings-projector-help': 'Ota videoprojektorinäkymä käyttöön kirjoittamalla tähän <a target="_blank" href="{url}">asetustiedoston</a> URL.',
+  'settings-default-language': 'Oletuskieli:',
+  'settings-default-language-help': 'Tätä kieltä käytetään käyttöliittymässä, mikäli LTI-kirjautuminen ei välitä tietoa käyttäjän kielestä.',
   'settings-statistics-visibility': 'Tilastojen näkyvyys:',
   'settings-statistics-help': 'Tilastoinnin asettaminen pois päältä poistaa pysyvästi kaikki mahdollisesti jo kerätyt tilastotiedot.',
   'settings-statistics--1': 'Ei tilastointia',

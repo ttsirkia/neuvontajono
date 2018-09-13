@@ -138,23 +138,30 @@ exports = module.exports = function(req, res) {
 
     if (isValid) {
 
-      // Take the UI language from the launch request if defined
-      // If it is form en-US, only the first part will be used
-
-      let language = null;
-      if (req.body.launch_presentation_locale) {
-        language = req.body.launch_presentation_locale.split('-')[0];
-      }
-      if (language && keystone.get('languages available').indexOf(language) < 0) {
-        language = keystone.get('default language');
-      }
-      req.session.uiLanguage = language || keystone.get('default language');
-
       checkUser(function() {
         req.session.teacher = /Instructor/.test(req.body.roles) || req.user.isAdmin;
         req.session.assistant = /TeachingAssistant|TA/.test(req.body.roles) || req.user.isAdmin;
         req.session.staff = req.session.teacher || req.session.assistant;
-        checkCourse(loginOK);
+        checkCourse(function() {
+
+          // Take the UI language from the launch request if defined
+          // If it is form en-US or en_US, only the first part will be used
+          // If not defined, the course or system default will be used
+
+          let language = null;
+          if (req.body.launch_presentation_locale) {
+            language = req.body.launch_presentation_locale.split('-')[0].split('_')[0];
+          } else {
+            language = req.course.defaultLanguage;
+          }
+
+          if (language && keystone.get('languages available').indexOf(language) < 0) {
+            language = keystone.get('default language');
+          }
+          req.session.uiLanguage = language || keystone.get('default language');
+
+          loginOK();
+        });
       });
 
     } else {

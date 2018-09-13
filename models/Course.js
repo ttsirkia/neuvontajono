@@ -15,6 +15,7 @@ Course.add({
   adhoc: { type: Types.Boolean, 'default': false },
   combined: { type: Types.Text },
   projectorConf: { type: Types.Text },
+  defaultLanguage: { type: Types.Text },
   createdBy: { type: Types.Relationship, ref: 'User' },
   createdAt: { type: Types.Datetime, 'default': Date.now },
   statisticsLevel: { type: Types.Number, required: true, 'default': 0 },
