@@ -85,7 +85,8 @@ projector({
 ```
 The JSON data must be inside a function called `projector` to allow loading the file from any domain by using JSONP.
 
-The `course` setting defines the image that will be shown when the queue is not open.
+The `course` setting defines the image that will be shown when the queue is not open. This image is mandatory,
+the following images are optional.
 
 The `sessions` object defines an image for each lab session identified by its name. This image will be visible every
 15 minutes. A session image may contain, for example, the names and pictures of the course staff members.
