@@ -11,11 +11,11 @@ import {Time} from '../components/Time';
  *  ManageQueue is the assistant view for managing the queue.
  *******************************************************************/
 
-const clickHandler = function(event, props, successText, failText) {
+const clickHandler = function(event, id, props, successText, failText) {
   props.clearAlertMessages();
   const form = $(event.target).closest('form');
   const postData = form.serializeArray();
-  postData.push({name: 'queueId', value: event.target.value});
+  postData.push({name: 'queueId', value: id});
   const formURL = $(form).attr('action');
 
   $.post(formURL, postData, function(data) {
@@ -76,7 +76,7 @@ const UserRow = function(props) {
       }
     }
 
-    clickHandler(event, props, null, 'manage-remove-queue-failed');
+    clickHandler(event, props.user._id, props, null, 'manage-remove-queue-failed');
 
   };
 
@@ -94,7 +94,7 @@ const UserRow = function(props) {
     }}/></td>
     {props.showLanguage && <td>{props.user.language}</td>}
     <td>
-      <button onClick={handleClick} className={cName} name="queueId" value={props.user._id}>
+      <button onClick={handleClick} className={cName}>
         <FormattedMessage id="manage-remove"/>
       </button>
     </td>

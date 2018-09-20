@@ -151,7 +151,7 @@ Queue.schema.static('clearQueue', function(course, session, callback) {
 
       if (!err) {
         Queue.model.getUsersInQueue(course, session, function(err, users) {
-          session.getLocationsAsList().forEach(function(location) {
+          session.getItemAsList('location').forEach(function(location) {
             socketHandler.sendQueueStaffStatus(course._id, location, { users: users });
           });
         });

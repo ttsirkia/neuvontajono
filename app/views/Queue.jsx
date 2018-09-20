@@ -153,7 +153,7 @@ const EnterQueue = function(props) {
         </div>
       </div>
 
-    </div>
+    </div>;
 
   };
 
