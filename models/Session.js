@@ -87,16 +87,20 @@ Session.schema.static('getCurrentSessions', function(course, callback) {
   const now = new Date();
   const minutes = new Date().getHours() * 60 + new Date().getMinutes();
   const today = momentJS().startOf('day').toDate();
-
-  Session.model.find({
-    course: course._id,
+  const query = {
     weekday: weekday,
     active: true,
     queueOpenTime: { $lte: minutes },
     endTime: { $gt: minutes },
     startDate: { $lte: now },
     endDate: { $gte: today }
-  }).sort({ weekday: 'asc', startTime: 'asc' }).exec(callback);
+  };
+
+  if (course) {
+    query.course = course._id;
+  }
+
+  Session.model.find(query).sort({ weekday: 'asc', startTime: 'asc' }).populate('course').exec(callback);
 
 });
 

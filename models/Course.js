@@ -19,8 +19,8 @@ Course.add({
   createdBy: { type: Types.Relationship, ref: 'User' },
   createdAt: { type: Types.Datetime, 'default': Date.now },
   statisticsLevel: { type: Types.Number, required: true, 'default': 0 },
-  yellowLimit: { type: Types.Number, required: true, 'default': 15, min: 1 },
-  redLimit: { type: Types.Number, required: true, 'default': 20, min: 1 }
+  statisticsQueueLevel: { type: Types.Number, required: true, 'default': 2 },
+  statisticsGraphLevel: { type: Types.Number, required: true, 'default': 2 }
 });
 
 // ************************************************************************************************
@@ -114,20 +114,6 @@ Course.schema.method('createSummary', function(user, callback) {
       addSessions();
     }
   });
-
-});
-
-// ************************************************************************************************
-
-Course.schema.pre('validate', function(next) {
-
-  const result = this.redLimit <= this.yellowLimit;
-
-  if (result) {
-    next(new Error('Validation failed'));
-  } else {
-    next();
-  }
 
 });
 

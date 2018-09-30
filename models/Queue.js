@@ -167,13 +167,16 @@ Queue.schema.static('clearQueue', function(course, session, callback) {
 
 Queue.schema.static('removeFromQueue', function(course, session, queueId, callback) {
 
-  Queue.model.findOneAndRemove({ course: course._id, _id: queueId }).exec(function(err, result) {
-
-    callback(err, result);
+  Queue.model.findOneAndRemove({ course: course._id, _id: queueId }).populate('session').exec(function(err, result) {
 
     if (result) {
 
       const Session = keystone.list('Session');
+      const SessionStats = keystone.list('SessionStats');
+
+      const duration = moment().diff(moment(result.enteredAt), 'seconds');
+      SessionStats.model.addQueueDuration(course, result.session, duration);
+
       Session.model.getCurrentSessions(course, function(err, sessions) {
 
         let selected = null;
@@ -190,7 +193,7 @@ Queue.schema.static('removeFromQueue', function(course, session, queueId, callba
 
           // User did not get assistance in the session in which originally
           // entered => participant in two sessions
-          if (selected && selected._id !== result && !saved) {
+          if (selected && selected._id !== result._id && !saved) {
             Participant.model.addParticipant(course, selected, result.user);
             saved = true;
           }
@@ -204,6 +207,7 @@ Queue.schema.static('removeFromQueue', function(course, session, queueId, callba
     }
 
     socketHandler.sendUserStatus(course);
+    callback(err, result);
 
   });
 
@@ -215,8 +219,6 @@ Queue.schema.static('removeUser', function(course, user, callback) {
 
   Queue.model.findOneAndRemove({ course: course._id, user: user._id }).populate('session').exec(function(err, result) {
 
-    callback(err, result);
-
     if (result) {
       Queue.model.getUsersInQueue(course, result.session, function(err, users) {
         socketHandler.sendQueueStaffStatus(course._id, result.location, { users: users });
@@ -224,6 +226,7 @@ Queue.schema.static('removeUser', function(course, user, callback) {
     }
 
     socketHandler.sendUserStatus(course);
+    callback(err, result);
 
   });
 

@@ -25,7 +25,7 @@ export function Tabs(props) {
     }, {
       href: '/neuvontajono/statistics',
       name: 'tabs-statistics',
-      role: props.statisticsLevel
+      stats: true
     }, {
       href: '/neuvontajono/selectSession',
       name: 'tabs-selectSession',
@@ -52,7 +52,7 @@ export function Tabs(props) {
   return <ul className="nav nav-tabs">
     {
       tabs.map((tab) => {
-        if (tab.role && tab.role !== 'any' && !props.user[tab.role]) {
+        if ((tab.role && tab.role !== 'any' && !props.user[tab.role]) || (tab.stats && !props.showStats)) {
           return null;
         } else {
           return <Tab key={tab.name} view={props.view} name={tab.name} href={tab.href} selected={props.selected}/>;

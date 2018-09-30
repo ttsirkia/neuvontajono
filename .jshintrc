@@ -73,5 +73,5 @@
     "wsh"           : false,
     "yui"           : false,
 
-    "globals"       : {"hljs": true, "ClipboardJS": true}
+    "globals"       : {"hljs": true, "ClipboardJS": true, "d3": true}
 }

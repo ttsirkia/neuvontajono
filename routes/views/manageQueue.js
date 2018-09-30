@@ -145,10 +145,6 @@ exports = module.exports = function(req, res) {
 
   // **********************************************************************************************
 
-  if (!/projector/.test(req.path)) {
-    view.render('reactView', locals);
-  } else {
-    view.render('reactView', locals);
-  }
+  view.render('reactView', locals);
 
 };

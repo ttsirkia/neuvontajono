@@ -8,6 +8,7 @@ exports = module.exports = function(req, res) {
   const Course = keystone.list('Course');
   const Session = keystone.list('Session');
   const Participant = keystone.list('Participant');
+  const SessionStats = keystone.list('SessionStats');
 
   const view = new keystone.View(req, res);
   const locals = res.locals;
@@ -25,9 +26,9 @@ exports = module.exports = function(req, res) {
         courseId: locals.course.courseId,
         url: locals.course.url,
         projectorConf: locals.course.projectorConf,
-        redLimit: locals.course.redLimit,
-        yellowLimit: locals.course.yellowLimit,
         statisticsLevel: locals.course.statisticsLevel,
+        statisticsQueueLevel: locals.course.statisticsQueueLevel,
+        statisticsGraphLevel: locals.course.statisticsGraphLevel,
         defaultLanguage: locals.course.defaultLanguage || keystone.get('default language')
       },
       sessions: [],
@@ -48,9 +49,9 @@ exports = module.exports = function(req, res) {
         courseId: locals.course.courseId,
         url: req.body.url,
         projectorConf: req.body.projectorConf,
-        redLimit: req.body.redLimit,
-        yellowLimit: req.body.yellowLimit,
         statisticsLevel: req.body.statisticsLevel,
+        statisticsQueueLevel: req.body.statisticsQueueLevel,
+        statisticsGraphLevel: req.body.statisticsGraphLevel,
         defaultLanguage: req.body.defaultLanguage
       },
       sessions: [],
@@ -63,8 +64,8 @@ exports = module.exports = function(req, res) {
         course.name = req.body.name;
         course.url = req.body.url;
         course.statisticsLevel = req.body.statisticsLevel;
-        course.yellowLimit = req.body.yellowLimit;
-        course.redLimit = req.body.redLimit;
+        course.statisticsQueueLevel = req.body.statisticsQueueLevel;
+        course.statisticsGraphLevel = req.body.statisticsGraphLevel;
         course.combined = req.body.combined;
         course.projectorConf = req.body.projectorConf;
         course.defaultLanguage = req.body.defaultLanguage;
@@ -77,7 +78,7 @@ exports = module.exports = function(req, res) {
 
             // Remove collected statistics if statistics will be disabled
             if (course.statisticsLevel === -1) {
-              Participant.model.remove({course: locals.course._id}).exec(function() {
+              Participant.model.remove({ course: locals.course._id }).exec(function() {
 
               });
             }
@@ -106,11 +107,14 @@ exports = module.exports = function(req, res) {
   view.on('post', { 'action': 'remove' }, function(next) {
     Session.model.findOneAndRemove({ course: locals.course._id, _id: req.body.sessionId }, function(err, session) {
       if (session) {
-        req.flash('success', 'alert-session-deleted');
+        SessionStats.model.remove({ session: session._id }, function() {
+          req.flash('success', 'alert-session-deleted');
+          next();
+        });
       } else {
         req.flash('error', 'alert-session-delete-failed');
+        next();
       }
-      next();
     });
   });
 

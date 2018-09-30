@@ -92,21 +92,26 @@ const GeneralSettings = function(props) {
     </div>
 
     <div className="form-group">
-      <label htmlFor="yellowLimit" className="col-sm-2 control-label"><FormattedMessage id="settings-color-limits"/></label>
+      <label htmlFor="statisticsQueueLevel" className="col-sm-2 control-label"><FormattedMessage id="settings-statistics-queue-visibility"/></label>
       <div className="col-sm-6">
-        <input
-          type="text"
-          className="statistics-level-input form-control"
-          name="yellowLimit"
-          id="yellowLimit"
-          defaultValue={props.course.yellowLimit}/>
-        <input
-          type="text"
-          className="statistics-level-input form-control"
-          name="redLimit"
-          id="redLimit"
-          defaultValue={props.course.redLimit}/>
-        <p className="help-block small"><FormattedMessage id="settings-color-help"/></p>
+        <select name="statisticsQueueLevel" defaultValue={props.course.statisticsQueueLevel}>
+          <option value="0">{props.intl.formatMessage({id: 'settings-statistics-0'})}</option>
+          <option value="1">{props.intl.formatMessage({id: 'settings-statistics-1'})}</option>
+          <option value="2">{props.intl.formatMessage({id: 'settings-statistics-2'})}</option>
+        </select>
+        <p className="help-block small"><FormattedMessage id="settings-statistics-queue-help"/></p>
+      </div>
+    </div>
+
+    <div className="form-group">
+      <label htmlFor="statisticsGraphLevel" className="col-sm-2 control-label"><FormattedMessage id="settings-statistics-graph-visibility"/></label>
+      <div className="col-sm-6">
+        <select name="statisticsGraphLevel" defaultValue={props.course.statisticsGraphLevel}>
+          <option value="0">{props.intl.formatMessage({id: 'settings-statistics-0'})}</option>
+          <option value="1">{props.intl.formatMessage({id: 'settings-statistics-1'})}</option>
+          <option value="2">{props.intl.formatMessage({id: 'settings-statistics-2'})}</option>
+        </select>
+        <p className="help-block small"><FormattedMessage id="settings-statistics-graph-help"/></p>
       </div>
     </div>
 
@@ -156,7 +161,8 @@ const SessionRow = function(props) {
 // ********************************************************************************************************************
 
 const Sessions = function(props) {
-  return <form action="/neuvontajono/settings" method="post">
+  return <form action="/neuvontajono/settings" method="post" style={{marginTop: '30px'}}>
+    <hr/>
     <h3><FormattedMessage id="settings-sessions-title"/></h3>
     <input type="hidden" name="action" value="remove"/>
     <input type="hidden" name="_csrf" value={props.csrf}/>

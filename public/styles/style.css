@@ -138,3 +138,18 @@ p+table {
 .btn + .btn, input + input, label + select {
 	margin-left: 5px;
 }
+
+#tooltip {
+  background-color: rgb(255, 252, 239);
+  border-radius: 6px;
+	padding: 5px;
+  border: 1px solid black;
+  box-shadow: 3px 3px 5px #888888;
+  display: inline-block;
+  position: absolute;
+	z-index: 9999;
+}
+
+.grid line {
+	stroke: #c0c0c0;
+}

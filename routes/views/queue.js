@@ -6,6 +6,7 @@ exports = module.exports = function(req, res) {
 
   const Session = keystone.list('Session');
   const Queue = keystone.list('Queue');
+  const SessionStats = keystone.list('SessionStats');
 
   const view = new keystone.View(req, res);
   const locals = res.locals;
@@ -31,6 +32,8 @@ exports = module.exports = function(req, res) {
 
           Queue.model.addToQueue(locals.course, session, locals.user, req.body.location, req.body.row, req.body.language,
             function(err) {
+
+              SessionStats.model.saveQueueLength(locals.course, session);
 
               if (err) {
                 res.json({ error: true });

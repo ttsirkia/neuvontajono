@@ -52,6 +52,7 @@ keystone.set('routes', require('./routes/routes.js'));
 const socketHandler = function() {
 
   const Queue = keystone.list('Queue');
+  const SessionStats = keystone.list('SessionStats');
   const moment = require('moment');
 
   // Clean first possible old users away
@@ -71,6 +72,11 @@ const socketHandler = function() {
   });
 
   socketHandler.initialize(io);
+
+  // Start statistics
+  setInterval(function() {
+    SessionStats.model.saveQueueLengths();
+  }, 30000);
 
 };
 

@@ -38,13 +38,6 @@ exports.initReactData = function(req, res, next) {
 
   const locals = res.locals;
 
-  const permissionLevels = {
-    '-1': 'nobody',
-    0: 'any',
-    1: 'staff',
-    2: 'teacher'
-  };
-
   locals.reactData = {
     user: {},
     course: {},
@@ -64,7 +57,16 @@ exports.initReactData = function(req, res, next) {
 
   if (locals.course) {
     locals.reactData.course.name = locals.course.name;
-    locals.reactData.app.statisticsLevel = permissionLevels[locals.course.statisticsLevel];
+
+    let priviledgeLevel = 0;
+    if (locals.teacher) {
+      priviledgeLevel = 2;
+    } else if (locals.staff) {
+      priviledgeLevel = 1;
+    }
+
+    locals.reactData.app.showStats = (locals.course.statisticsLevel >= 0 && priviledgeLevel >= locals.course.statisticsLevel) || (priviledgeLevel >= locals.course.statisticsQueueLevel);
+
   }
 
   next();

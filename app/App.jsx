@@ -87,7 +87,7 @@ const CourseBlock = function(props) {
         user={props.state.user}
         view={props.state.app.view}
         selected={props.state.app.selectedTab}
-        statisticsLevel={props.state.app.statisticsLevel}/>
+        showStats={props.state.app.showStats}/>
     </div>;
   } else {
     return null;
