@@ -93,11 +93,11 @@ class Tooltip extends React.Component {
       })
     ]).nice();
 
-    const xAxis = d3.axisBottom().scale(x).tickFormat(d3.timeFormat('%H:%M'));
+    const xAxis = d3.axisBottom().scale(x).ticks(d3.timeMinute.every(30)).tickFormat(d3.timeFormat('%H:%M'));
     const yAxis = d3.axisLeft(y).ticks(5);
 
     var makeXAxisForGrid = function(y, axis) {
-      return d3.axisTop().scale(y).tickValues(axis.tickValues());
+      return d3.axisTop().scale(y).ticks(d3.timeMinute.every(10));
     };
 
     var makeYAxisForGrid = function(y, axis) {
