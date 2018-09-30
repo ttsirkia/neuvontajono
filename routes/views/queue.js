@@ -21,7 +21,7 @@ exports = module.exports = function(req, res) {
 
   view.on('post', { action: 'add' }, function(next) {
 
-    Session.model.findOne({ course: locals.course._id, _id: req.body.sessionId, active: true }).exec(
+    Session.model.findOne({ course: locals.course._id, _id: req.body.sessionId, active: true }).populate('course').exec(
       function(err, session) {
 
         if (err) {

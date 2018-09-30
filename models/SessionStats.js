@@ -57,7 +57,7 @@ SessionStats.schema.static('saveQueueLengths', function() {
 
 SessionStats.schema.static('saveQueueLength', function(course, session) {
 
-  session.getQueueLength(session.course, function(err, length) {
+  session.getQueueLength(course, function(err, length) {
 
     const today = moment(new Date()).startOf('day');
     const minutes = new Date().getHours() * 60 + new Date().getMinutes();
