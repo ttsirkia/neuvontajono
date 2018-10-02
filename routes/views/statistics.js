@@ -189,7 +189,7 @@ exports = module.exports = function(req, res) {
             const values = [];
             sessionIdList.forEach(function(id) {
               weeks.forEach(function(week) {
-                if (stats[id][index][week] !== undefined) {
+                if (stats[id][index][week] > 0) {
                   values.push(stats[id][index][week]);
                 }
               });
@@ -225,7 +225,7 @@ exports = module.exports = function(req, res) {
             const values = [];
             sessionIdList.forEach(function(id) {
               weeks.forEach(function(week) {
-                if (stats[id][index][week] !== undefined) {
+                if (stats[id][index][week] > 0) {
                   values.push(stats[id][index][week]);
                 }
               });
@@ -261,7 +261,7 @@ exports = module.exports = function(req, res) {
             const values = [];
             sessionIdList.forEach(function(id) {
               weeks.forEach(function(week) {
-                if (stats[id][index][week] !== undefined) {
+                if (stats[id][index][week] > 0) {
                   values.push(stats[id][index][week]);
                 }
               });
@@ -310,7 +310,7 @@ exports = module.exports = function(req, res) {
             const values = [];
             sessionIdList.forEach(function(id) {
               weeks.forEach(function(week) {
-                if (stats[id][index][week] !== undefined) {
+                if (stats[id][index][week] > 0) {
                   values.push(stats[id][index][week]);
                 }
               });

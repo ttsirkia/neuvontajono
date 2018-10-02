@@ -60,10 +60,14 @@ class Tooltip extends React.Component {
       if (minutes < 10) {
         minutes = '0' + minutes;
       }
-      return hours + ':' + minutes + '|' + parts[1];
+      return [
+        hours + ':' + minutes, + parts[1]
+      ];
     });
 
     const svg = d3.select('#tooltip-svg');
+    svg.selectAll('g').remove();
+
     const margin = {
       top: 10,
       right: 25,
@@ -77,39 +81,61 @@ class Tooltip extends React.Component {
     const x = d3.scaleTime().rangeRound([0, width]);
     const y = d3.scaleLinear().rangeRound([height, 0]);
     const line = d3.line().x(function(d) {
-      return x(parseTime(d.split('|')[0]));
+      return x(parseTime(d[0]));
     }).y(function(d) {
-      return y(+d.split('|')[1]);
+      return y(d[1]);
     });
 
     x.domain(d3.extent(data, function(d) {
-      return parseTime(d.split('|')[0]);
-    })).nice();
+      return parseTime(d[0]);
+    })).nice(d3.timeMinute, 30);
 
-    y.domain([
-      0,
-      d3.max(data, function(d) {
-        return + d.split('|')[1];
-      })
-    ]).nice();
+    let maxY = d3.max(data, function(d) {
+      return d[1];
+    });
 
-    const xAxis = d3.axisBottom().scale(x).ticks(d3.timeMinute.every(30)).tickFormat(d3.timeFormat('%H:%M'));
-    const yAxis = d3.axisLeft(y).ticks(5);
+    // Ceil to the nearest modulo five
+    let addY = (5 - (maxY % 5)) % 5;
 
-    var makeXAxisForGrid = function(y, axis) {
-      return d3.axisTop().scale(y).ticks(d3.timeMinute.every(10));
-    };
+    // But always at least five
+    maxY = Math.max(maxY + addY, 5);
 
-    var makeYAxisForGrid = function(y, axis) {
-      return d3.axisLeft().scale(y).tickValues(axis.tickValues());
-    };
+    y.domain([0, maxY]);
 
-    g.append('g').attr('class', 'grid').call(makeXAxisForGrid(x, xAxis).tickSize(-height, 0, 0).tickFormat('')).select(
-      '.domain '
-    ).remove();
-    g.append('g').attr('class', 'grid').call(makeYAxisForGrid(y, yAxis).tickSize(-width, 0, 0).tickFormat('')).select(
-      '.domain '
-    ).remove();
+    const yTicks = [];
+    let yTickIncrement = 1;
+
+    if (maxY > 10) {
+      yTickIncrement = 5;
+    } else if (maxY > 5) {
+      yTickIncrement = 2;
+    }
+
+    let yTick = 0;
+    while (yTick <= maxY) {
+      yTicks.push(yTick);
+      yTick += yTickIncrement;
+    }
+
+    const hours = (x.domain()[1].valueOf() - x.domain()[0].valueOf()) / 3600000;
+    let minuteTicks = d3.timeMinute.every(30);
+    let minuteGridLines = d3.timeMinute.every(10);
+
+    if (hours >= 6) {
+      minuteTicks = d3.timeHour.every(2);
+      minuteGridLines = d3.timeMinute.every(60);
+    } else if (hours >= 3) {
+      minuteTicks = d3.timeMinute.every(60);
+      minuteGridLines = d3.timeMinute.every(30);
+    }
+
+    const xAxis = d3.axisBottom().scale(x).ticks(minuteTicks).tickFormat(d3.timeFormat('%H:%M'));
+    const yAxis = d3.axisLeft(y).tickValues(yTicks).tickFormat(d3.format('.0f'));
+    const yAxisGrid = d3.axisLeft(y).tickValues(yTicks);
+    const xAxisGrid = d3.axisTop().scale(x).ticks(minuteGridLines);
+
+    g.append('g').attr('class', 'grid').call(xAxisGrid.tickSize(-height, 0, 0).tickFormat('')).select('.domain ').remove();
+    g.append('g').attr('class', 'grid').call(yAxisGrid.tickSize(-width, 0, 0).tickFormat('')).select('.domain ').remove();
     g.append('g').attr('transform', 'translate(0,' + height + ')').call(xAxis);
     g.append('g').call(yAxis);
 
