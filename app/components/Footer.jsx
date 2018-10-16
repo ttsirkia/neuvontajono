@@ -11,9 +11,11 @@ export function Footer() {
     <div className="container">
       <p className="small text-muted text-center">
         <span>Aalto-yliopisto, </span>
-        <a href="http://research.cs.aalto.fi/LeTech/">Learning + Technology</a>
+        <a href="https://www.aalto.fi/department-of-computer-science/letech-research-group-learning-technology">
+          Learning + Technology
+        </a>
         <br/>
-        <span className="author">v 2.3.1 | Teemu Sirkiä, 2018</span>
+        <span className="author">v 2.4.0 | Teemu Sirkiä, 2018</span>
       </p>
     </div>
   </footer>;

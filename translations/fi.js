@@ -35,7 +35,6 @@ export default {
 
   'manage-open-projector': 'Avaa videoprojektorinäkymä',
   'manage-projector-help': 'Projektorinäkymässä seuraavaksi vuorossa oleva poistetaan jonosta painamalla välilyöntiä tai napsauttamalla nimeä. Useimmissa selaimissa saa näkymän koko ruutuun painamalla F11-painiketta.',
-  'manage-projector-not-in-use': 'Tälle kurssille ei ole määritelty videoprojektorinäkymää.',
   'manage-confirm-remove-middle': 'Haluatko varmasti poistaa opiskelijan keskeltä jonoa?',
   'manage-remove-queue-failed': 'Jonosta poistaminen epäonnistui.',
   'manage-remove': 'Poista jonosta',
@@ -96,7 +95,7 @@ export default {
   'settings-combine': 'Yhdistä toiseen:',
   'settings-combine-help': 'Jos haluat yhdistää useamman kurssin harjoitusjonon, kirjoita tähän sen kurssin tunniste, johon tämä kurssi liitetään. Tällöin kaikki muut paitsi kurssin opettaja ohjataan annetulle kurssille, kun neuvontajono avataan, eikä tämän kurssin neuvontajono ole käytössä.',
   'settings-projector': 'Projektori\u00adnäkymän URL:',
-  'settings-projector-help': 'Ota videoprojektorinäkymä käyttöön kirjoittamalla tähän <a target="_blank" href="{url}">asetustiedoston</a> URL.',
+  'settings-projector-help': 'Määrittele videoprojektorinäkymä halutessasi kirjoittamalla tähän <a target="_blank" href="{url}">asetustiedoston</a> URL.',
   'settings-default-language': 'Oletuskieli:',
   'settings-default-language-help': 'Tätä kieltä käytetään käyttöliittymässä, mikäli LTI-kirjautuminen ei välitä tietoa käyttäjän kielestä.',
   'settings-statistics-visibility': 'Osallistujatilastojen näkyvyys:',

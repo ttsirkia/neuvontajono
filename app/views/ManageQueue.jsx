@@ -37,27 +37,21 @@ const clickHandler = function(event, id, props, successText, failText) {
 // ********************************************************************************************************************
 
 const ProjectorMode = function(props) {
-  if (props.projectorConf) {
-    return <div>
-      <p>
-        <a
-          href={`/neuvontajono/sessions/${props.sessionId}/manage/projector`}
-          target="_blank"
-          className="btn btn-success"
-          onClick={props.disableNotifications}>
-          <FormattedMessage id="manage-open-projector"/>
-        </a>
-      </p>
-      <p>
-        <FormattedMessage id="manage-projector-help"/>
-      </p>
-      <hr/>
-    </div>;
-  } else {
-    return <div>
-      <p><FormattedMessage id="manage-projector-not-in-use"/></p>
-    </div>;
-  }
+  return <div>
+    <p>
+      <a
+        href={`/neuvontajono/sessions/${props.sessionId}/manage/projector`}
+        target="_blank"
+        className="btn btn-success"
+        onClick={props.disableNotifications}>
+        <FormattedMessage id="manage-open-projector"/>
+      </a>
+    </p>
+    <p>
+      <FormattedMessage id="manage-projector-help"/>
+    </p>
+    <hr/>
+  </div>;
 };
 
 // ********************************************************************************************************************

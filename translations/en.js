@@ -34,7 +34,6 @@ export default {
 
   'manage-open-projector': 'Open Projector View',
   'manage-projector-help': 'Use the space key or click the participant name in the projector view to remove the participant from the queue. Most browsers open a full-screen view by pressing F11.',
-  'manage-projector-not-in-use': 'The projector view is not defined for this course.',
   'manage-confirm-remove-middle': 'Do you really want to remove a participant who is not in the first position?',
   'manage-remove-queue-failed': 'Removing from the queue failed.',
   'manage-remove': 'Remove from Queue',
@@ -95,7 +94,7 @@ export default {
   'settings-combine': 'Combine with:',
   'settings-combine-help': 'If you want to combine multiple Lab Session Queues, write here the course id of the queue that will be used instead of this. All users except the course teacher will be redirected to that Lab Session Queue.',
   'settings-projector': 'Video projector URL:',
-  'settings-projector-help': 'Enable the video projector view by typing here the URL of the <a target="_blank" href="{url}">configuration file</a>.',
+  'settings-projector-help': 'Define the video projector view by typing here the optional URL of the <a target="_blank" href="{url}">configuration file</a>.',
   'settings-default-language': 'Default UI language:',
   'settings-default-language-help': 'This UI language will be used if the LTI authentication does not provide the user language.',
   'settings-statistics-visibility': 'Visibility of statistics for participants',

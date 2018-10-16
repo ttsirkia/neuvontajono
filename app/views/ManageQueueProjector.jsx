@@ -31,6 +31,7 @@ class ManageQueueProjector_ extends React.Component {
     this.updatePicture = this.updatePicture.bind(this);
     this.remove = this.remove.bind(this);
     this.pollingUpdate = this.pollingUpdate.bind(this);
+    this.updateClockFace = this.updateClockFace.bind(this);
   }
 
   // **********************************************************************************************
@@ -190,8 +191,8 @@ class ManageQueueProjector_ extends React.Component {
   // **********************************************************************************************
 
   setImageSize() {
-    $('#img').css('max-width', ($(window).width() - 100) + 'px');
-    $('#img').css('max-height', ($(window).height() - $('#header').height() - 100) + 'px');
+    $('#img').css('max-width', ($(window).width() - 150) + 'px');
+    $('#img').css('max-height', ($(window).height() - $('#header').height() - 150) + 'px');
   }
 
   // **********************************************************************************************
@@ -233,14 +234,79 @@ class ManageQueueProjector_ extends React.Component {
 
   // **********************************************************************************************
 
+  updateClockFace() {
+
+    const maxWidth = $(window).width() - 150;
+    const maxHeight = $(window).height() - $('#header').height() - 150;
+    const size = Math.min(maxWidth, maxHeight);
+
+    $('#clockface').attr('width', size).attr('height', size);
+
+    const center = size / 2;
+    const lineWidth = size * 0.01;
+
+    const canvas = document.getElementById('clockface');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, size, size);
+    const angle = (360 / 60) * Math.PI / 180;
+    let cAngle = 0;
+    ctx.strokeStyle = '#777';
+    for (let i = 0; i < 60; i++) {
+      ctx.lineWidth = (i % 5 === 0) ? lineWidth * 3 : lineWidth;
+      ctx.translate(center, center);
+      ctx.rotate(cAngle);
+      ctx.beginPath();
+      ctx.moveTo(0, (i % 5 === 0) ? -center * 0.8 : -center * 0.9);
+      ctx.lineTo(0, -center * 1);
+      ctx.stroke();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      cAngle += angle;
+    }
+
+    ctx.strokeStyle = '#eee';
+
+    const now = new Date();
+    const hours = (1 / 12) * (now.getHours() % 12) + (1 / 720) * (now.getMinutes()) + (1 / 43200) * (now.getSeconds());
+    const minutes = new Date().getMinutes() + (1 / 60) * (now.getSeconds());
+
+    cAngle = (360 * hours) * Math.PI / 180;
+    ctx.lineWidth = lineWidth * 6;
+    ctx.translate(center, center);
+    ctx.rotate(cAngle);
+    ctx.beginPath();
+    ctx.moveTo(0, center * 0.1);
+    ctx.lineTo(0, -center * 0.75);
+    ctx.stroke();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    cAngle = (360 * (1 / 60) * minutes) * Math.PI / 180;
+    ctx.lineWidth = lineWidth * 4;
+    ctx.translate(center, center);
+    ctx.rotate(cAngle);
+    ctx.beginPath();
+    ctx.moveTo(0, center * 0.2);
+    ctx.lineTo(0, -center * 0.98);
+    ctx.stroke();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  }
+
+  // **********************************************************************************************
+
   componentDidMount() {
 
     const self = this;
     setInterval(this.updateClockAndLength, 2000);
     setInterval(this.pollingUpdate, 20000);
-    setInterval(this.updatePicture, 2000);
     this.update(this.props.view.queueData);
-    this.downloadProjectorConf();
+
+    if (this.props.view.projectorConf) {
+      this.downloadProjectorConf();
+      setInterval(this.updatePicture, 2000);
+    } else {
+      setInterval(this.updateClockFace, 1000);
+      $('#clockface').show();
+    }
 
     const socket = io.connect('/queue', {
       path: '/neuvontajono/socket.io',
@@ -295,7 +361,9 @@ class ManageQueueProjector_ extends React.Component {
           <span id="row"></span>)</div>
       </div>
 
-      <div id="content"></div>
+      <div id="content">
+        <canvas id="clockface" style={{display: 'none'}}></canvas>
+      </div>
 
     </div>;
   }

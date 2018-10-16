@@ -42,7 +42,7 @@ body {
     margin-right: auto;
     clear: both;
 }
-#img, #img1 {
+#img, #img1, #clockface {
     display: block;
     margin-left: auto;
     margin-right: auto;

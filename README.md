@@ -69,11 +69,12 @@ connection string.
 
 ## Projector Configuration
 
-In the lab sessions, a video projector can be used to show the queue length and course-specific images which may
-contain hints etc.
+In the lab sessions, a video projector can be used to show the queue length, the next student in the queue, and
+course-specific images which may contain hints etc.
 
-To enable this feature, you have to create a projector configuration JSON and make it available online. Define the
-URL in the course settings.
+To customize the view, you have to create a projector configuration JSON and make it available online. Define the
+URL in the course settings. If the projector configuration is not defined, an analog clock face will be shown
+instead of course-specific hints etc.
 
 The configuration file looks like this:
 ```
