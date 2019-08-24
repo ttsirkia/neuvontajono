@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').load();
+require('dotenv').config();
 
 const keystone = require('keystone');
 const cons = require('consolidate');
