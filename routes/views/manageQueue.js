@@ -73,6 +73,7 @@ exports = module.exports = function(req, res) {
         locals.session = session;
         locals.reactData.view.sessionId = session._id.toString();
         locals.reactData.view.courseId = locals.course._id.toString();
+        locals.reactData.view.courseName = locals.course.name;
         locals.reactData.view.sessionLocation = session.location;
         locals.reactData.view.projectorConf = locals.course.projectorConf;
         locals.reactData.view.multipleLocations = session.location.indexOf(',') >= 0;

@@ -63,14 +63,20 @@ class ManageQueueProjector_ extends React.Component {
 
     const timeFormat = this.props.intl.formatMessage({id: 'time-output-format'});
     const time = moment().format(timeFormat);
-
     let closed = '';
 
     if (!this.isOpen) {
-      closed = this.props.intl.formatMessage({id: 'manage-projector-queue-closed'}) + ' - ';
+      closed = this.props.intl.formatMessage({id: 'manage-projector-queue-closed'});
+      if (this.props.view.projectorConf) {
+        closed += ' - ';
+      }
     }
 
-    $('#time').text(closed + time);
+    if (this.props.view.projectorConf) {
+      $('#time').text(closed + time);
+    } else {
+      $('#time').text(closed);
+    }
 
     $('#length').text(this.queueLength);
     document.title = this.props.intl.formatMessage({id: 'title'}) + ' (' + this.queueLength + ')';
@@ -236,11 +242,10 @@ class ManageQueueProjector_ extends React.Component {
 
   updateClockFace() {
 
-    const maxWidth = $(window).width() - 150;
-    const maxHeight = $(window).height() - $('#header').height() - 150;
+    const maxWidth = $('#left').width() - 80;
+    const maxHeight = $(window).height() - 80;
     const size = Math.min(maxWidth, maxHeight);
-
-    $('#clockface').attr('width', size).attr('height', size);
+    $('#clockface').attr('width', size).attr('height', size).css('margin-top', ((maxHeight - size) / 2) + 'px');
 
     const center = size / 2;
     const lineWidth = size * 0.01;
@@ -347,25 +352,51 @@ class ManageQueueProjector_ extends React.Component {
   // **********************************************************************************************
 
   render() {
-    return <div>
-      <div id="header">
-        <div id="time"></div>
-        <div id="queue">
-          <FormattedMessage id="manage-projector-in-queue"/>
-          <span id="length"></span>
+
+    if (this.props.view.projectorConf) {
+      return <div>
+        <div id="header">
+          <div id="time"></div>
+          <div id="queue">
+            <FormattedMessage id="manage-projector-in-queue"/>
+            <span id="length"></span>
+          </div>
+          <div id="next">
+            <FormattedMessage id="manage-projector-next-in-queue"/>
+            <span id="name"></span>{' '}
+            (<span id="location"></span><FormattedMessage id="manage-projector-row"/>{' '}
+            <span id="row"></span>)</div>
         </div>
-        <div id="next">
-          <FormattedMessage id="manage-projector-next-in-queue"/>
-          <span id="name"></span>{' '}
-          (<span id="location"></span><FormattedMessage id="manage-projector-row"/>{' '}
-          <span id="row"></span>)</div>
-      </div>
 
-      <div id="content">
-        <canvas id="clockface" style={{display: 'none'}}></canvas>
-      </div>
+        <div id="content"></div>
 
-    </div>;
+      </div>;
+    } else {
+
+      return <div>
+        <div id="left">
+          <canvas id="clockface"></canvas>
+        </div>
+        <div id="right">
+          <div id="course-name">{this.props.view.courseName}</div>
+          <div id="time"></div>
+          <div id="queue">
+            <FormattedMessage id="manage-projector-in-queue"/>
+            <span id="length"></span>
+          </div>
+          <div id="next">
+            <FormattedMessage id="manage-projector-next-in-queue"/>
+            <div>
+              <span id="name"></span>{' '}
+              (<span id="location"></span><FormattedMessage id="manage-projector-row"/>{' '}
+              <span id="row"></span>)</div>
+          </div>
+          <div id="help">
+            <FormattedMessage id="queue-lead"/>
+          </div>
+        </div>
+      </div>
+    }
   }
 }
 
