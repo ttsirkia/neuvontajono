@@ -34,8 +34,6 @@ keystone.init({
   'lti secret': process.env.LTI_SECRET || 'neuvontajono',
   'cookie secret': process.env.COOKIE_SECRET || 'secret',
 
-  // Change also the default admin password in /updates/0.0.1-admins.js
-
 });
 
 keystone.import('models');
