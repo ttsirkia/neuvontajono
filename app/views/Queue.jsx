@@ -357,8 +357,7 @@ class Queue_ extends React.Component {
       }
     });
 
-    setInterval(function() {
-
+    const pollingUpdate = function() {
       const timestamp = (new Date().getTime() / 1000).toFixed(0);
       $.getJSON('?timestamp=' + timestamp, function(data) {
         if (data.error) {
@@ -372,7 +371,15 @@ class Queue_ extends React.Component {
         self.props.clearAlertMessages();
         self.props.addAlertMessage('error', 'alert-page-update-failed');
       });
+    };
+
+    setInterval(function() {
+      pollingUpdate();
     }, 60000);
+
+    socket.on('reconnect', function() {
+      pollingUpdate();
+    })
 
   }
 

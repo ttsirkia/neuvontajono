@@ -227,8 +227,7 @@ class ManageQueue_ extends React.Component {
       }
     });
 
-    setInterval(function() {
-
+    const pollingUpdate = function() {
       const timestamp = Date.now();
       $.getJSON('?timestamp=' + timestamp, function(data) {
         if (data.error) {
@@ -241,7 +240,13 @@ class ManageQueue_ extends React.Component {
         self.props.clearAlertMessages();
         self.props.addAlertMessage('error', 'alert-page-update-failed');
       });
-    }, 60000);
+    };
+
+    socket.on('reconnect', function() {
+      pollingUpdate();
+    });
+
+    setInterval(pollingUpdate, 60000);
 
     if (window.Notification) {
       window.Notification.requestPermission(function(permission) {

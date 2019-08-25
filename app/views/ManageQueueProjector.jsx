@@ -302,7 +302,7 @@ class ManageQueueProjector_ extends React.Component {
 
     const self = this;
     setInterval(this.updateClockAndLength, 2000);
-    setInterval(this.pollingUpdate, 20000);
+    setInterval(this.pollingUpdate, 60000);
     this.update(this.props.view.queueData);
 
     if (this.props.view.projectorConf) {
@@ -328,6 +328,10 @@ class ManageQueueProjector_ extends React.Component {
       } else {
         self.update(data);
       }
+    });
+
+    socket.on('reconnect', function() {
+      this.pollingUpdate();
     });
 
     $('#next').click(function() {
