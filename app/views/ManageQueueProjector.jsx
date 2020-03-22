@@ -86,7 +86,7 @@ class ManageQueueProjector_ extends React.Component {
   // **********************************************************************************************
 
   updateNextInQueue(data) {
-
+    const self = this;
     if (data.users.length > 0 && this.nextInQueue === null) {
       $('#name').text(data.users[0].user.name.first);
       $('#location').text(data.users[0].location + ', ');
@@ -106,9 +106,8 @@ class ManageQueueProjector_ extends React.Component {
         $('#location').text(data.users[0].location + ', ');
         $('#row').text(data.users[0].row);
         $('#next').fadeIn(500);
-        this.nextInQueue = data.users[0]._id;
+        self.nextInQueue = data.users[0]._id;
       });
-      this.nextInQueue = null;
     } else if (data.users.length > 0) {
       $('#name').text(data.users[0].user.name.first);
       $('#location').text(data.users[0].location + ', ');
