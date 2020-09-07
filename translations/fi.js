@@ -127,6 +127,7 @@ export default {
   'settings-participation-policy-2': 'Vain etäyhteydellä',
   'settings-participation-policy-3': 'Paikan päällä tai etäyhteydellä',
   'settings-participation-policy-help': 'Asetuksen voi määritellä jokaiselle harjoitusryhmälle erikseen. Oletusasetus koskee vain niitä harjoitusryhmiä, joihin on valittu kurssin oletusosallistumistapa.',
+  'settings-session-participation-policy': 'Osallistumistapa:',
 
   'statistics-most-active-title': 'Aktiivisimmat opiskelijat',
   'statistics-most-active-info': 'Tämä tilasto näkyy aina vain kurssin opettajille.',

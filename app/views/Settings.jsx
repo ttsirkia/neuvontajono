@@ -179,7 +179,7 @@ const SessionRow = function(props) {
   </tr>
   <tr>
     <td className="details-row" colSpan="6">
-    <FormattedMessage id="settings-participation-policy"/>{' '}
+    <FormattedMessage id="settings-session-participation-policy"/>{' '}
     {props.intl.formatMessage({id: 'settings-participation-policy-' + props.session.participationPolicy})}
     </td>
   </tr>

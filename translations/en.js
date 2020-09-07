@@ -127,6 +127,7 @@ export default {
   'settings-participation-policy-2': 'Only remotely',
   'settings-participation-policy-3': 'Locally or remotely',
   'settings-participation-policy-help': 'This setting can be overridden for each session separately and will affect only those groups which use the course default policy.',
+  'settings-session-participation-policy': 'Participation policy:',
 
   'statistics-most-active-title': 'Most Active Participants',
   'statistics-most-active-info': 'Only the course teacher can see this section.',
