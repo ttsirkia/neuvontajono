@@ -70,29 +70,46 @@ const UserRow = function(props) {
       }
     }
 
+    if (props.user.row < 0) {
+      props.setLastConnectionInfo(props.user.callURL || props.user.user.email);
+    } else {
+      props.setLastConnectionInfo(null);
+    }
     clickHandler(event, props.user._id, props, null, 'manage-remove-queue-failed');
 
   };
 
-  return <tr className={props.position === 1 ? 'first-in-queue' : ''}>
-    <td><FormattedMessage id="ordinal-value" values={{
-      position: props.position
-    }}/></td>
-    <td>{`${props.user.user.name.first} ${props.user.user.name.last}`}</td>
-    <td><Time value={props.user.enteredAt}/></td>
-    <td><FormattedMessage
-      id="manage-user-row-template"
-      values={{
-      location: props.user.location,
-      row: props.user.row
-    }}/></td>
-    {props.showLanguage && <td>{props.user.language}</td>}
-    <td>
-      <button onClick={handleClick} className={cName}>
-        <FormattedMessage id="manage-remove"/>
-      </button>
-    </td>
-  </tr>;
+  return <>
+    <tr className={props.position === 1 ? 'first-in-queue' : ''}>
+      <td><FormattedMessage id="ordinal-value" values={{
+        position: props.position
+      }}/></td>
+      <td>{`${props.user.user.name.first} ${props.user.user.name.last}`}</td>
+      <td><Time value={props.user.enteredAt}/></td>
+      <td>
+        {
+          props.user.row > 0 && <FormattedMessage
+              id="manage-user-row-template"
+              values={{
+                location: props.user.location,
+                row: props.user.row
+              }}/>
+        }
+        {props.user.row < 0 && <FormattedMessage id="queue-remote"/>}
+      </td>
+      {props.showLanguage && <td>{props.user.language}</td>}
+      <td>
+        <button onClick={handleClick} className={cName}>
+          <FormattedMessage id="manage-remove"/>
+        </button>
+      </td>
+    </tr>
+    {props.user.row < 0 && <tr>
+      <td colSpan="5" className={(props.position === 1 ? 'first-in-queue' : '') + ' details-row'}>
+        {props.user.callURL ? <a targe="_blank" href={props.user.callURL}>{props.user.callURL}</a> : props.user.user.email}
+      </td>
+    </tr>}
+  </>;
 };
 
 // ********************************************************************************************************************
@@ -151,6 +168,7 @@ const UsersInQueue = function(props) {
                 clearAlertMessages={props.clearAlertMessages}
                 addAlertMessage={props.addAlertMessage}
                 updateQueueData={props.updateQueueData}
+                setLastConnectionInfo={props.setLastConnectionInfo}
                 key={user._id}
                 user={user}
                 position={index + 1}
@@ -180,7 +198,17 @@ const NotificationPanel = function(props) {
       <a href="#" onClick={props.enableNotifications}><FormattedMessage id="notification-activate"/></a>
     </p>;
   } else {
-    return <p><FormattedMessage id="notification-no-permission"/></p>;
+    return <p><a href="#" onClick={(e) => {
+      e.preventDefault();
+      if (window.Notification) {
+        window.Notification.requestPermission(function(permission) {
+          if (permission === 'granted') {
+            props.enableNotifications();
+          }
+        });
+      }
+    }}><FormattedMessage id="notification-no-permission"/></a>
+    </p>;
   }
 
 };
@@ -194,12 +222,14 @@ class ManageQueue_ extends React.Component {
     this.state = {
       queueData: this.props.view.queueData,
       notificationPermission: false,
-      nofificationsEnabled: false
+      nofificationsEnabled: false,
+      lastRemovedConnection: null
     };
 
     this.updateQueueData = this.updateQueueData.bind(this);
     this.disableNotifications = this.disableNotifications.bind(this);
     this.enableNotifications = this.enableNotifications.bind(this);
+    this.setLastConnectionInfo = this.setLastConnectionInfo.bind(this);
 
   }
 
@@ -227,6 +257,10 @@ class ManageQueue_ extends React.Component {
       }
     });
 
+    if (window.Notification && window.Notification.permission === 'granted') {
+      this.setState({notificationPermission: true, notificationsEnabled: true}); 
+    }
+
     const pollingUpdate = function() {
       const timestamp = Date.now();
       $.getJSON('?timestamp=' + timestamp, function(data) {
@@ -248,14 +282,6 @@ class ManageQueue_ extends React.Component {
 
     setInterval(pollingUpdate, 60000);
 
-    if (window.Notification) {
-      window.Notification.requestPermission(function(permission) {
-        if (permission === 'granted') {
-          self.setState({notificationPermission: true, notificationsEnabled: true});
-        }
-      });
-    }
-
     document.title = this.props.intl.formatMessage({id: 'title'}) + ' (' + this.state.queueData.users.length + ')';
 
   }
@@ -267,8 +293,16 @@ class ManageQueue_ extends React.Component {
   }
 
   enableNotifications(e) {
-    e.preventDefault();
-    this.setState({notificationsEnabled: true});
+    if (e) {
+      e.preventDefault();
+    }
+    this.setState({notificationPermission: true, notificationsEnabled: true});    
+  }
+
+  // **********************************************************************************************
+
+  setLastConnectionInfo(info) {
+    this.setState({lastRemovedConnection: info});
   }
 
   // **********************************************************************************************
@@ -278,7 +312,7 @@ class ManageQueue_ extends React.Component {
     if (this.state.notificationsEnabled && this.state.queueData.users.length === 0 && data.users.length > 0) {
       const options = {
         body: this.props.intl.formatMessage({
-          id: 'notification-joined-queue'
+          id: data.users[0].row > 0 ? 'notification-joined-queue-local' : 'notification-joined-queue-remote'
         }, {
           name: data.users[0].user.name.first,
           row: data.users[0].row,
@@ -321,6 +355,15 @@ class ManageQueue_ extends React.Component {
           }}/>
       </p>
 
+      {
+        this.state.lastRemovedConnection && <p>
+          <FormattedMessage id={'manage-last-connection'}/>{' '}
+          {this.state.lastRemovedConnection.indexOf('http') === 0 ? 
+          <a target="_blank" href={this.state.lastRemovedConnection}>{this.state.lastRemovedConnection}</a> : 
+          this.state.lastRemovedConnection}
+        </p>
+      }
+
       <UsersInQueue
         users={this.state.queueData.users}
         csrf={this.props.view.csrf}
@@ -328,6 +371,7 @@ class ManageQueue_ extends React.Component {
         addAlertMessage={this.props.addAlertMessage}
         clearAlertMessages={this.props.clearAlertMessages}
         updateQueueData={this.updateQueueData}
+        setLastConnectionInfo={this.setLastConnectionInfo}
         intl={this.props.intl}/>
 
       <ClearQueue intl={this.props.intl} csrf={this.props.view.csrf} length={this.state.queueData.users.length}/>

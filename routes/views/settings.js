@@ -29,7 +29,8 @@ exports = module.exports = function(req, res) {
         statisticsLevel: locals.course.statisticsLevel,
         statisticsQueueLevel: locals.course.statisticsQueueLevel,
         statisticsGraphLevel: locals.course.statisticsGraphLevel,
-        defaultLanguage: locals.course.defaultLanguage || keystone.get('default language')
+        defaultLanguage: locals.course.defaultLanguage || keystone.get('default language'),
+        participationPolicy: locals.course.participationPolicy
       },
       sessions: [],
       languages: keystone.get('languages available')
@@ -52,11 +53,12 @@ exports = module.exports = function(req, res) {
         statisticsLevel: req.body.statisticsLevel,
         statisticsQueueLevel: req.body.statisticsQueueLevel,
         statisticsGraphLevel: req.body.statisticsGraphLevel,
-        defaultLanguage: req.body.defaultLanguage
+        defaultLanguage: req.body.defaultLanguage,
+        participationPolicy: req.body.participationPolicy
       },
       sessions: [],
       languages: keystone.get('languages available')
-    };
+    };   
 
     Course.model.findById(req.session.courseId).exec(function(err, course) {
       if (course) {
@@ -69,6 +71,7 @@ exports = module.exports = function(req, res) {
         course.combined = req.body.combined;
         course.projectorConf = req.body.projectorConf;
         course.defaultLanguage = req.body.defaultLanguage;
+        course.participationPolicy = req.body.participationPolicy;
 
         course.save(function(err) {
           if (!err) {
@@ -160,6 +163,7 @@ exports = module.exports = function(req, res) {
               queueOpen = '(' + session.queueOpenTimeString + ') - ';
             }
 
+            sess.location = session.getAllVisibleLocations(locals.course).join(', ');
             sess.id = session._id.toString();
             sess.startDate = moment(session.startDate).format('YYYY-MM-DD');
             sess.endDate = moment(session.endDate).format('YYYY-MM-DD');
@@ -173,7 +177,6 @@ exports = module.exports = function(req, res) {
   });
 
   // **********************************************************************************************
-
 
   view.render('reactView', locals);
 

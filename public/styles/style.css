@@ -1,80 +1,80 @@
 html {
-	position: relative;
-	min-height: 100%;
+  position: relative;
+  min-height: 100%;
 }
 
 body {
-	font-family: "Open Sans", sans-serif;
-	margin-bottom: 60px;
+  font-family: "Open Sans", sans-serif;
+  margin-bottom: 60px;
 }
 
 h2 {
-	margin-top: 0;
+  margin-top: 0;
 }
 
 h3 {
-	margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 ul.nav {
-	margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .navbar-right {
-	float: right;
+  float: right;
 }
 
 .navbar-header {
-	float: left;
+  float: left;
 }
 
 footer {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	height: 60px;
-	padding: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  padding: 10px;
 }
 
 .author {
-	color: #CCCCCC;
+  color: #CCCCCC;
 }
 
 ul.nav-tabs {
-	margin-top: 30px;
-	margin-bottom: 30px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .form-horizontal .control-label {
-	text-align: left !important;
+  text-align: left !important;
 }
 
 .inactive-session {
-	text-decoration: line-through;
-	background-color: #eeeeee;
+  text-decoration: line-through;
+  background-color: #eeeeee;
 }
 
 p+table {
-	margin-top: 30px;
+  margin-top: 30px;
 }
 
 .first-in-queue {
-	font-size: 130%;
-	background-color: #dff0d8;
+  font-size: 130%;
+  background-color: #dff0d8;
 }
 
 #queue-length {
-	margin-top: 30px;
-	margin-bottom: 30px;
-	font-size: 16px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  font-size: 16px;
 }
 
 #queue-length span {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 #session-selector {
-	font-size: 130%
+  font-size: 130%
 }
 
 .statistics-table td {
@@ -98,7 +98,7 @@ p+table {
 }
 
 .statistics-yellow {
-  color:  #F28D09;
+  color: #F28D09;
 }
 
 .statistics-red {
@@ -111,45 +111,54 @@ p+table {
 }
 
 .container .jumbotron {
-	padding-left: 35px;
-	padding-right: 35px;
-	padding-top: 35px;
-	padding-bottom: 35px;
-	margin-top: 20px;
+  padding-left: 35px;
+  padding-right: 35px;
+  padding-top: 35px;
+  padding-bottom: 35px;
+  margin-top: 20px;
 }
 
 .container .jumbotron p:last-child {
-	margin-bottom: 0
+  margin-bottom: 0
 }
 
 .change-session {
-	margin-top: 60px;
-	font-size: 85%;
+  margin-top: 60px;
+  font-size: 85%;
 }
 
-.change-session select {
-	margin-right: 10px;
+.change-session select, .change-session input {
+  margin-right: 10px;
 }
 
 .session-starting {
-	background-color: #F2FFED;
+  background-color: #F2FFED;
 }
 
-.btn + .btn, input + input, label + select {
-	margin-left: 5px;
+.btn+.btn, input+input, label+select, label+input {
+  margin-left: 5px;
 }
 
 #tooltip {
   background-color: rgb(255, 252, 239);
   border-radius: 6px;
-	padding: 5px;
+  padding: 5px;
   border: 1px solid black;
   box-shadow: 3px 3px 5px #888888;
   display: inline-block;
   position: absolute;
-	z-index: 9999;
+  z-index: 9999;
 }
 
 .grid line {
-	stroke: #c0c0c0;
+  stroke: #c0c0c0;
+}
+
+table tbody tr td.details-row {
+  padding-top: 0;
+  border-top: none;
+  padding-left: 10px;
+  font-size: 80%;
+  color: #555;
+  margin-top: 0;
 }

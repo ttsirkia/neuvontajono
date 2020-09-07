@@ -20,7 +20,7 @@ class ManageQueueProjector_ extends React.Component {
     this.nextInQueue = null;
     this.queueLength = props.view.queueData.users.length;
     this.sessionName = props.view.queueData.sessionName;
-    this.multipleLocations = false;
+    this.multipleLocations = props.view.queueData.multipleLocations;
     this.projectorConf = null;
     this.pictureChanging = false;
 
@@ -118,20 +118,26 @@ class ManageQueueProjector_ extends React.Component {
       this.nextInQueue = null;
     }
 
+    if (data.users.length > 0 && data.users[0].row < 0) {
+      $('#locAll').hide();
+    } else if (data.users.length > 0 && data.users[0].row >= 0) {
+      $('#locAll').show();
+    }
+
   }
 
   // **********************************************************************************************
 
   update(data) {
-    this.queueLength = data.users.length;
+    this.queueLength = data.users.length;    
 
     // Socket doesn't provide these
     if (data.open !== undefined) {
       this.isOpen = data.open === true;
       this.sessionName = data.sessionName;
+      this.multipleLocations = data.multipleLocations === true;
     }
-
-    this.multipleLocations = data.multipleLocations === true;
+    
     if (this.multipleLocations) {
       $('#location').show();
     } else {
@@ -204,6 +210,12 @@ class ManageQueueProjector_ extends React.Component {
 
   remove() {
     const self = this;
+
+    if ($('#locAll:visible').length < 1) {
+      alert(self.props.intl.formatMessage({id: 'alert-cannot-remove-remote'}));
+      return;
+    }
+
     const postData = {
       action: 'remove',
       queueId: this.nextInQueue,
@@ -367,8 +379,10 @@ class ManageQueueProjector_ extends React.Component {
           <div id="next">
             <FormattedMessage id="manage-projector-next-in-queue"/>
             <span id="name"></span>{' '}
+            <span id="locAll">
             (<span id="location"></span><FormattedMessage id="manage-projector-row"/>{' '}
-            <span id="row"></span>)</div>
+            <span id="row"></span>)</span>
+          </div>
         </div>
 
         <div id="content"></div>
@@ -391,8 +405,10 @@ class ManageQueueProjector_ extends React.Component {
             <FormattedMessage id="manage-projector-next-in-queue"/>
             <div>
               <span id="name"></span>{' '}
+              <span id="locAll">
               (<span id="location"></span><FormattedMessage id="manage-projector-row"/>{' '}
-              <span id="row"></span>)</div>
+              <span id="row"></span>)</span>
+            </div>
           </div>
           <div id="help">
             <FormattedMessage id="queue-lead"/>

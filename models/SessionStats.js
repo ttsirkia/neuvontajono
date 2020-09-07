@@ -62,7 +62,7 @@ SessionStats.schema.static('saveQueueLength', function(course, session) {
     const today = moment(new Date()).startOf('day');
     const minutes = new Date().getHours() * 60 + new Date().getMinutes();
 
-    SessionStats.model.findOrCreate({ session: session._id, course: session.course._id, date: today }, {}, function(err2, res) {
+    SessionStats.model.findOrCreate({ session: session._id, course: course, date: today }, {}, function(err2, res) {
       if (!err & !err2 && res) {
         // Direct push fails in Mongoose ($pushAll removed)
         const newArray = res.queueLength.slice(0);

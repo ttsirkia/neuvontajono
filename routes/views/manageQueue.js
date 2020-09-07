@@ -42,9 +42,9 @@ exports = module.exports = function(req, res) {
         if (sessions) {
           sessions.forEach(function(session) {
             locals.reactData.view.queueData.sessionName = session.name;
-            if (session.location === locals.session.location) {
+            if (session.getAllVisibleLocations(locals.course).join(', ') === locals.session.location) {
               locals.reactData.view.queueData.open = true;
-              locals.reactData.view.multipleLocations = session.location.indexOf(',') >= 0;
+              locals.reactData.view.queueData.multipleLocations = session.getAllVisibleLocations(locals.course).length > 1;
             }
           });
         }
@@ -74,9 +74,10 @@ exports = module.exports = function(req, res) {
         locals.reactData.view.sessionId = session._id.toString();
         locals.reactData.view.courseId = locals.course._id.toString();
         locals.reactData.view.courseName = locals.course.name;
-        locals.reactData.view.sessionLocation = session.location;
+        locals.reactData.view.sessionLocation = session.getAllVisibleLocations(locals.course).join(', ');
         locals.reactData.view.projectorConf = locals.course.projectorConf;
-        locals.reactData.view.multipleLocations = session.location.indexOf(',') >= 0;
+        locals.session.location = session.getAllVisibleLocations(locals.course).join(', ');
+        locals.reactData.view.multipleLocations = session.getAllVisibleLocations(locals.course).length >= 0;
 
         next();
 

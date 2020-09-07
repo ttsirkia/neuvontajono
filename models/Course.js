@@ -18,9 +18,10 @@ Course.add({
   defaultLanguage: { type: Types.Text },
   createdBy: { type: Types.Relationship, ref: 'User' },
   createdAt: { type: Types.Datetime, 'default': Date.now },
-  statisticsLevel: { type: Types.Number, required: true, 'default': 0 },
-  statisticsQueueLevel: { type: Types.Number, required: true, 'default': 2 },
-  statisticsGraphLevel: { type: Types.Number, required: true, 'default': 2 }
+  statisticsLevel: { type: Types.Number, required: true, 'default': 0, min: -1, max: 2 },
+  statisticsQueueLevel: { type: Types.Number, required: true, 'default': 2, min: 0, max: 2 },
+  statisticsGraphLevel: { type: Types.Number, required: true, 'default': 2, min: 0, max: 2 },
+  participationPolicy: { type: Types.Number, required: true, 'default': 1, min: 1, max: 3 }
 });
 
 // ************************************************************************************************
@@ -34,9 +35,11 @@ Course.schema.method('createSummary', function(user, callback) {
 
   const summary = {
     course: { name: self.name },
-    user: { previousRow: user.previousRow, previousLocation: user.previousLocation, previousLanguage: user.previousLanguage },
+    user: { previousRow: user.previousRow, previousLocation: user.previousLocation, previousLanguage: user.previousLanguage, previousParticipationLocal: user.previousParticipationLocal, previousCallURL: user.previousCallURL },
     sessions: [],
-    locations: []
+    locations: [],
+    remote: false,
+    local: false
   };
 
   const handleSessions = function(sessions) {
@@ -48,6 +51,7 @@ Course.schema.method('createSummary', function(user, callback) {
       const sess = session.toJSON();
       sess.id = session._id.toString();
       sess.language = session.getItemAsList('language');
+      sess.location = session.getAllVisibleLocations(session.course);
       convertedSessions.push(sess);
 
       session.getQueueLength(self, function(err, count) {
@@ -64,12 +68,33 @@ Course.schema.method('createSummary', function(user, callback) {
 
             // A bit complicated, but maintain the original order
             convertedSessions.forEach(function(convertedSession) {
-              const locations = convertedSession.location.split(',').map(function(item) {
+              const locations = convertedSession.location.map(function(item) {
 
                 // Clone the original item
                 const s = JSON.parse(JSON.stringify(convertedSession));
-
+                delete s.course;
                 s.location = item.trim();
+
+                if (convertedSession.participationPolicy === 1 || (convertedSession.participationPolicy === 0 && convertedSession.course.participationPolicy === 1)) {
+                  s.local = true;
+                  summary.local = true;
+                }
+
+                if (convertedSession.participationPolicy === 2 || (convertedSession.participationPolicy === 0 && convertedSession.course.participationPolicy === 2)) {
+                  s.remote = true;
+                  summary.remote = true;
+                }
+
+                if (convertedSession.participationPolicy === 3 || (convertedSession.participationPolicy === 0 && convertedSession.course.participationPolicy === 3)) {                  
+                  summary.local = true;                  
+                  summary.remote = true;
+                  if (item.trim() === convertedSession.remoteMethod) {
+                    s.remote = true;
+                  } else {
+                    s.local = true;
+                  }
+                }
+
                 summary.sessions.push(s);
                 return item.trim();
 

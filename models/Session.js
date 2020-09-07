@@ -21,18 +21,20 @@ Session.add({
   location: { type: Types.Text, initial: true, required: true },
   active: { type: Types.Boolean, 'default': true },
   assistants: { type: Types.Text, initial: true, 'default': '' },
-  language: { type: Types.Text, initial: true, 'default': '' }
+  language: { type: Types.Text, initial: true, 'default': '' },
+  remoteMethod: { type: Types.Text, initial: true, 'default': '' },
+  participationPolicy: { type: Types.Number, required: true, 'default': 0, min: 0, max: 3 }
 });
-
 
 // ************************************************************************************************
 // Helper methods
-
 
 Session.schema.method('getQueueLength', function(course, callback) {
   const Queue = keystone.list('Queue');
   Queue.model.getQueueLength(course, this, callback);
 });
+
+// ************************************************************************************************
 
 Session.schema.method('getItemAsList', function(item) {
   if (!this[item]) {
@@ -44,6 +46,46 @@ Session.schema.method('getItemAsList', function(item) {
   return items;
 });
 
+// ************************************************************************************************
+
+Session.schema.method('getAllVisibleLocations', function(course) {
+
+  let items = this.location.split(',').map(function(item) {
+    return item.trim();
+  });
+
+  if (this.participationPolicy === 3 || (this.participationPolicy === 0 && course.participationPolicy === 3)) {
+    if (this.remoteMethod) {
+      items.push(this.remoteMethod);
+    }
+  }
+
+  return items;
+
+});
+
+// ************************************************************************************************
+
+Session.schema.method('getAllLocations', function(course) {
+
+  if (this.participationPolicy === 2 || (this.participationPolicy === 0 && course.participationPolicy === 2)) {
+    return ['REMOTELOCATION'];
+  }
+
+  let items = this.location.split(',').map(function(item) {
+    return item.trim();
+  });
+
+  if (this.participationPolicy === 3 || (this.participationPolicy === 0 && course.participationPolicy === 3)) {
+    items.push('REMOTELOCATION');
+  }
+
+  return items;
+
+});
+
+// ************************************************************************************************
+
 Session.schema.method('isOpen', function() {
 
   return new Date().getDay() === this.weekday && this.active &&
@@ -53,6 +95,8 @@ Session.schema.method('isOpen', function() {
     momentJS().isBefore(momentJS().startOf('day').add(this.endTime, 'm'));
 
 });
+
+// ************************************************************************************************
 
 Session.schema.method('isOpening', function() {
 

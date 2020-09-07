@@ -31,6 +31,8 @@ exports = module.exports = function(req, res) {
 
     if (!req.params.sessionId) {
       locals.reactData.view.createNew = true;
+      locals.reactData.view.courseParticipationPolicy = locals.course.participationPolicy;
+      locals.reactData.view.participationPolicy = 0;
       next();
     } else {
       Session.model.findOne({ course: locals.course._id, _id: req.params.sessionId }).exec(function(err, session) {
@@ -47,6 +49,9 @@ exports = module.exports = function(req, res) {
           locals.reactData.view.queueOpenTime = session.queueOpenTime;
           locals.reactData.view.active = session.active === true;
           locals.reactData.view.language = session.language;
+          locals.reactData.view.participationPolicy = session.participationPolicy;
+          locals.reactData.view.remoteMethod = session.remoteMethod || session.location;
+          locals.reactData.view.courseParticipationPolicy = locals.course.participationPolicy;
           next();
         } else {
           req.flash('error', 'alert-session-not-found');
@@ -63,23 +68,32 @@ exports = module.exports = function(req, res) {
 
     locals.reactData.view.name = req.body.name;
     locals.reactData.view.assistants = req.body.assistants;
-    locals.reactData.view.location = req.body.location;
+    locals.reactData.view.location = req.body.location || req.body.remoteMethod;
     locals.reactData.view.weekday = req.body.weekday;
-    locals.reactData.view.startDate = req.body.startDate;
-    locals.reactData.view.endDate = req.body.endDate;
+    locals.reactData.view.startDate = moment(req.body.startDate, [req.body.dateFormat, 'D.M.YYYY']).format('YYYY-MM-DD');
+    locals.reactData.view.endDate = moment(req.body.endDate, [req.body.dateFormat, 'D.M.YYYY']).format('YYYY-MM-DD');
     locals.reactData.view.startTime = req.body.startTime;
     locals.reactData.view.endTime = req.body.endTime;
     locals.reactData.view.queueOpenTime = req.body.queueOpenTime;
     locals.reactData.view.active = req.body.active === 'active';
     locals.reactData.view.language = req.body.language;
+    locals.reactData.view.participationPolicy = +req.body.participationPolicy;
+    locals.reactData.view.remoteMethod = req.body.remoteMethod;
+
+    if ((req.body.participationPolicy === '3' || (req.body.participationPolicy === '0' && locals.course.participationPolicy === 3)) && !req.body.remoteMethod) {
+      req.flash('error', 'alert-session-save-failed');
+      return next();
+    }
 
     const save = function(session, next) {
 
       session.name = req.body.name;
       session.weekday = req.body.weekday;
-      session.location = req.body.location;
+      session.location = req.body.location || req.body.remoteMethod;
       session.assistants = req.body.assistants;
       session.language = req.body.language;
+      session.participationPolicy = +req.body.participationPolicy;
+      session.remoteMethod = req.body.remoteMethod;
 
       session.startDate = moment(req.body.startDate, [req.body.dateFormat, 'D.M.YYYY']);
       session.endDate = moment(req.body.endDate, [req.body.dateFormat, 'D.M.YYYY']);
@@ -103,7 +117,6 @@ exports = module.exports = function(req, res) {
 
     if (req.params.sessionId) {
 
-
       Session.model.findOne({ course: locals.course._id, _id: req.params.sessionId }).exec(function(err, session) {
 
         if (session) {
@@ -120,6 +133,7 @@ exports = module.exports = function(req, res) {
     } else {
 
       locals.reactData.view.createNew = true;
+      locals.reactData.view.courseParticipationPolicy = locals.course.participationPolicy;
       const session = new Session.model({ course: locals.course._id });
       save(session, next);
 

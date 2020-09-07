@@ -22,6 +22,7 @@ exports = module.exports = function(req, res) {
         const sess = session.toJSON();
         sess.id = session._id.toString();
         sess.status = '';
+        sess.location = session.getAllVisibleLocations(locals.course).join(', ');
 
         // CSS class
         if (session.isOpen()) {

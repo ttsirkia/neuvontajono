@@ -54,7 +54,7 @@ const socketHandler = function() {
   const moment = require('moment');
 
   // Clean first possible old users away
-  const cleanLimit = moment().subtract(5, 'h').toDate();
+  const cleanLimit = moment().subtract(12, 'h').toDate();
   Queue.model.remove({ enteredAt: { $lt: cleanLimit } }, function() {});
 
   let io = require('socket.io');

@@ -27,7 +27,9 @@ export class ModifySession_ extends React.Component {
 
     this.state = {
       startTime: this.transformTime(props.view.startTime) || '',
-      queueOpenTime: this.transformTime(props.view.queueOpenTime) || ''
+      queueOpenTime: this.transformTime(props.view.queueOpenTime) || '',
+      participationPolicy: props.view.participationPolicy,
+      courseParticipationPolicy: props.view.courseParticipationPolicy
     };
     this.state.queueOpenTimeChanged = this.state.queueOpenTime !== '';
 
@@ -35,7 +37,14 @@ export class ModifySession_ extends React.Component {
     this.handleQueueOpenTime = this.handleQueueOpenTime.bind(this);
     this.transformDate = this.transformDate.bind(this);
     this.transformTime = this.transformTime.bind(this);
+    this.handlePolicyChange = this.handlePolicyChange.bind(this);
 
+  }
+
+  // **********************************************************************************************
+
+  handlePolicyChange(event) {
+    this.setState({participationPolicy: +event.target.value});
   }
 
   // **********************************************************************************************
@@ -105,12 +114,41 @@ export class ModifySession_ extends React.Component {
           </div>
         </div>
         <div className="form-group">
+          <label htmlFor="participationPolicy" className="col-sm-2 control-label"><FormattedMessage id="settings-participation-policy"/></label>
+          <div className="col-sm-6">
+            <select name="participationPolicy" onChange={this.handlePolicyChange} value={this.state.participationPolicy}>
+              <option value="0">{this.props.intl.formatMessage({id: 'settings-participation-policy-0'})}</option>
+              <option value="1">{this.props.intl.formatMessage({id: 'settings-participation-policy-1'})}</option>
+              <option value="2">{this.props.intl.formatMessage({id: 'settings-participation-policy-2'})}</option>
+              <option value="3">{this.props.intl.formatMessage({id: 'settings-participation-policy-3'})}</option>
+            </select>            
+          </div>
+        </div>
+        
+        {(this.state.participationPolicy === 1 || this.state.participationPolicy === 3 ||
+         (this.state.participationPolicy === 0 && this.state.courseParticipationPolicy === 1) ||
+         (this.state.participationPolicy === 0 && this.state.courseParticipationPolicy === 3)) &&
+        <div className="form-group">
           <label htmlFor="location" className="col-sm-2 control-label"><FormattedMessage id="modify-location"/></label>
           <div className="col-sm-6">
             <input type="text" className="form-control" name="location" id="location" defaultValue={this.props.view.location}/>
             <p className="help-block small"><FormattedMessage id="modify-location-help"/></p>
           </div>
         </div>
+        }
+
+        {(this.state.participationPolicy === 2 || this.state.participationPolicy === 3 ||
+         (this.state.participationPolicy === 0 && this.state.courseParticipationPolicy === 2) ||
+         (this.state.participationPolicy === 0 && this.state.courseParticipationPolicy === 3)) &&
+        <div className="form-group">
+          <label htmlFor="location" className="col-sm-2 control-label"><FormattedMessage id="modify-remote-method"/></label>
+          <div className="col-sm-6">
+            <input type="text" className="form-control" name="remoteMethod" id="remoteMethod" defaultValue={this.props.view.remoteMethod}/>
+            <p className="help-block small"><FormattedMessage id="modify-remote-method-help"/></p>
+          </div>
+        </div>
+        }
+
         <div className="form-group">
           <label htmlFor="assistants" className="col-sm-2 control-label"><FormattedMessage id="modify-staff"/></label>
           <div className="col-sm-6">
@@ -129,7 +167,7 @@ export class ModifySession_ extends React.Component {
             <input type="text" className="form-control" name="language" id="language" defaultValue={this.props.view.language}/>
             <p className="help-block small"><FormattedMessage id="modify-language-help"/></p>
           </div>
-        </div>
+        </div>            
 
         <hr/>
 

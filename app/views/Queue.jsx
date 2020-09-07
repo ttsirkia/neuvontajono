@@ -68,13 +68,22 @@ const EnterQueue = function(props) {
 
   const handleEnterClick = function(event) {
     event.preventDefault();
+
+    if ($('#callURL').val() && ($('#callURL').val().indexOf('https://') !== 0 && $('#callURL').val().indexOf('http://') !== 0)) {
+      alert(props.intl.formatMessage({id: 'queue-wrong-call-url'}));
+      return;
+    }
+
     clickHandler(event, props, null, 'queue-join-failed', true);
   };
 
   // **********************************************************************************************
 
   const MultipleLocations = function(props) {
-    if (props.sessions.length > 1) {
+    const results = props.sessions.filter(
+      x => (props.localParticipation && x.local) || (!props.localParticipation && x.remote)
+    );
+    if (results.length > 1) {
       return <div>
         <div className="alert alert-warning">
           <FormattedMessage id="queue-multiple-locations"/>
@@ -88,7 +97,7 @@ const EnterQueue = function(props) {
               defaultValue={props.selectedSession.location}
               onChange={props.handleSessionSelectionChange}>
               {
-                props.sessions.map(
+                results.map(
                   (session) => <option key={`${session.name}|${session.location}`} value={session.location}>{`${session.name} (${session.location})`}</option>
                 )
               }
@@ -104,11 +113,14 @@ const EnterQueue = function(props) {
   // **********************************************************************************************
 
   const SingleLocation = function(props) {
-    if (props.sessions.length === 1) {
+    const results = props.sessions.filter(
+      x => (props.localParticipation && x.local) || (!props.localParticipation && x.remote)
+    );
+    if (results.length === 1) {      
       return <div className="form-group">
         <label htmlFor="location" className="col-sm-3 control-label"><FormattedMessage id="queue-group"/></label>
         <div className="col-sm-6">
-          <span id="session-selector">{`${props.sessions[0].name} (${props.sessions[0].location})`}</span>
+          <span id="session-selector">{`${results[0].name} (${results[0].location})`}</span>
         </div>
       </div>;
     } else {
@@ -172,8 +184,11 @@ const EnterQueue = function(props) {
         <MultipleLocations
           sessions={props.sessions}
           selectedSession={props.selectedSession}
+          localParticipation={props.localParticipation}
           handleSessionSelectionChange={props.handleSessionSelectionChange}/>
-        <SingleLocation sessions={props.sessions}/>
+        <SingleLocation sessions={props.sessions} 
+          localParticipation={props.localParticipation} 
+          setSelectedSession={props.setSelectedSession}/>
 
         <hr/>
 
@@ -187,8 +202,7 @@ const EnterQueue = function(props) {
         </div>
 
         <hr/>
-
-        <div className="form-group">
+        { props.localParticipation && <div className="form-group">
           <label htmlFor="row" className="col-sm-3 control-label"><FormattedMessage id="queue-my-row"/></label>
           <div className="col-sm-6">
             <select name="row" defaultValue={props.user.previousRow}>
@@ -205,7 +219,19 @@ const EnterQueue = function(props) {
             </select>
             <p className="help-block small"><FormattedMessage id="queue-row-direction-help"/></p>
           </div>
+          <input type="hidden" name="participationMode" value="local"/>
         </div>
+        }
+
+        {!props.localParticipation && <div className="form-group">
+          <label htmlFor="callURL" className="col-sm-3 control-label"><FormattedMessage id="queue-call-url"/></label>
+          <div className="col-sm-6">
+            <input type="text" className="form-control" name="callURL" id="callURL" defaultValue={props.user.previousCallURL}/>
+            <p className="help-block small"><FormattedMessage id="queue-call-url-help"/></p>
+          </div>
+          <input type="hidden" name="participationMode" value="remote"/>
+        </div>
+        }
 
         <LanguageSelection languages={props.selectedSession.language} previousLanguage={props.user.previousLanguage}/>
 
@@ -256,6 +282,10 @@ const ChangeLocation = function(props) {
 
   const handleChangeClick = function(event) {
     event.preventDefault();
+    if ($('#callURL2').val() && ($('#callURL2').val().indexOf('https://') !== 0 && $('#callURL2').val().indexOf('http://') !== 0)) {
+      alert(props.intl.formatMessage({id: 'queue-wrong-call-url'}));
+      return;
+    }
     clickHandler(event, props, 'queue-position-updated', 'queue-position-failed', true);
   };
 
@@ -279,6 +309,7 @@ const ChangeLocation = function(props) {
           </select>
         </div>
 
+        {props.selectedSession.local &&
         <div className="form-group">
           <label htmlFor="row2"><FormattedMessage id="queue-row-short"/></label>
           <select name="row" defaultValue={props.user.previousRow}>
@@ -293,7 +324,18 @@ const ChangeLocation = function(props) {
             <option value="9">9</option>
             <option value="10">10</option>
           </select>
+          <input type="hidden" name="participationMode" value="local"/>
         </div>
+        }
+
+        {props.selectedSession.remote &&
+        <div className="form-group">
+          <label htmlFor="callURL2"><FormattedMessage id="queue-url-short"/></label>
+          <input name="callURL" id="callURL2" defaultValue={props.user.previousCallURL}></input>
+          <input type="hidden" name="participationMode" value="remote"/>
+          <input type="hidden" name="row" value="-1"/>
+        </div>
+        }
 
         <div className="form-group">
           <button className="add btn btn-primary btn-xs" onClick={handleChangeClick}><FormattedMessage id="queue-move"/></button>
@@ -308,29 +350,84 @@ const ChangeLocation = function(props) {
 
 // ********************************************************************************************************************
 
+const SelectParticipationMode = function(props) {
+
+  if (props.local && props.remote && props.sessions.length > 0 && props.user.position === 0) {
+    return <div style={{
+        marginTop: '20px',
+        marginBottom: '20px'
+      }}>
+      <div>
+        <label>
+          <input type="radio" value="local" name="participationMode"
+           checked={props.currentlyLocal} onChange={props.changeParticipationMode}/>
+          <span
+            style={{
+              display: 'inline-block',
+              paddingLeft: '10px',
+              fontSize: '125%'
+            }}><FormattedMessage id="queue-local-participation"/></span>
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="radio" value="remote" name="participationMode"
+            checked={!props.currentlyLocal}
+            onChange={props.changeParticipationMode}/>
+          <span
+            style={{
+              display: 'inline-block',
+              paddingLeft: '10px',
+              fontSize: '125%'
+            }}><FormattedMessage id="queue-remote-participation"/></span>
+        </label>
+      </div>
+    </div>;
+  } else {
+    return null;
+  }
+
+}
+
+// ********************************************************************************************************************
+
 class Queue_ extends React.Component {
 
   constructor(props) {
     super(props);
 
-    let selectedSession = props.view.queueData.sessions.length > 0 ? props.view.queueData.sessions[0] : null;
+    let selectedSession = null;
+    let localP = (props.view.queueData.local && !props.view.queueData.remote) || (props.view.queueData.local && props.view.queueData.user.previousParticipationLocal);
+    if (props.view.queueData.sessions.length > 0) {
+      const results = props.view.queueData.sessions.filter(
+        x => (localP && x.local) || (!localP && x.remote)
+      );
+        selectedSession = results[0];
+    }
+    
     if (props.view.queueData.sessions.length > 1 && props.view.queueData.user.previousLocation) {
       props.view.queueData.sessions.forEach((session) => {
-        if (session.location === props.view.queueData.user.previousLocation) {
+        if (session.location === props.view.queueData.user.previousLocation && (localP && session.local) || (!localP && session.remote)) {
           selectedSession = session;
         }
       });
     }
 
+
     this.state = {
       sessions: props.view.queueData.sessions,
       locations: props.view.queueData.locations,
       user: props.view.queueData.user,
-      selectedSession: selectedSession
+      selectedSession: selectedSession,
+      local: props.view.queueData.local,
+      remote: props.view.queueData.remote,
+      localParticipation: localP
     };
 
     this.handleSessionSelectionChange = this.handleSessionSelectionChange.bind(this);
     this.updateQueueData = this.updateQueueData.bind(this);
+    this.changeParticipationMode = this.changeParticipationMode.bind(this);
+    this.setSelectedSession = this.setSelectedSession.bind(this);
   }
 
   // **********************************************************************************************
@@ -358,7 +455,7 @@ class Queue_ extends React.Component {
     });
 
     const pollingUpdate = function() {
-      const timestamp = (new Date().getTime() / 1000).toFixed(0);
+      const timestamp = Date.now();
       $.getJSON('?timestamp=' + timestamp, function(data) {
         if (data.error) {
           self.props.clearAlertMessages();
@@ -385,19 +482,59 @@ class Queue_ extends React.Component {
 
   // **********************************************************************************************
 
+  changeParticipationMode(event) {
+    const localParticipation = event.target.value === 'local';
+    const results = this.state.sessions.filter(
+      x => (localParticipation && x.local) || (!localParticipation && x.remote)
+    );
+    const newState = {
+      localParticipation,
+      selectedSession: results[0]
+    };
+    
+    this.setState(newState);
+  }
+
+  // **********************************************************************************************
+
   updateQueueData(data, overrideLocation) {
 
-    let selectedSession = data.sessions.length > 0 ? data.sessions[0] : null;
+    const localP = (data.local && !data.remote) || (data.local && this.state.localParticipation);
+    let selectedSession = null;
+    if (data.sessions.length > 0) {
+      const results = data.sessions.filter(
+        x => (localP && x.local) || (!localP && x.remote)
+      );
+        selectedSession = results[0];
+    }
     if (data.sessions.length > 1 && data.user.previousLocation) {
       data.sessions.forEach((session) => {
         if ((session.location === data.user.previousLocation && overrideLocation) || (session.location === this.state.selectedSession.location && !overrideLocation)) {
-          selectedSession = session;
+          if ((localP && session.local) || (!localP && session.remote)) {
+            selectedSession = session;
+          }
         }
       });
     }
 
-    this.setState({sessions: data.sessions, locations: data.locations, user: data.user, selectedSession: selectedSession});
+    this.setState((prevState) => {
+      return {
+        sessions: data.sessions,
+        locations: data.locations,
+        user: data.user,
+        selectedSession: selectedSession,
+        local: data.local,
+        remote: data.remote,
+        localParticipation: localP
+      }
+    });
 
+  }
+
+  // **********************************************************************************************
+
+  setSelectedSession(session) {
+    this.setState({selectedSession: session});
   }
 
   // **********************************************************************************************
@@ -427,15 +564,26 @@ class Queue_ extends React.Component {
 
       <CurrentPosition position={this.state.user.position}/>
       <NoSessions position={this.state.user.position} locations={this.state.locations}/>
+
+      <SelectParticipationMode
+        sessions={this.state.sessions}
+        local={this.state.local}
+        remote={this.state.remote}
+        user={this.state.user}
+        currentlyLocal={this.state.localParticipation}
+        changeParticipationMode={this.changeParticipationMode}/>
       <EnterQueue
         csrf={this.props.view.csrf}
         handleSessionSelectionChange={this.handleSessionSelectionChange}
         sessions={this.state.sessions}
+        localParticipation={this.state.localParticipation}
         selectedSession={this.state.selectedSession}
         clearAlertMessages={this.props.clearAlertMessages}
         addAlertMessage={this.props.addAlertMessage}
         updateQueueData={this.updateQueueData}
-        user={this.state.user}/>
+        setSelectedSession={this.setSelectedSession}
+        user={this.state.user}
+        intl={this.props.intl}/>
       <ExitQueue
         csrf={this.props.view.csrf}
         user={this.state.user}

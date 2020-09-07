@@ -1,6 +1,7 @@
 'use strict';
 
 const keystone = require('keystone');
+const punycodeUrl = require('punycode-url');
 
 exports = module.exports = function(req, res) {
 
@@ -30,7 +31,20 @@ exports = module.exports = function(req, res) {
 
         if (session && session.isOpen()) {
 
-          Queue.model.addToQueue(locals.course, session, locals.user, req.body.location, req.body.row, req.body.language,
+          if (req.body.callURL && (req.body.callURL.indexOf('https://') !== 0 && req.body.callURL.indexOf('http://') !== 0)) {
+            req.body.callURL = '';
+          }
+
+          if (req.body.participationMode === 'remote') {            
+            req.body.row = -1;
+          } else {
+            req.body.callURL = '';
+          }
+
+          req.body.callURL = req.body.callURL || '';
+          req.body.callURL = punycodeUrl.toASCII(req.body.callURL.trim());
+
+          Queue.model.addToQueue(locals.course, session, locals.user, req.body.location, req.body.row, req.body.language, req.body.callURL,
             function(err) {
 
               SessionStats.model.saveQueueLength(locals.course, session);

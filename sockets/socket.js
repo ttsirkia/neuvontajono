@@ -17,10 +17,10 @@ socketHandler.initialize = function(io) {
     socket.on('staffQueue', function(data) {
       if (data.sessionId && socket.request.session.staff) {
 
-        Session.model.findOne({ course: socket.request.session.courseId, _id: data.sessionId }, function(err, session) {
+        Session.model.findOne({ course: socket.request.session.courseId, _id: data.sessionId }).populate('course').exec(function(err, session) {
 
           if (!err && session) {
-            session.location.split(',').forEach(function(location) {
+            session.getAllLocations(session.course).forEach(function(location) {
               socket.join('Staff|' + location.trim() + '|' + socket.request.session.courseId);
             });
 

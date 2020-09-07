@@ -15,6 +15,8 @@ User.add({
   previousLocation: { type: Types.Text, 'default': '' },
   previousRow: { type: Types.Number, 'default': 1 },
   previousLanguage: { type: Types.Text, 'default': '' },
+  previousParticipationLocal: { type: Boolean, default: true },
+  previousCallURL: { type: Types.Text, default: '' },
   ltiId: { type: Types.Text, required: true, initial: true, index: true },
 }, 'Permissions', {
   isAdmin: { type: Boolean, label: 'Can access Keystone', index: true }

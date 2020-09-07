@@ -18,13 +18,14 @@ Queue.add({
   row: { type: Types.Number, initial: true, required: true },
   enteredAt: { type: Types.Datetime, initial: true, required: true, 'default': Date.now },
   language: { type: Types.Text },
+  callURL: { type: Types.Text },
 });
 
 // **********************************************************************************************
 
 Queue.schema.static('getUsersInQueue', function(course, session, callback) {
 
-  const cleanLimit = moment().subtract(5, 'h').toDate();
+  const cleanLimit = moment().subtract(12, 'h').toDate();
 
   // Clean first possible old users away
   Queue.model.remove({ course: course._id, enteredAt: { $lt: cleanLimit } }, function() {
@@ -35,10 +36,10 @@ Queue.schema.static('getUsersInQueue', function(course, session, callback) {
       course: course._id,
       $or: [
         { session: session._id },
-        { location: { $in: session.getItemAsList('location') } }
+        { location: { $in: session.getAllLocations(course) } }
       ]
     };
-    Queue.model.find(query).sort('enteredAt').populate('user', 'name').exec(function(err, users) {
+    Queue.model.find(query).sort('enteredAt').populate('user', 'name email').exec(function(err, users) {
 
       if (users) {
 
@@ -67,7 +68,7 @@ Queue.schema.static('getQueueLength', function(course, session, callback) {
     course: course._id,
     $or: [
       { session: session._id },
-      { location: { $in: session.getItemAsList('location') } }
+      { location: { $in: session.getAllLocations(course) } }
     ]
   };
   Queue.model.find(query).count().exec(function(err, count) {
@@ -78,16 +79,24 @@ Queue.schema.static('getQueueLength', function(course, session, callback) {
 
 // **********************************************************************************************
 
-Queue.schema.static('addToQueue', function(course, session, user, location, row, language, callback) {
+Queue.schema.static('addToQueue', function(course, session, user, location, row, language, callURL, callback) {
 
   user.previousRow = row;
   user.previousLocation = location;
   if (language) {
     user.previousLanguage = language;
   }
+  user.previousParticipationLocal = row >= 0;
+  if (row < 0 ) {
+    user.previousCallURL = callURL;
+  }  
   user.save();
 
-  Queue.model.findOrCreate({ course: course._id, user: user._id }, { session: session._id, location: location, row: row, language: language },
+  if (row < 0) {
+    location = 'REMOTELOCATION';
+  }
+
+  Queue.model.findOrCreate({ course: course._id, user: user._id }, { session: session._id, location: location, row: row, callURL: callURL, language: language },
     function(err, result, created) {
 
       const sockets = function(session, location) {
@@ -141,7 +150,7 @@ Queue.schema.static('clearQueue', function(course, session, callback) {
   const query = {
     course: course._id,
     $or: [{ session: session._id },
-      { location: { $in: session.getItemAsList('location') } }
+      { location: { $in: session.getAllLocations(course) } }
     ]
   };
   Queue.model.remove(query).exec(
@@ -151,7 +160,7 @@ Queue.schema.static('clearQueue', function(course, session, callback) {
 
       if (!err) {
         Queue.model.getUsersInQueue(course, session, function(err, users) {
-          session.getItemAsList('location').forEach(function(location) {
+          session.getAllLocations(course).forEach(function(location) {
             socketHandler.sendQueueStaffStatus(course._id, location, { users: users });
           });
         });
@@ -186,7 +195,7 @@ Queue.schema.static('removeFromQueue', function(course, session, queueId, callba
         sessions.forEach(function(curSession) {
 
           const foundCorrect = curSession._id === session._id;
-          const foundInSameLocation = selected === null && curSession.getItemAsList('location').indexOf(result.location) >= 0;
+          const foundInSameLocation = selected === null && curSession.getAllLocations(course).indexOf(result.location) >= 0;
           if (foundCorrect || foundInSameLocation) {
             selected = curSession;
           }

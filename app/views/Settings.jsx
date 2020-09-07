@@ -79,6 +79,20 @@ const GeneralSettings = function(props) {
     </div>
 
     <div className="form-group">
+      <label htmlFor="participationPolicy" className="col-sm-2 control-label"><FormattedMessage id="settings-participation-policy"/></label>
+      <div className="col-sm-6">
+        <select name="participationPolicy" defaultValue={props.course.participationPolicy}>
+          <option value="1">{props.intl.formatMessage({id: 'settings-participation-policy-1'})}</option>
+          <option value="2">{props.intl.formatMessage({id: 'settings-participation-policy-2'})}</option>
+          <option value="3">{props.intl.formatMessage({id: 'settings-participation-policy-3'})}</option>
+        </select>
+        <p className="help-block small"><FormattedMessage id="settings-participation-policy-help"/></p>
+      </div>
+    </div>
+
+    <hr/>
+
+    <div className="form-group">
       <label htmlFor="statisticsLevel" className="col-sm-2 control-label"><FormattedMessage id="settings-statistics-visibility"/></label>
       <div className="col-sm-6">
         <select name="statisticsLevel" defaultValue={props.course.statisticsLevel}>
@@ -136,7 +150,8 @@ const SessionRow = function(props) {
     }
   };
 
-  return <tr className={cName}>
+  return <>
+    <tr className={cName}>
     <td>{props.session.name}</td>
     <td><Datespan start={props.session.startDate} end={props.session.endDate}/></td>
     <td><Timespan
@@ -145,7 +160,7 @@ const SessionRow = function(props) {
       start={props.session.startTime}
       end={props.session.endTime}/></td>
     <td>{props.session.location}</td>
-    <td>{props.session.assistants}</td>
+    
     <td>{props.session.language}</td>
     <td>
       <a href={`/neuvontajono/sessions/${props.session.id}/edit`} className="btn btn-xs btn-primary"><FormattedMessage id="edit"/></a>
@@ -155,7 +170,20 @@ const SessionRow = function(props) {
         value={props.session.id}
         className="btn btn-xs btn-danger delete-session"><FormattedMessage id="delete"/></button>
     </td>
-  </tr>;
+  </tr>
+  <tr>
+    <td className="details-row" colSpan="6">
+      <FormattedMessage id="select-th-staff"/>{': '}
+      {props.session.assistants}
+    </td>
+  </tr>
+  <tr>
+    <td className="details-row" colSpan="6">
+    <FormattedMessage id="settings-participation-policy"/>{' '}
+    {props.intl.formatMessage({id: 'settings-participation-policy-' + props.session.participationPolicy})}
+    </td>
+  </tr>
+  </>;
 };
 
 // ********************************************************************************************************************
@@ -173,7 +201,6 @@ const Sessions = function(props) {
           <th><FormattedMessage id="settings-th-span"/></th>
           <th><FormattedMessage id="select-th-time"/></th>
           <th><FormattedMessage id="select-th-location"/></th>
-          <th><FormattedMessage id="select-th-staff"/></th>
           <th><FormattedMessage id="select-th-language"/></th>
           <th></th>
         </tr>
