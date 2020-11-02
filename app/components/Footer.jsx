@@ -15,7 +15,7 @@ export function Footer() {
           Learning + Technology
         </a>
         <br/>
-        <span className="author">v 2.6.0 | Teemu Sirkiä, 2020</span>
+        <span className="author">v 2.6.1 | Teemu Sirkiä, 2020</span>
       </p>
     </div>
   </footer>;

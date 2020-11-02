@@ -1,6 +1,6 @@
 {
   "name": "neuvontajono",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "private": true,
   "dependencies": {
     "connect-mongo": "^3.2.0",

@@ -71,7 +71,10 @@ const UserRow = function(props) {
     }
 
     if (props.user.row < 0) {
-      props.setLastConnectionInfo(props.user.callURL || props.user.user.email);
+      props.setLastConnectionInfo({
+        connection: props.user.callURL || props.user.user.email,
+        name: `${props.user.user.name.first} ${props.user.user.name.last}`
+      });
     } else {
       props.setLastConnectionInfo(null);
     }
@@ -258,7 +261,7 @@ class ManageQueue_ extends React.Component {
     });
 
     if (window.Notification && window.Notification.permission === 'granted') {
-      this.setState({notificationPermission: true, notificationsEnabled: true}); 
+      this.setState({notificationPermission: true, notificationsEnabled: true});
     }
 
     const pollingUpdate = function() {
@@ -296,7 +299,7 @@ class ManageQueue_ extends React.Component {
     if (e) {
       e.preventDefault();
     }
-    this.setState({notificationPermission: true, notificationsEnabled: true});    
+    this.setState({notificationPermission: true, notificationsEnabled: true});
   }
 
   // **********************************************************************************************
@@ -358,9 +361,10 @@ class ManageQueue_ extends React.Component {
       {
         this.state.lastRemovedConnection && <p>
           <FormattedMessage id={'manage-last-connection'}/>{' '}
-          {this.state.lastRemovedConnection.indexOf('http') === 0 ? 
-          <a target="_blank" href={this.state.lastRemovedConnection}>{this.state.lastRemovedConnection}</a> : 
-          this.state.lastRemovedConnection}
+          {this.state.lastRemovedConnection.name}{', '}
+          {this.state.lastRemovedConnection.connection.indexOf('http') === 0 ?
+          <a target="_blank" href={this.state.lastRemovedConnection.connection}>{this.state.lastRemovedConnection.connection}</a> :
+          this.state.lastRemovedConnection.connection}
         </p>
       }
 
