@@ -38,7 +38,9 @@ export default {
   'queue-call-url': 'Video connection address:',
   'queue-call-url-help': 'If there is a video conference tool in use (e.g. Zoom), you can paste here the address to join the call. If the field is empty, course staff members will see your email address.',
   'queue-remote': 'Remotely',
-  
+  'queue-sign-up-required': 'Before you can join the queue, you need to sign up to this lab session by clicking the button below.',
+  'queue-sign-up': 'Sign up',
+
 
   'manage-open-projector': 'Open Projector View',
   'manage-projector-help': 'Use the space key or click the participant name in the projector view to remove the participant from the queue. Most browsers open a full-screen view by pressing F11.',
@@ -73,7 +75,7 @@ export default {
   'modify-language-help': 'Use a comma to separate the languages. This field can be left empty but if there are at least two languages, participants have to choose in which language they would like to get help.',
   'modify-weekday': 'Weekday:',
   'modify-start-date': 'Start date:',
-  'modify-date-help': 'Use the format 2018-03-01.',
+  'modify-date-help': 'Use the format 2021-03-01.',
   'modify-end-date': 'End date:',
   'modify-in-use': 'In use',
   'modify-in-use-help': 'This setting can be used to temporarily disable the session.',
@@ -128,6 +130,8 @@ export default {
   'settings-participation-policy-3': 'Locally or remotely',
   'settings-participation-policy-help': 'This setting can be overridden for each session separately and will affect only those groups which use the course default policy.',
   'settings-session-participation-policy': 'Participation policy:',
+  'settings-require-sign-up': 'Require to sign up in local lab sessions',
+  'settings-require-sign-up-help': 'If the setting is enabled, participants cannot join the queue without signing up first. This setting does not affect remote groups or if statistics are disabled below.',
 
   'statistics-most-active-title': 'Most Active Participants',
   'statistics-most-active-info': 'Only the course teacher can see this section.',
@@ -145,6 +149,10 @@ export default {
   'statistics-maximum-queue-duration': 'Maximum of the waiting time',
   'statistics-maximum-queue-duration-lead': 'Statistics show the maximum number of minutes the participants have been in the queue before getting help.',
   'statistics-queue-graph': 'Number of students in the queue',
+  'statistics-session-participants-title': 'Lab Session Participants',
+  'statistics-session-participants-main': 'You can search the participants of a specific lab session by selecting the session and entering the date.',
+  'statistics-session-date': 'Date:',
+  'statistics-no-search-results': 'The search did not return any participants.',
 
   'save': 'Save',
   'cancel': 'Cancel',
@@ -154,6 +162,7 @@ export default {
   'create': 'Create New',
   'enable-all': 'Enable All',
   'disable-all': 'Disable All',
+  'search': 'Search',
 
   'weekdays-order': '0,1,2,3,4,5,6',
   'weekdays-short': 'Sun,Mon,Tue,Wed,Thu,Fri,Sat',

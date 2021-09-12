@@ -21,7 +21,8 @@ Course.add({
   statisticsLevel: { type: Types.Number, required: true, 'default': 0, min: -1, max: 2 },
   statisticsQueueLevel: { type: Types.Number, required: true, 'default': 2, min: 0, max: 2 },
   statisticsGraphLevel: { type: Types.Number, required: true, 'default': 2, min: 0, max: 2 },
-  participationPolicy: { type: Types.Number, required: true, 'default': 1, min: 1, max: 3 }
+  participationPolicy: { type: Types.Number, required: true, 'default': 1, min: 1, max: 3 },
+  requireSignUp: { type: Types.Boolean, 'default': false },
 });
 
 // ************************************************************************************************
@@ -30,6 +31,7 @@ Course.schema.method('createSummary', function(user, callback) {
 
   const Queue = keystone.list('Queue');
   const Session = keystone.list('Session');
+  const Participant = keystone.list('Participant');
 
   const self = this;
 
@@ -39,7 +41,8 @@ Course.schema.method('createSummary', function(user, callback) {
     sessions: [],
     locations: [],
     remote: false,
-    local: false
+    local: false,
+    signUpRequired: self.requireSignUp === true && self.statisticsLevel >= 0
   };
 
   const handleSessions = function(sessions) {
@@ -85,8 +88,8 @@ Course.schema.method('createSummary', function(user, callback) {
                   summary.remote = true;
                 }
 
-                if (convertedSession.participationPolicy === 3 || (convertedSession.participationPolicy === 0 && convertedSession.course.participationPolicy === 3)) {                  
-                  summary.local = true;                  
+                if (convertedSession.participationPolicy === 3 || (convertedSession.participationPolicy === 0 && convertedSession.course.participationPolicy === 3)) {
+                  summary.local = true;
                   summary.remote = true;
                   if (item.trim() === convertedSession.remoteMethod) {
                     s.remote = true;
@@ -104,7 +107,22 @@ Course.schema.method('createSummary', function(user, callback) {
 
             });
 
-            callback(err, summary);
+            let sessionCounter = 0;
+            summary.sessions.forEach(function(session) {
+              Participant.model.hasSignedUp(self, session, user._id, session.local ? session.location : 'REMOTELOCATION', function(res) {
+                session.hasSignedUp = res;
+                sessionCounter++;
+                console.log(res)
+                if (sessionCounter === summary.sessions.length) {
+                  callback(err, summary);
+                }
+              });
+            });
+
+            if (summary.sessions.length === 0) {
+              callback(err, summary);
+            }
+
           }
         }
 

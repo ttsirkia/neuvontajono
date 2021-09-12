@@ -116,7 +116,7 @@ const EnterQueue = function(props) {
     const results = props.sessions.filter(
       x => (props.localParticipation && x.local) || (!props.localParticipation && x.remote)
     );
-    if (results.length === 1) {      
+    if (results.length === 1) {
       return <div className="form-group">
         <label htmlFor="location" className="col-sm-3 control-label"><FormattedMessage id="queue-group"/></label>
         <div className="col-sm-6">
@@ -176,7 +176,6 @@ const EnterQueue = function(props) {
     return <div>
       <form className="queue form-horizontal" method="post" action="/neuvontajono/queue">
 
-        <input type="hidden" name="action" value="add"/>
         <input type="hidden" name="_csrf" value={props.csrf}/>
         <input type="hidden" name="sessionId" value={props.selectedSession.id}/>
         <input type="hidden" name="location" value={props.selectedSession.location}/>
@@ -186,60 +185,78 @@ const EnterQueue = function(props) {
           selectedSession={props.selectedSession}
           localParticipation={props.localParticipation}
           handleSessionSelectionChange={props.handleSessionSelectionChange}/>
-        <SingleLocation sessions={props.sessions} 
-          localParticipation={props.localParticipation} 
+        <SingleLocation sessions={props.sessions}
+          localParticipation={props.localParticipation}
           setSelectedSession={props.setSelectedSession}/>
 
         <hr/>
 
-        <Assistants session={props.selectedSession}/>
-
-        <div className="form-group">
-          <label className="col-sm-3 control-label"><FormattedMessage id="queue-current-length"/></label>
-          <div className="col-sm-6">
-            <p className="form-control-static">{props.selectedSession.queueLength}</p>
-          </div>
-        </div>
-
-        <hr/>
-        { props.localParticipation && <div className="form-group">
-          <label htmlFor="row" className="col-sm-3 control-label"><FormattedMessage id="queue-my-row"/></label>
-          <div className="col-sm-6">
-            <select name="row" defaultValue={props.user.previousRow}>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-            </select>
-            <p className="help-block small"><FormattedMessage id="queue-row-direction-help"/></p>
-          </div>
-          <input type="hidden" name="participationMode" value="local"/>
-        </div>
-        }
-
-        {!props.localParticipation && <div className="form-group">
-          <label htmlFor="callURL" className="col-sm-3 control-label"><FormattedMessage id="queue-call-url"/></label>
-          <div className="col-sm-6">
-            <input type="text" className="form-control" name="callURL" id="callURL" defaultValue={props.user.previousCallURL}/>
-            <p className="help-block small"><FormattedMessage id="queue-call-url-help"/></p>
-          </div>
-          <input type="hidden" name="participationMode" value="remote"/>
-        </div>
-        }
-
-        <LanguageSelection languages={props.selectedSession.language} previousLanguage={props.user.previousLanguage}/>
-
-        <hr/>
-
+        {(props.selectedSession.hasSignedUp || !props.localParticipation || !props.signUpRequired) &&
         <div>
-          <button className="add btn btn-primary" onClick={handleEnterClick}><FormattedMessage id="queue-join"/></button>
+          <input type="hidden" name="action" value="add"/>
+          <Assistants session={props.selectedSession}/>
+
+          <div className="form-group">
+            <label className="col-sm-3 control-label"><FormattedMessage id="queue-current-length"/></label>
+            <div className="col-sm-6">
+              <p className="form-control-static">{props.selectedSession.queueLength}</p>
+            </div>
+          </div>
+
+          <hr/>
+
+          {props.localParticipation && <div className="form-group">
+            <label htmlFor="row" className="col-sm-3 control-label"><FormattedMessage id="queue-my-row"/></label>
+            <div className="col-sm-6">
+              <select name="row" defaultValue={props.user.previousRow}>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+              <p className="help-block small"><FormattedMessage id="queue-row-direction-help"/></p>
+            </div>
+            <input type="hidden" name="participationMode" value="local"/>
+          </div>
+          }
+
+          {!props.localParticipation && <div className="form-group">
+            <label htmlFor="callURL" className="col-sm-3 control-label"><FormattedMessage id="queue-call-url"/></label>
+            <div className="col-sm-6">
+              <input type="text" className="form-control" name="callURL" id="callURL" defaultValue={props.user.previousCallURL}/>
+              <p className="help-block small"><FormattedMessage id="queue-call-url-help"/></p>
+            </div>
+            <input type="hidden" name="participationMode" value="remote"/>
+          </div>
+          }
+
+          <LanguageSelection languages={props.selectedSession.language} previousLanguage={props.user.previousLanguage}/>
+
+          <hr/>
+
+          <div>
+            <button className="add btn btn-primary" onClick={handleEnterClick}><FormattedMessage id="queue-join"/></button>
+          </div>
         </div>
+      }
+
+      {(!props.selectedSession.hasSignedUp && props.localParticipation && props.signUpRequired) &&
+      <div>
+        <input type="hidden" name="action" value="signUp"/>
+        <p style={{marginBottom: '20px'}}>
+          <FormattedMessage id="queue-sign-up-required"/>
+        </p>
+        <div>
+          <button className="add btn btn-primary" onClick={handleEnterClick}><FormattedMessage id="queue-sign-up"/></button>
+        </div>
+      </div>
+      }
 
       </form>
     </div>;
@@ -404,7 +421,7 @@ class Queue_ extends React.Component {
       );
         selectedSession = results[0];
     }
-    
+
     if (props.view.queueData.sessions.length > 1 && props.view.queueData.user.previousLocation) {
       props.view.queueData.sessions.forEach((session) => {
         if (session.location === props.view.queueData.user.previousLocation && (localP && session.local) || (!localP && session.remote)) {
@@ -421,7 +438,8 @@ class Queue_ extends React.Component {
       selectedSession: selectedSession,
       local: props.view.queueData.local,
       remote: props.view.queueData.remote,
-      localParticipation: localP
+      localParticipation: localP,
+      signUpRequired: props.view.queueData.signUpRequired
     };
 
     this.handleSessionSelectionChange = this.handleSessionSelectionChange.bind(this);
@@ -491,7 +509,7 @@ class Queue_ extends React.Component {
       localParticipation,
       selectedSession: results[0]
     };
-    
+
     this.setState(newState);
   }
 
@@ -583,6 +601,7 @@ class Queue_ extends React.Component {
         updateQueueData={this.updateQueueData}
         setSelectedSession={this.setSelectedSession}
         user={this.state.user}
+        signUpRequired={this.state.signUpRequired}
         intl={this.props.intl}/>
       <ExitQueue
         csrf={this.props.view.csrf}

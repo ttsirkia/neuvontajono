@@ -225,24 +225,135 @@ const FrequentUsers = function(props) {
 
 // ********************************************************************************************************************
 
+const SessionParticipants = function(props) {
+
+  const searchParticipants = function(e) {
+    e.preventDefault();
+
+    const form = $(event.target).closest('form');
+    const postData = form.serializeArray();
+    const formURL = $(form).attr('action');
+
+    $.post(formURL, postData, function(data) {
+        props.setParticipants(data.participants);
+    });
+
+  };
+
+  return <div>
+    <hr/>
+
+    <h3><FormattedMessage id="statistics-session-participants-title"/></h3>
+
+    <div className="alert alert-info">
+      <FormattedMessage id="statistics-most-active-info"/>
+    </div>
+
+    <p style={{marginBottom: '20px'}}>
+      <FormattedMessage id="statistics-session-participants-main"/>
+    </p>
+
+    <div>
+      <form className="form-horizontal" method="post" action={'#'}>
+        <input type="hidden" name="action" value="search"/>
+        <input type="hidden" name="_csrf" value={props.csrf}/>
+        <input type="hidden" name="dateFormat" value={props.intl.formatMessage({id: 'date-input-format'})}/>
+        <div className="form-group">
+          <label htmlFor="courseName" className="col-sm-2 control-label"><FormattedMessage id="queue-group"/></label>
+          <div className="col-sm-6">
+            <select name="session">
+              {props.sessions.map(function(session) {
+                return <option key={session.id} value={session.id}>{session.name}</option>
+              })}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="date" className="col-sm-2 control-label"><FormattedMessage id="statistics-session-date"/></label>
+          <div className="col-sm-4">
+            <input
+              type="text"
+              className="form-control calendar"
+              name="date"
+              id="date"/>
+            <p className="help-block small"><FormattedMessage id="modify-date-help"/></p>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <div className="col-sm-offset-2 col-sm-10">
+            <button onClick={searchParticipants} className="btn btn-primary">
+              <FormattedMessage id="search"/>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    {props.participantsSearched && props.participants.length > 0 && <div>
+
+      <table className="table table-condensed">
+        <thead>
+          <tr>
+            <th><FormattedMessage id="statistics-th-active-name"/></th>
+            <th><FormattedMessage id="manage-th-location"/></th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            props.participants.map(function(participant, i) {
+              return <tr key={i}>
+                <td>{`${participant.name.first} ${participant.name.last}`}</td>
+                <td>{participant.locations.join(', ').replace(/REMOTELOCATION/g, props.intl.formatMessage({id: 'queue-remote'}))}</td>
+              </tr>;
+            })
+          }
+        </tbody>
+      </table>
+
+    </div>}
+
+    {props.participantsSearched && props.participants.length === 0 && <div>
+      <p>
+        <FormattedMessage id="statistics-no-search-results"/>
+      </p>
+    </div>}
+
+
+  </div>;
+};
+
+// ********************************************************************************************************************
+
 export class Statistics_ extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       selectedIndex: 0,
-      tooltip: null
+      tooltip: null,
+      participantsSearched: false,
+      participants: []
     };
 
     this.selectionChange = this.selectionChange.bind(this);
     this.showTooltip = this.showTooltip.bind(this);
     this.hideTooltip = this.hideTooltip.bind(this);
+    this.setParticipants = this.setParticipants.bind(this);
 
   }
 
   selectionChange(e) {
     this.setState({
       selectedIndex: +e.target.value.split('|')[0]
+    });
+  }
+
+  setParticipants(participants) {
+    this.setState({
+      participantsSearched: true,
+      participants: participants
     });
   }
 
@@ -261,6 +372,13 @@ export class Statistics_ extends React.Component {
 
   hideTooltip() {
     this.setState({tooltip: null});
+  }
+
+  componentDidMount() {
+    $('.calendar').datetimepicker({
+      locale: this.props.view.UILanguage,
+      format: this.props.intl.formatMessage({id: 'date-input-format'})
+    });
   }
 
   render() {
@@ -313,6 +431,18 @@ export class Statistics_ extends React.Component {
         this.props.view.teacher && this.props.view.mostFrequent && this.props.view.mostFrequent.length > 0 && <div>
             <FrequentUsers mostFrequent={this.props.view.mostFrequent}/>
           </div>
+      }
+
+      {
+        this.props.view.teacher && this.props.view.showParticipants && <div>
+          <SessionParticipants
+            sessions={this.props.view.sessionNames}
+            csrf={this.props.view.csrf}
+            intl={this.props.intl}
+            setParticipants={this.setParticipants}
+            participantsSearched={this.state.participantsSearched}
+            participants={this.state.participants}/>
+        </div>
       }
 
       <Tooltip data={this.state.tooltip}/>

@@ -39,6 +39,8 @@ export default {
   'queue-call-url': 'Videoyhteyden osoite:',
   'queue-call-url-help': 'Jos käytössä on videoneuvotteluohjelma (esim. Zoom), voit liittää tähän linkin puheluun liittymiseksi. Jos kenttä on tyhjä, kurssihenkilökunta näkee sähköpostiosoitteesi.',
   'queue-remote': 'Etänä',
+  'queue-sign-up-required': 'Ennen kuin voit jonottaa, tulee sinun ilmoittautua tähän harjoitusryhmään painamalla alla olevaa painiketta.',
+  'queue-sign-up': 'Ilmoittaudu',
 
   'manage-open-projector': 'Avaa videoprojektorinäkymä',
   'manage-projector-help': 'Projektorinäkymässä seuraavaksi vuorossa oleva poistetaan jonosta painamalla välilyöntiä tai napsauttamalla nimeä. Useimmissa selaimissa saa näkymän koko ruutuun painamalla F11-painiketta.',
@@ -73,7 +75,7 @@ export default {
   'modify-language-help': 'Erottele kielet pilkulla. Kentän voi jättää myös tyhjäksi, mutta jos kieliä on vähintään kaksi, on käyttäjän valittava, millä kielellä hän haluaa neuvontaa.',
   'modify-weekday': 'Viikonpäivä:',
   'modify-start-date': 'Alkamispäivä:',
-  'modify-date-help': 'Anna päivämäärä muodossa 1.3.2018.',
+  'modify-date-help': 'Anna päivämäärä muodossa 1.3.2021.',
   'modify-end-date': 'Päättymispäivä:',
   'modify-in-use': 'Käytössä',
   'modify-in-use-help': 'Tällä asetuksella harjoitusryhmän voi poistaa tilapäisesti käytöstä.',
@@ -128,6 +130,8 @@ export default {
   'settings-participation-policy-3': 'Paikan päällä tai etäyhteydellä',
   'settings-participation-policy-help': 'Asetuksen voi määritellä jokaiselle harjoitusryhmälle erikseen. Oletusasetus koskee vain niitä harjoitusryhmiä, joihin on valittu kurssin oletusosallistumistapa.',
   'settings-session-participation-policy': 'Osallistumistapa:',
+  'settings-require-sign-up': 'Edellytä ilmoittautuminen paikan päällä',
+  'settings-require-sign-up-help': 'Jos asetus on päällä, opiskelija ei voi jonottaa ilmoittautumatta ensin ryhmään. Toiminnolla ei ole vaikutusta etäryhmissä tai jos osallistujatilastot on kytketty alla pois käytöstä.',
 
   'statistics-most-active-title': 'Aktiivisimmat opiskelijat',
   'statistics-most-active-info': 'Tämä tilasto näkyy aina vain kurssin opettajille.',
@@ -145,6 +149,10 @@ export default {
   'statistics-maximum-queue-duration': 'Maksimiodotusajat',
   'statistics-maximum-queue-duration-lead': 'Alla on esitetty, kuinka monta minuuttia jonottaminen on enintään kestänyt.',
   'statistics-queue-graph': 'Jonottajien määrä',
+  'statistics-session-participants-title': 'Harjoitusryhmän osallistujat',
+  'statistics-session-participants-main': 'Voit etsiä yksittäiseen harjoitusryhmään osallistuneet valitsemalla harjoitusryhmän ja syöttämällä päivämäärän.',
+  'statistics-session-date': 'Päivämäärä:',
+  'statistics-no-search-results': 'Haulla ei löytynyt yhtään osallistujaa.',
 
   'save': 'Tallenna',
   'cancel': 'Peruuta',
@@ -154,6 +162,7 @@ export default {
   'create': 'Luo uusi',
   'enable-all': 'Ota kaikki käyttöön',
   'disable-all': 'Poista kaikki käytöstä',
+  'search': 'Etsi',
 
   'weekdays-order': '1,2,3,4,5,6,0',
   'weekdays-short': 'su,ma,ti,ke,to,pe,la',

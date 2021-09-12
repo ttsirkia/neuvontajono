@@ -90,6 +90,18 @@ const GeneralSettings = function(props) {
       </div>
     </div>
 
+    <div className="form-group">
+      <div className="col-sm-offset-2 col-sm-6">
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" name="requireSignUp" value="requireSignUp" id="requireSignUp" defaultChecked={props.course.requireSignUp}/>
+            <FormattedMessage id="settings-require-sign-up"/>
+          </label>
+          <p className="help-block small"><FormattedMessage id="settings-require-sign-up-help"/></p>
+        </div>
+      </div>
+    </div>
+
     <hr/>
 
     <div className="form-group">
@@ -130,7 +142,7 @@ const GeneralSettings = function(props) {
     </div>
 
     <div className="form-group">
-      <div className="col-sm-offset-2 col-sm-10">
+      <div className="col-sm-10">
         <button type="submit" name="action" value="saveSettings" className="btn btn-primary"><FormattedMessage id="save"/></button>
       </div>
     </div>
@@ -160,7 +172,7 @@ const SessionRow = function(props) {
       start={props.session.startTime}
       end={props.session.endTime}/></td>
     <td>{props.session.location}</td>
-    
+
     <td>{props.session.language}</td>
     <td>
       <a href={`/neuvontajono/sessions/${props.session.id}/edit`} className="btn btn-xs btn-primary"><FormattedMessage id="edit"/></a>

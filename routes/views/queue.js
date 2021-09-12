@@ -8,6 +8,7 @@ exports = module.exports = function(req, res) {
   const Session = keystone.list('Session');
   const Queue = keystone.list('Queue');
   const SessionStats = keystone.list('SessionStats');
+  const Participant = keystone.list('Participant');
 
   const view = new keystone.View(req, res);
   const locals = res.locals;
@@ -35,7 +36,7 @@ exports = module.exports = function(req, res) {
             req.body.callURL = '';
           }
 
-          if (req.body.participationMode === 'remote') {            
+          if (req.body.participationMode === 'remote') {
             req.body.row = -1;
           } else {
             req.body.callURL = '';
@@ -53,6 +54,41 @@ exports = module.exports = function(req, res) {
                 res.json({ error: true });
               } else {
                 next();
+              }
+
+            });
+
+        } else {
+          return res.json({ error: true });
+        }
+
+      });
+
+  });
+
+  // **********************************************************************************************
+
+  view.on('post', { action: 'signUp' }, function(next) {
+
+    Session.model.findOne({ course: locals.course._id, _id: req.body.sessionId, active: true }).populate('course').exec(
+      function(err, session) {
+
+        if (err) {
+          return res.json({ error: true });
+        }
+
+        if (session && session.isOpen()) {
+
+          Participant.model.addParticipant(locals.course, session, locals.user._id, req.body.location, true,
+            function() {
+
+              if (err) {
+                res.json({ error: true });
+              } else {
+                locals.user.previousLocation = req.body.location;
+                locals.user.save(function() {
+                  next();
+                });
               }
 
             });

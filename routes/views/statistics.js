@@ -19,9 +19,20 @@ exports = module.exports = function(req, res) {
   locals.reactData.view.colors = [];
   locals.reactData.view.mostFrequent = [];
   locals.reactData.view.datasetNames = [];
+  locals.reactData.view.sessionNames = [];
   locals.reactData.view.teacher = locals.teacher === true;
+  locals.reactData.view.UILanguage = locals.reactData.app.language;
+  locals.reactData.view.csrf = locals.csrf_token_value;
+  locals.reactData.view.showParticipants = locals.course.statisticsLevel >= 0;
 
-  locals.additionalResources = `<script src="/neuvontajono/scripts/d3.v5.min.js"></script>`;
+  locals.additionalResources = `
+<script src="/neuvontajono/scripts/d3.v5.min.js"></script>
+<script src="/neuvontajono/scripts/jquery-2.2.4.min.js"></script>
+<script src="/neuvontajono/scripts/moment.min.js"></script>
+<script src="/neuvontajono/scripts/bootstrap.transitions.min.js"></script>
+<script src="/neuvontajono/scripts/bootstrap-datetimepicker.min.js"></script>
+<link href="/neuvontajono/styles/bootstrap-datetimepicker.min.css" rel="stylesheet">
+`;
 
   let priviledgeLevel = 0;
   if (locals.teacher) {
@@ -42,6 +53,28 @@ exports = module.exports = function(req, res) {
     }
 
   });
+
+  // **********************************************************************************************
+
+  view.on('post', { 'action': 'search' }, function() {
+    const response = {
+      participants: []
+    };
+
+    if (!locals.teacher || !req.body.session) {
+      return res.json(response);
+    } else {
+      const date = req.body.date ? moment(req.body.date, [req.body.dateFormat, 'D.M.YYYY']) : moment();
+      const session = req.body.session;
+      Participant.model.getParticipants(locals.course._id, session, date, function(participants) {
+        response.participants = participants;
+        return res.json(response);
+      });
+    }
+
+  });
+
+  // **********************************************************************************************
 
   view.on('get', function(next) {
 
@@ -67,6 +100,8 @@ exports = module.exports = function(req, res) {
 
           const generateWeeks = function(datasets) {
             sessions.forEach(function(session) {
+
+              locals.reactData.view.sessionNames.push({name: session.name, id: session.id});
 
               // Find the actual first and last date for sessions
               const startTime = moment(session.startDate).startOf('day').add(session.queueOpenTime, 'm');

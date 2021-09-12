@@ -89,7 +89,7 @@ Queue.schema.static('addToQueue', function(course, session, user, location, row,
   user.previousParticipationLocal = row >= 0;
   if (row < 0 ) {
     user.previousCallURL = callURL;
-  }  
+  }
   user.save();
 
   if (row < 0) {
@@ -137,7 +137,7 @@ Queue.schema.static('addToQueue', function(course, session, user, location, row,
 
       // Register participant for statistics
       const Participant = keystone.list('Participant');
-      Participant.model.addParticipant(course, session, user._id);
+      Participant.model.addParticipant(course, session, user._id, location);
 
     });
 
@@ -203,7 +203,7 @@ Queue.schema.static('removeFromQueue', function(course, session, queueId, callba
           // User did not get assistance in the session in which originally
           // entered => participant in two sessions
           if (selected && selected._id !== result._id && !saved) {
-            Participant.model.addParticipant(course, selected, result.user);
+            Participant.model.addParticipant(course, selected, result.user, result.location);
             saved = true;
           }
 
