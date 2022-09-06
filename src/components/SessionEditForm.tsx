@@ -234,9 +234,10 @@ export const SessionEditForm: FC<Props> = (props) => {
           <Controller
             control={control}
             name="startDate"
+            rules={{ validate: (x) => x !== null && !isNaN(x.valueOf()) }}
             render={({ field }) => (
               <DatePicker
-                className="form-control"
+                className={clsx("form-control", { "is-invalid": errors.startDate })}
                 dateFormat={getTypedFormattedString(intl, "date-input-format")}
                 onChange={(date) => field.onChange(date)}
                 selected={field.value}
@@ -258,9 +259,10 @@ export const SessionEditForm: FC<Props> = (props) => {
           <Controller
             control={control}
             name="endDate"
+            rules={{ validate: (x) => x !== null && !isNaN(x.valueOf()) }}
             render={({ field }) => (
               <DatePicker
-                className="form-control"
+                className={clsx("form-control", { "is-invalid": errors.endDate })}
                 dateFormat={getTypedFormattedString(intl, "date-input-format")}
                 onChange={(date) => field.onChange(date)}
                 selected={field.value}
