@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    ".next": true,
+    ".swc": true,
+    ".vscode": true,
+    "node_modules": true
+  }
+}
