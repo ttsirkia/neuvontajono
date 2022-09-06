@@ -3,9 +3,13 @@ import { add, differenceInMinutes, eachDayOfInterval, format, parse, startOfDay 
 // ************************************************************************************************
 
 export const getDatesBetween = function (start: Date, end: Date, weekday: number) {
-  return eachDayOfInterval({ start, end })
-    .filter((x) => x.getDay() === weekday || weekday < 0)
-    .map((x) => format(x, "yyyy-MM-dd"));
+  try {
+    return eachDayOfInterval({ start, end })
+      .filter((x) => x.getDay() === weekday || weekday < 0)
+      .map((x) => format(x, "yyyy-MM-dd"));
+  } catch (e) {
+    return [];
+  }
 };
 
 // ************************************************************************************************
