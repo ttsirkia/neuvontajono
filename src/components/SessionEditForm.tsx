@@ -321,7 +321,12 @@ export const SessionEditForm: FC<Props> = (props) => {
           <TypedFormattedMessage id="modify-start-time" />
         </label>
         <div className="col-sm-6">
-          <input type="text" className="form-control" id="startTime" {...register("startTime")} />
+          <input
+            type="text"
+            className={clsx("form-control", { "is-invalid": errors.startTime })}
+            id="startTime"
+            {...register("startTime", { required: true })}
+          />
           <div className="form-text">
             <TypedFormattedMessage id="modify-time-help" />
           </div>
@@ -334,7 +339,12 @@ export const SessionEditForm: FC<Props> = (props) => {
           <TypedFormattedMessage id="modify-end-time" />
         </label>
         <div className="col-sm-6">
-          <input type="text" className="form-control" id="endTime" {...register("endTime")} />
+          <input
+            type="text"
+            className={clsx("form-control", { "is-invalid": errors.endTime })}
+            id="endTime"
+            {...register("endTime", { required: true })}
+          />
         </div>
       </div>
 
@@ -344,7 +354,12 @@ export const SessionEditForm: FC<Props> = (props) => {
           <TypedFormattedMessage id="modify-queue-open-time" />
         </label>
         <div className="col-sm-6">
-          <input type="text" className="form-control" id="queueOpenTime" {...register("queueOpenTime")} />
+          <input
+            type="text"
+            className={clsx("form-control", { "is-invalid": errors.queueOpenTime })}
+            id="queueOpenTime"
+            {...register("queueOpenTime", { required: true })}
+          />
         </div>
       </div>
 
