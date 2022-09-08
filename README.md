@@ -98,7 +98,7 @@ service is configured so that it will be available in port 3002 and with the pre
 Use the following configuration with NGINX:
 
 ```
-location /neuvontajono/ {
+location /neuvontajono {
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   proxy_set_header X-Forwarded-Proto $scheme;
@@ -106,13 +106,11 @@ location /neuvontajono/ {
   proxy_set_header X-NginX-Proxy true;
   proxy_set_header Upgrade $http_upgrade;
   proxy_set_header Connection "upgrade";
-  proxy_pass http://localhost:3002/;
+  proxy_pass http://localhost:3002/neuvontajono;
   proxy_redirect off;
   proxy_http_version 1.1;
 }
 ```
-
-Please notice that this configuration is not the same as in [Koodisailo](https://github.com/ttsirkia/koodisailo).
 
 ## LTI Configuration
 
