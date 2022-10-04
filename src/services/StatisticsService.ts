@@ -62,7 +62,7 @@ export namespace StatisticsService {
     const stats = await SessionStatsModel.find({ course: course.id }).populate("session");
 
     const selectColor = function (value: number, values: number[]) {
-      const filteredValues = values.filter((x) => x > 0);
+      const filteredValues = values.filter((x) => x > 0).sort();
       if (filteredValues.length < 4 || value < 1) {
         return "green";
       } else if (value < filteredValues[~~(filteredValues.length * 0.75)]!) {
