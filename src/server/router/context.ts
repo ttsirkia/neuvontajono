@@ -14,9 +14,8 @@ type Context = trpc.inferAsyncReturnType<typeof createContext>;
 export const createRouter = () =>
   trpc.router<Context>().formatError(({ shape, error }) => {
     if (
-      process.env.NODE_ENV === "production" &&
-      shape.data.code !== "FORBIDDEN" &&
-      shape.data.code !== "UNAUTHORIZED"
+      process.env.NODE_ENV !== "production" ||
+      (shape.data.code !== "FORBIDDEN" && shape.data.code !== "UNAUTHORIZED")
     ) {
       console.log("***** ERROR *****");
       console.log(new Date().toUTCString());
