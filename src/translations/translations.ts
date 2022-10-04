@@ -83,6 +83,7 @@ export type Translations = {
   "modify-queue-open-time": string;
   "modify-remote-method": string;
   "modify-remote-method-help": string;
+  "modify-queue-open-help": string;
 
   "select-no-groups-today": string;
   "select-main-text": string;

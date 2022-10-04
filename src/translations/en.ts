@@ -96,6 +96,8 @@ export const en: Translations = {
   "modify-remote-method": "Method for remote participation:",
   "modify-remote-method-help":
     "Write here the method (for example Zoom) which the students will use to participate the session.",
+  "modify-queue-open-help":
+    "Queue can be opened before the session starts but it needs to open at latest at that time.",
 
   "select-no-groups-today": "No lab sessions today.",
   "select-main-text": "Choose the lab session. The table below lists all the labs today.",

@@ -95,6 +95,8 @@ export const fi: Translations = {
   "modify-queue-open-time": "Jono avautuu:",
   "modify-remote-method": "Etäosallistumisen tapa:",
   "modify-remote-method-help": "Kirjoita tähän, miten harjoitusryhmään osallistutaan etäyhteydellä (esim. Zoom).",
+  "modify-queue-open-help":
+    "Jonon voi avata jo ennen harjoitusryhmän alkamista. Jonon tulee avautua viimeistään harjoitusryhmän alkaessa.",
 
   "select-no-groups-today": "Ei harjoitusryhmiä tänään.",
   "select-main-text": "Valitse harjoitusryhmä. Alla olevassa taulukossa on kaikki tänään pidettävät harjoitusryhmät.",

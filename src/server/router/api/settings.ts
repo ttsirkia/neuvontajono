@@ -130,7 +130,8 @@ export const settingsRouter = createRouter()
       if (
         isNaN(newData.startDate!.valueOf()) ||
         isNaN(newData.endDate!.valueOf()) ||
-        newData.startTime! < newData.queueOpenTime!
+        newData.startTime! < newData.queueOpenTime! ||
+        newData.startTime! >= newData.endTime!
       ) {
         throw new TRPCError({ code: "BAD_REQUEST" });
       }

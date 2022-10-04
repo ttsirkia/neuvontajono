@@ -7,7 +7,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useIntl } from "react-intl";
 
 import { SessionDTO } from "../models/Session";
-import { getDatesBetween } from "../utils/dates";
+import { convertTimeStringToInt, getDatesBetween } from "../utils/dates";
 import { getTypedFormattedString, TypedFormattedMessage } from "../utils/translation";
 import { Stringified } from "../utils/typeUtils";
 
@@ -57,6 +57,7 @@ export const SessionEditForm: FC<Props> = (props) => {
     control,
     watch,
     getValues,
+    setValue,
     formState: { errors },
   } = useForm<SessionDTOWithDates>({
     defaultValues: props.values,
@@ -142,7 +143,12 @@ export const SessionEditForm: FC<Props> = (props) => {
             <TypedFormattedMessage id="modify-location" />
           </label>
           <div className="col-sm-6">
-            <input type="text" className="form-control" id="locations" {...register("locations")} />
+            <input
+              type="text"
+              className={clsx("form-control", { "is-invalid": errors.locations })}
+              id="locations"
+              {...register("locations", { required: true })}
+            />
             <div className="form-text">
               <TypedFormattedMessage id="modify-location-help" />
             </div>
@@ -327,7 +333,17 @@ export const SessionEditForm: FC<Props> = (props) => {
             type="text"
             className={clsx("form-control", { "is-invalid": errors.startTime })}
             id="startTime"
-            {...register("startTime", { required: true })}
+            {...register("startTime", {
+              required: true,
+              validate: (val) => {
+                return convertTimeStringToInt(val, getTypedFormattedString(intl, "time-input-format")) >= 0;
+              },
+            })}
+            onBlur={() => {
+              if (!getValues("queueOpenTime")) {
+                setValue("queueOpenTime", getValues("startTime"));
+              }
+            }}
           />
           <div className="form-text">
             <TypedFormattedMessage id="modify-time-help" />
@@ -345,7 +361,16 @@ export const SessionEditForm: FC<Props> = (props) => {
             type="text"
             className={clsx("form-control", { "is-invalid": errors.endTime })}
             id="endTime"
-            {...register("endTime", { required: true })}
+            {...register("endTime", {
+              required: true,
+              validate: (val) => {
+                return (
+                  convertTimeStringToInt(val, getTypedFormattedString(intl, "time-input-format")) >= 0 &&
+                  convertTimeStringToInt(val, getTypedFormattedString(intl, "time-input-format")) >
+                    convertTimeStringToInt(getValues("startTime"), getTypedFormattedString(intl, "time-input-format"))
+                );
+              },
+            })}
           />
         </div>
       </div>
@@ -360,8 +385,20 @@ export const SessionEditForm: FC<Props> = (props) => {
             type="text"
             className={clsx("form-control", { "is-invalid": errors.queueOpenTime })}
             id="queueOpenTime"
-            {...register("queueOpenTime", { required: true })}
+            {...register("queueOpenTime", {
+              required: true,
+              validate: (val) => {
+                return (
+                  convertTimeStringToInt(val, getTypedFormattedString(intl, "time-input-format")) >= 0 &&
+                  convertTimeStringToInt(val, getTypedFormattedString(intl, "time-input-format")) <=
+                    convertTimeStringToInt(getValues("startTime"), getTypedFormattedString(intl, "time-input-format"))
+                );
+              },
+            })}
           />
+          <div className="form-text">
+            <TypedFormattedMessage id="modify-queue-open-help" />
+          </div>
         </div>
       </div>
 
