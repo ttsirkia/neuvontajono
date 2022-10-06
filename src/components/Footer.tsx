@@ -9,7 +9,7 @@ export const Footer: FC = () => {
         </span>
         <a href="https://wiki.aalto.fi/display/EDIT/EDIT">EDIT team</a>
         <br />
-        <span className="author">v 3.0.1 | Teemu Sirkiä, 2022</span>
+        <span className="author">v 3.0.2 | Teemu Sirkiä, 2022</span>
       </div>
     </footer>
   );
