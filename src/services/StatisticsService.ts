@@ -270,7 +270,6 @@ export namespace StatisticsService {
       });
       let allValues: number[] = [];
       queueCount.forEach((x) => (allValues = [...x.values, ...allValues]));
-      console.log("All", allValues);
       queueCount.forEach((x) => {
         x.values.forEach((y, i) => (x.colors[i] = selectColor(y, allValues)));
       });

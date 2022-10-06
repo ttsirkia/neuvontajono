@@ -129,7 +129,6 @@ const ManageSessionProjectorPage: NextPageWithLayout = () => {
             setCurrentShownPicture(json.course);
           })
           .catch(function (ex) {
-            console.log(ex);
             toast.error(getTypedFormattedString(intl, "manage-projector-conf-fail"));
           });
       }
