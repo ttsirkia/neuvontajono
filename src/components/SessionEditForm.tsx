@@ -147,7 +147,11 @@ export const SessionEditForm: FC<Props> = (props) => {
               type="text"
               className={clsx("form-control", { "is-invalid": errors.locations })}
               id="locations"
-              {...register("locations", { required: true })}
+              {...register("locations", {
+                validate: (val) => {
+                  return showFields.location && val.length > 0;
+                },
+              })}
             />
             <div className="form-text">
               <TypedFormattedMessage id="modify-location-help" />
@@ -163,7 +167,16 @@ export const SessionEditForm: FC<Props> = (props) => {
             <TypedFormattedMessage id="modify-remote-method" />
           </label>
           <div className="col-sm-6">
-            <input type="text" className="form-control" id="locations" {...register("remoteMethod")} />
+            <input
+              type="text"
+              className={clsx("form-control", { "is-invalid": errors.remoteMethod })}
+              id="locations"
+              {...register("remoteMethod", {
+                validate: (val) => {
+                  return showFields.method && val.length > 0;
+                },
+              })}
+            />
             <div className="form-text">
               <TypedFormattedMessage id="modify-remote-method-help" />
             </div>

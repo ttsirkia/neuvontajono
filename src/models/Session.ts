@@ -165,6 +165,10 @@ export class Session extends defaultClasses.FindOrCreate implements Base {
   public getAllVisibleLocations(this: Session, course: Course) {
     let items = stringAsList(this.location);
 
+    if (this.participationPolicy === 2 || (this.participationPolicy === 0 && course.participationPolicy === 2)) {
+      return [this.remoteMethod || this.location];
+    }
+
     if (this.participationPolicy === 3 || (this.participationPolicy === 0 && course.participationPolicy === 3)) {
       if (this.remoteMethod) {
         items.push(this.remoteMethod);
