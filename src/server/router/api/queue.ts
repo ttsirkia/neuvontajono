@@ -31,7 +31,7 @@ export const queueRouter = createRouter()
   // ************************************************************************************************
   .mutation("addMeToQueue", {
     input: z.object({
-      sessionId: z.string(),
+      sessionId: z.string().regex(/^[a-fA-F0-9]{24}$/),
       row: z.number().min(-1).max(10).int(),
       location: z.string(),
       language: z.string(),
@@ -66,7 +66,7 @@ export const queueRouter = createRouter()
   // ************************************************************************************************
   .mutation("signUp", {
     input: z.object({
-      sessionId: z.string(),
+      sessionId: z.string().regex(/^[a-fA-F0-9]{24}$/),
       location: z.string(),
     }),
     async resolve({ input, ctx }) {

@@ -83,7 +83,10 @@ export const settingsRouter = createRouter()
   // ************************************************************************************************
   .mutation("createOrUpdateSession", {
     input: z.object({
-      sessionId: z.string().optional(),
+      sessionId: z
+        .string()
+        .regex(/^[a-fA-F0-9]{24}$/)
+        .optional(),
       name: z.string().min(1),
       locations: z.string(),
       languages: z.string(),
@@ -169,7 +172,7 @@ export const settingsRouter = createRouter()
   })
   // ************************************************************************************************
   .mutation("deleteSession", {
-    input: z.object({ sessionId: z.string() }),
+    input: z.object({ sessionId: z.string().regex(/^[a-fA-F0-9]{24}$/) }),
     async resolve({ input, ctx }) {
       const courseSession = await QueueService.findSessionById(ctx.course, input.sessionId);
       if (courseSession) {
@@ -180,7 +183,7 @@ export const settingsRouter = createRouter()
   })
   // ************************************************************************************************
   .query("getSingleSession", {
-    input: z.object({ sessionId: z.string() }),
+    input: z.object({ sessionId: z.string().regex(/^[a-fA-F0-9]{24}$/) }),
     async resolve({ input, ctx }) {
       const courseSession = await QueueService.findSessionById(ctx.course, input.sessionId);
       if (courseSession) {

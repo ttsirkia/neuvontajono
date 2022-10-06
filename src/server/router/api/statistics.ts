@@ -96,7 +96,7 @@ export const statisticsRouter = createRouter()
   // ************************************************************************************************
   .mutation("getParticipants", {
     input: z.object({
-      session: z.string(),
+      session: z.string().regex(/^[a-fA-F0-9]{24}$/),
       date: z.number().int(),
     }),
     async resolve({ input, ctx }) {

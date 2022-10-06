@@ -32,7 +32,7 @@ export const manageQueueRouter = createRouter()
   })
   // ************************************************************************************************
   .query("getSessionData", {
-    input: z.object({ sessionId: z.string() }),
+    input: z.object({ sessionId: z.string().regex(/^[a-fA-F0-9]{24}$/) }),
     async resolve({ ctx, input }) {
       const courseSession = await QueueService.findSessionById(ctx.course, input.sessionId);
       if (courseSession) {
@@ -43,7 +43,7 @@ export const manageQueueRouter = createRouter()
   })
   // ************************************************************************************************
   .mutation("removeFromQueueById", {
-    input: z.object({ queueId: z.string() }),
+    input: z.object({ queueId: z.string().regex(/^[a-fA-F0-9]{24}$/) }),
     async resolve({ input, ctx }) {
       await QueueService.removeFromQueueById(ctx.course, input.queueId);
       return true;
@@ -51,7 +51,7 @@ export const manageQueueRouter = createRouter()
   })
   // ************************************************************************************************
   .mutation("clearQueue", {
-    input: z.object({ sessionId: z.string() }),
+    input: z.object({ sessionId: z.string().regex(/^[a-fA-F0-9]{24}$/) }),
     async resolve({ input, ctx }) {
       const courseSession = await QueueService.findSessionById(ctx.course, input.sessionId);
       if (courseSession) {
