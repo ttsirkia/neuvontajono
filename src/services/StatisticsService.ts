@@ -68,7 +68,7 @@ export namespace StatisticsService {
       } else if (value < filteredValues[~~(filteredValues.length * 0.75)]!) {
         return "green";
       } else if (value < filteredValues[~~(filteredValues.length * 0.9)]!) {
-        return "yellow";
+        return "orange";
       } else {
         return "red";
       }
