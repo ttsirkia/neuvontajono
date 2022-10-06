@@ -15,6 +15,7 @@ import { trpc } from "../utils/trpc";
 
 const selectBestSession = (
   currentSession: SessionDTOWithLengthAndLocalRemote | undefined,
+  selectedName: string,
   previousLocation: string,
   previousInLocal: boolean,
   sessions: SessionDTOWithLengthAndLocalRemote[]
@@ -25,8 +26,11 @@ const selectBestSession = (
   } else if (previousInLocal && sessions.some((x) => x.local)) {
     const options = sessions.filter((x) => x.local && x.location === previousLocation);
     const byId = options.filter((x) => x.id === currentSession?.id);
+    const byName = options.filter((x) => x.name === selectedName);
 
-    if (byId.length === 1) {
+    if (byName.length > 0) {
+      selected = byName[0];
+    } else if (byId.length === 1) {
       selected = byId[0];
     } else if (options.length > 0) {
       selected = options[0];
@@ -36,7 +40,11 @@ const selectBestSession = (
   } else if (!previousInLocal && sessions.some((x) => x.remote)) {
     const options = sessions.filter((x) => x.remote && x.location === previousLocation);
     const byId = options.filter((x) => x.id === currentSession?.id);
-    if (byId.length === 1) {
+    const byName = options.filter((x) => x.name === selectedName);
+
+    if (byName.length > 0) {
+      selected = byName[0];
+    } else if (byId.length === 1) {
       selected = byId[0];
     } else if (options.length > 0) {
       selected = options[0];
@@ -79,6 +87,7 @@ const QueuePage: NextPage = () => {
   } = useForm();
 
   const participationMode = watch("participationMode");
+  const location = watch("location");
 
   // ************************************************************************************************
 
@@ -90,6 +99,7 @@ const QueuePage: NextPage = () => {
 
       const best = selectBestSession(
         undefined,
+        "",
         userAndSessionStatusQuery.data.previousLocation,
         userAndSessionStatusQuery.data.previousParticipationLocal,
         userAndSessionStatusQuery.data.sessions
@@ -101,7 +111,7 @@ const QueuePage: NextPage = () => {
           userAndSessionStatusQuery.data.sessions.filter((x) => (x.local && best.local) || (x.remote && best.remote))
         );
         setValue("participationMode", best.local ? "local" : "remote");
-        setValue("location", `${best.id}|${best.location}`);
+        setValue("location", `${best.id}|${best.location}|${best.name}`);
         setValue("row", userAndSessionStatusQuery.data.previousRow.toString());
         setValue("callURL", userAndSessionStatusQuery.data.previousCallURL);
         if (best.languages.indexOf(userAndSessionStatusQuery.data.previousLanguage) >= 0) {
@@ -121,6 +131,7 @@ const QueuePage: NextPage = () => {
     const pMode = getValues("participationMode");
     const best = selectBestSession(
       selectedSession,
+      (getValues("location") ?? "").split("|")[2],
       (getValues("location") ?? "").split("|")[1],
       pMode === "local",
       userAndSessionStatusQuery.data.sessions
@@ -134,10 +145,10 @@ const QueuePage: NextPage = () => {
       setFilteredSessions(filtered);
       setValue("participationMode", best.local ? "local" : "remote");
       if (best.local || filtered.length > 1) {
-        setValue("location", `${best.id}|${best.location}`);
+        setValue("location", `${best.id}|${best.location}|${best.name}`);
       }
     }
-  }, [getValues, selectedSession, setValue, userAndSessionStatusQuery.data, participationMode]);
+  }, [getValues, selectedSession, setValue, userAndSessionStatusQuery.data, location, participationMode]);
 
   // ************************************************************************************************
 
@@ -336,7 +347,7 @@ const QueuePage: NextPage = () => {
                     <div className="col-md-6">
                       <select style={{ fontSize: "125%" }} id="row" className="form-select" {...register("location")}>
                         {filteredSessions.map((x) => (
-                          <option key={`${x.id}|${x.location}`} value={`${x.id}|${x.location}`}>
+                          <option key={`${x.id}|${x.location}|${x.name}`} value={`${x.id}|${x.location}|${x.name}`}>
                             {x.name + " (" + x.location + ")"}
                           </option>
                         ))}
