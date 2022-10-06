@@ -103,11 +103,13 @@ export namespace StatisticsService {
       const lastWeek = format(maxDate!, "I/RRRR");
       let curWeek = format(minDate!, "I/RRRR");
       let curDay = minDate!;
-      do {
-        weeks.push(curWeek);
-        curDay = add(curDay, { days: 7 });
-        curWeek = format(curDay, "I/RRRR");
-      } while (curWeek !== lastWeek);
+      if (lastWeek !== curWeek) {
+        do {
+          weeks.push(curWeek);
+          curDay = add(curDay, { days: 7 });
+          curWeek = format(curDay, "I/RRRR");
+        } while (curWeek !== lastWeek);
+      }
       weeks.push(lastWeek);
     }
 
