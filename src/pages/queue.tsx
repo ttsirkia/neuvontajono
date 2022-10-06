@@ -25,6 +25,7 @@ const selectBestSession = (
   } else if (previousInLocal && sessions.some((x) => x.local)) {
     const options = sessions.filter((x) => x.local && x.location === previousLocation);
     const byId = options.filter((x) => x.id === currentSession?.id);
+
     if (byId.length === 1) {
       selected = byId[0];
     } else if (options.length > 0) {
@@ -78,7 +79,6 @@ const QueuePage: NextPage = () => {
   } = useForm();
 
   const participationMode = watch("participationMode");
-  const selectedLocation = watch("location");
 
   // ************************************************************************************************
 
@@ -137,7 +137,7 @@ const QueuePage: NextPage = () => {
         setValue("location", `${best.id}|${best.location}`);
       }
     }
-  }, [getValues, selectedSession, setValue, userAndSessionStatusQuery.data, participationMode, selectedLocation]);
+  }, [getValues, selectedSession, setValue, userAndSessionStatusQuery.data, participationMode]);
 
   // ************************************************************************************************
 
