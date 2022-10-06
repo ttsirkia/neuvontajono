@@ -76,7 +76,7 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         socket.on("staffQueueRequest", async (sessionId) => {
           const courseSession = await QueueService.findSessionById(course, sessionId);
           if (courseSession && richSession.isStaff) {
-            courseSession.getAllLocations(course).forEach((x) => {
+            courseSession.getAllVisibleLocations(course).forEach((x) => {
               socket.join("Staff|" + x.trim() + "|" + course.id);
             });
           }
@@ -84,7 +84,7 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         socket.on("staffQueueLeaveRequest", async (sessionId) => {
           const courseSession = await QueueService.findSessionById(course, sessionId);
           if (courseSession && richSession.isStaff) {
-            courseSession.getAllLocations(course).forEach((x) => {
+            courseSession.getAllVisibleLocations(course).forEach((x) => {
               socket.leave("Staff|" + x.trim() + "|" + course.id);
             });
           }
