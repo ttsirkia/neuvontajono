@@ -166,15 +166,20 @@ export namespace StatisticsService {
             values.stringValues[weekIndex[week] ?? 0] = "x";
           });
 
-        values.values.forEach((x, i) => (values.colors[i] = selectColor(x, values.values)));
         values.values.forEach(
           (x, i) =>
             (values.stringValues[i] =
               values.stringValues[i] === "-" ? "-" : role === "student" && x < 5 ? "<5" : x.toString())
         );
 
-        participationCounts.push({ ...values, values: [] });
+        participationCounts.push({ ...values });
       });
+      let allValues: number[] = [];
+      participationCounts.forEach((x) => (allValues = [...x.values, ...allValues]));
+      participationCounts.forEach((x) => {
+        x.values.forEach((y, i) => (x.colors[i] = selectColor(y, allValues)));
+      });
+      participationCounts.forEach((x) => (x.values = []));
       availableStats.push({ name: "statistics-participant-count", values: participationCounts });
     }
 
@@ -208,15 +213,20 @@ export namespace StatisticsService {
             values.stringValues[weekIndex[week] ?? 0] = "x";
           });
 
-        values.values.forEach((x, i) => (values.colors[i] = selectColor(x, values.values)));
         values.values.forEach(
           (x, i) =>
             (values.stringValues[i] =
               values.stringValues[i] === "-" ? "-" : role === "student" && x > 30 ? ">30" : x.toString())
         );
 
-        maximumQueueDuration.push({ ...values, values: [] });
+        maximumQueueDuration.push({ ...values });
       });
+      let allValues: number[] = [];
+      maximumQueueDuration.forEach((x) => (allValues = [...x.values, ...allValues]));
+      maximumQueueDuration.forEach((x) => {
+        x.values.forEach((y, i) => (x.colors[i] = selectColor(y, allValues)));
+      });
+      maximumQueueDuration.forEach((x) => (x.values = []));
       availableStats.push({ name: "statistics-maximum-queue-duration", values: maximumQueueDuration });
     }
 
@@ -250,15 +260,21 @@ export namespace StatisticsService {
             values.stringValues[weekIndex[week] ?? 0] = "x";
           });
 
-        values.values.forEach((x, i) => (values.colors[i] = selectColor(x, values.values)));
         values.values.forEach(
           (x, i) =>
             (values.stringValues[i] =
               values.stringValues[i] === "-" ? "-" : role === "student" && x < 10 ? "<10" : x.toString())
         );
 
-        queueCount.push({ ...values, values: [] });
+        queueCount.push({ ...values });
       });
+      let allValues: number[] = [];
+      queueCount.forEach((x) => (allValues = [...x.values, ...allValues]));
+      console.log("All", allValues);
+      queueCount.forEach((x) => {
+        x.values.forEach((y, i) => (x.colors[i] = selectColor(y, allValues)));
+      });
+      queueCount.forEach((x) => (x.values = []));
       availableStats.push({ name: "statistics-queue-count", values: queueCount });
     }
 
@@ -305,15 +321,20 @@ export namespace StatisticsService {
             values.stringValues[weekIndex[week] ?? 0] = "x";
           });
 
-        values.values.forEach((x, i) => (values.colors[i] = selectColor(x, values.values)));
         values.values.forEach(
           (x, i) =>
             (values.stringValues[i] =
               values.stringValues[i] === "-" ? "-" : role === "student" && x > 30 ? ">30" : x.toString())
         );
 
-        medianQueueDuration.push({ ...values, values: [] });
+        medianQueueDuration.push({ ...values });
       });
+      let allValues: number[] = [];
+      medianQueueDuration.forEach((x) => (allValues = [...x.values, ...allValues]));
+      medianQueueDuration.forEach((x) => {
+        x.values.forEach((y, i) => (x.colors[i] = selectColor(y, allValues)));
+      });
+      medianQueueDuration.forEach((x) => (x.values = []));
       availableStats.push({ name: "statistics-median-queue-duration", values: medianQueueDuration });
     }
 
