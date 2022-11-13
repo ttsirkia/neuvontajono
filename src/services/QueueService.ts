@@ -180,23 +180,26 @@ export namespace QueueService {
     if (queueItem && isDocument(queueItem.session)) {
       const duration = differenceInSeconds(new Date(), queueItem.enteredAt);
       StatisticsService.addQueueDuration(queueItem.session, course, duration);
+
       const curSessions = await getCurrentSessions(course);
-
       let selected: Session | null = null;
-      let saved = false;
-
-      curSessions.forEach(async (x) => {
+      curSessions.forEach((x, i) => {
         const foundCorrect = x.id === queueItem.session?.id;
-        const foundInSameLocation = selected === null && x.getAllLocations(course).indexOf(queueItem.location) >= 0;
+        const foundInSameLocation =
+          selected === null && x.getAllVisibleLocations(course).indexOf(queueItem.location) >= 0;
         if (foundCorrect || foundInSameLocation) {
           selected = x;
         }
 
         // User did not get assistance in the session in which originally
         // entered => participant in two sessions
-        if (selected && selected.id !== queueItem.session?.id && !saved && isDocument(queueItem.user)) {
-          await addParticipant(course, x, queueItem.user, queueItem.location, false);
-          saved = true;
+        if (
+          i === curSessions.length - 1 &&
+          selected &&
+          selected.id !== queueItem.session?.id &&
+          isDocument(queueItem.user)
+        ) {
+          addParticipant(course, selected, queueItem.user, queueItem.location, true);
         }
       });
 
@@ -317,12 +320,29 @@ export namespace QueueService {
       .getAllVisibleLocations(course)
       .forEach((x) => (queueOpenInLocation = queueOpenInLocation || allOpenLocations.indexOf(x) >= 0));
 
+    // This will be used in projector mode to show the correct session-specific image
+    // regardless of which session was originally opened if the following sessions
+    // are in the same location
+    let openQueueName = "";
+    if (session.isOpen) {
+      openQueueName = session.name;
+    } else {
+      allSessions.forEach((x) => {
+        session.getAllLocations(course).forEach((y) => {
+          if (x.getAllVisibleLocations(course).indexOf(y) >= 0) {
+            openQueueName = x.name;
+          }
+        });
+      });
+    }
+
     return {
       name: session.name,
       id: session.id,
       locations: session.getAllVisibleLocations(course),
       projectorConf: course.projectorConf ?? "",
       queueOpen: queueOpenInLocation,
+      openQueueName,
       inQueue: inQueue.map((x, i) => {
         const queueUser: QueueUser = {
           name: isDocument(x.user) ? x.user.fullName : "?",

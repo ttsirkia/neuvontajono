@@ -210,9 +210,9 @@ const ManageSessionProjectorPage: NextPageWithLayout = () => {
         if (
           sessionDataQuery.data.queueOpen &&
           projectorConf.current.sessions &&
-          projectorConf.current.sessions[sessionDataQuery.data.name]
+          projectorConf.current.sessions[sessionDataQuery.data.openQueueName]
         ) {
-          imageSrc = projectorConf.current.sessions[sessionDataQuery.data.name];
+          imageSrc = projectorConf.current.sessions[sessionDataQuery.data.openQueueName];
         }
 
         // Time-specific picture

@@ -15,6 +15,7 @@ declare global {
 export type StaffQueueData = {
   name: string;
   id: string;
+  openQueueName: string;
   locations: string[];
   projectorConf: string;
   queueOpen: boolean;
