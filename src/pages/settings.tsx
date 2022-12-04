@@ -120,6 +120,19 @@ const SettingsPage: NextPage = () => {
             </div>
           </div>
 
+          {/* Course url */}
+          <div className="row mb-4">
+            <label htmlFor="courseURL" className="col-sm-2 col-form-label">
+              <TypedFormattedMessage id="settings-course-url" />
+            </label>
+            <div className="col-sm-6">
+              <input type="text" className="form-control" id="courseURL" {...register("url")} />
+              <div className="form-text">
+                <TypedFormattedMessage id="settings-course-url-help" />
+              </div>
+            </div>
+          </div>
+
           {/* Course id */}
           <div className="row mb-4">
             <label className="col-sm-2 col-form-label">
@@ -132,19 +145,6 @@ const SettingsPage: NextPage = () => {
                 className="form-control-plaintext"
                 defaultValue={settingsQuery.data.courseId}
               />
-            </div>
-          </div>
-
-          {/* Course url */}
-          <div className="row mb-4">
-            <label htmlFor="courseURL" className="col-sm-2 col-form-label">
-              <TypedFormattedMessage id="settings-course-url" />
-            </label>
-            <div className="col-sm-6">
-              <input type="text" className="form-control" id="courseURL" {...register("url")} />
-              <div className="form-text">
-                <TypedFormattedMessage id="settings-course-url-help" />
-              </div>
             </div>
           </div>
 
@@ -430,7 +430,7 @@ const SettingsPage: NextPage = () => {
                     {s.excludedDates.length > 0 && (
                       <tr>
                         <td className="details-row" colSpan={6}>
-                          <TypedFormattedMessage id="settings-excluded-dates" />
+                          <TypedFormattedMessage id="settings-excluded-dates" />{" "}
                           {s.excludedDates.map((x, i) => (
                             <span key={x}>
                               {i > 0 ? ", " : ""}

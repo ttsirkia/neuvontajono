@@ -433,7 +433,9 @@ const ManageSessionPage: NextPage = () => {
               className="btn btn-success"
               target="_blank"
               onClick={() => {
-                setNotificationMode("disabled");
+                if (notificationMode === "enabled") {
+                  setNotificationMode("disabled");
+                }
               }}
             >
               <TypedFormattedMessage id="manage-open-projector" />

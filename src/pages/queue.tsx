@@ -421,7 +421,7 @@ const QueuePage: NextPage = () => {
 
               {selectedSession.hasSignedUp && (
                 <>
-                  {selectedSession.languages.length > 0 && (
+                  {selectedSession.languages.length > 1 && (
                     <div className="row mb-4">
                       <p className="fw-bold">
                         <TypedFormattedMessage id="queue-multiple-languages" />
@@ -437,6 +437,22 @@ const QueuePage: NextPage = () => {
                             </option>
                           ))}
                         </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedSession.languages.length === 1 && (
+                    <div className="row mb-4">
+                      <label htmlFor="language" className="col-md-3 col-form-label">
+                        <TypedFormattedMessage id="queue-language" />
+                      </label>
+                      <div className="col-md-3">
+                        <input
+                          type="text"
+                          readOnly
+                          className="form-control-plaintext"
+                          defaultValue={selectedSession.languages[0]}
+                        />
                       </div>
                     </div>
                   )}

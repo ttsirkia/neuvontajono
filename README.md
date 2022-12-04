@@ -183,3 +183,7 @@ This allow easily changing the user, course, roles (`student`, `staff` or `teach
 The source code is formatted with [Prettier](https://prettier.io/) (used as a plugin inside [VS Code](https://code.visualstudio.com/))
 using maximum line length of 120 characters and two spaces to indent code.
 
+## Instructions
+
+The instructions for using Neuvontajono can be found [here](docs/README.md).
+
