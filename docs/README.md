@@ -7,7 +7,7 @@ This documentation will describe how different user roles can use Neuvontajono.
 ### General
 
 In order to use Neuvontajono, you need to login to the system via a course
-management system. When you launch Neuontajono in the course management system,
+management system. When you launch Neuvontajono in the course management system,
 it will automatically receive your identity and role (student, staff member or
 teacher) in the course.
 
