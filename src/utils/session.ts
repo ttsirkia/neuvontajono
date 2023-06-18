@@ -18,6 +18,8 @@ export type SessionData = {
   userId?: string;
   language: string;
   role: Role;
+  ltiKeyId?: string;
+  ltiNonce?: string;
 };
 
 export type RichSessionData = {

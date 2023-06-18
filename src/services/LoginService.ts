@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { dbConnect } from "../utils/database";
-import { getSession, Role } from "../utils/session";
+import { Role, getSession } from "../utils/session";
 import { CourseService } from "./CourseService";
 import { UserService } from "./UserService";
 

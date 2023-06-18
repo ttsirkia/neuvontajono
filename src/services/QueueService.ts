@@ -1,10 +1,10 @@
 import { isDocument } from "@typegoose/typegoose";
 import { add, differenceInSeconds, format, startOfDay, startOfISOWeek } from "date-fns";
 import { Course } from "../models/Course";
-import { ParticipantModel, QueueModel, SessionModel, UserModel } from "../models/modelClasses";
 import { QueueUser } from "../models/Queue";
 import { Session, SessionDTOWithLength, SessionDTOWithLengthAndLocalRemote } from "../models/Session";
 import { User } from "../models/User";
+import { ParticipantModel, QueueModel, SessionModel, UserModel } from "../models/modelClasses";
 import { dbConnect } from "../utils/database";
 import { getDatesBetween } from "../utils/dates";
 import { StatisticsService } from "./StatisticsService";
@@ -524,6 +524,9 @@ export namespace QueueService {
       };
 
       sockets.forEach(async (s) => {
+        if (!s.data.session.userId) {
+          return;
+        }
         const userId: string = s.data.session.userId;
         const user = await UserService.find(userId);
         if (user) {
