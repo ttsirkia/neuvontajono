@@ -340,7 +340,7 @@ const ManageSessionPage: NextPage = () => {
     return (
       <div>
         <Head>
-          <title key="title">{`${title} (${sessionDataQuery.data.inQueue.length})`}</title>
+          <title key="title">{`(${sessionDataQuery.data.inQueue.length}) ${title}`}</title>
         </Head>
         <h2>{sessionDataQuery.data.name}</h2>
         <h4>{sessionDataQuery.data.locations.join(", ")}</h4>
