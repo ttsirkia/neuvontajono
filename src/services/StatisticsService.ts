@@ -1,8 +1,8 @@
 import { isDocument } from "@typegoose/typegoose";
 import { add, format, max, min, nextDay, previousDay, startOfDay } from "date-fns";
 import { Course } from "../models/Course";
-import { ParticipantModel, SessionModel, SessionStatsModel } from "../models/modelClasses";
 import { Session } from "../models/Session";
+import { ParticipantModel, SessionModel, SessionStatsModel } from "../models/modelClasses";
 import { dbConnect } from "../utils/database";
 import { Role } from "../utils/session";
 import { QueueService } from "./QueueService";
@@ -118,6 +118,7 @@ export namespace StatisticsService {
 
     type SessionAndColorValues = {
       session: string;
+      id: string;
       values: number[];
       stringValues: string[];
       colors: string[];
@@ -125,12 +126,14 @@ export namespace StatisticsService {
 
     type SessionAndStringColorValues = {
       session: string;
+      id: string;
       stringValues: string[];
       colors: string[];
     };
 
     type SessionAndValues = {
       session: string;
+      id: string;
       values: string[][];
     };
 
@@ -148,6 +151,7 @@ export namespace StatisticsService {
       sessions.forEach((s) => {
         const values: SessionAndColorValues = {
           session: s.name,
+          id: s._id.toString(),
           values: [],
           colors: [],
           stringValues: [],
@@ -195,6 +199,7 @@ export namespace StatisticsService {
       sessions.forEach((s) => {
         const values: SessionAndColorValues = {
           session: s.name,
+          id: s._id.toString(),
           values: [],
           colors: [],
           stringValues: [],
@@ -242,6 +247,7 @@ export namespace StatisticsService {
       sessions.forEach((s) => {
         const values: SessionAndColorValues = {
           session: s.name,
+          id: s._id.toString(),
           values: [],
           colors: [],
           stringValues: [],
@@ -289,6 +295,7 @@ export namespace StatisticsService {
       sessions.forEach((s) => {
         const values: SessionAndColorValues = {
           session: s.name,
+          id: s._id.toString(),
           values: [],
           colors: [],
           stringValues: [],
@@ -349,6 +356,7 @@ export namespace StatisticsService {
       sessions.forEach((s) => {
         const values: SessionAndValues = {
           session: s.name,
+          id: s._id.toString(),
           values: [],
         };
         for (let i = 0; i < weeks.length; i++) {

@@ -225,9 +225,7 @@ const StatisticsPage: NextPage = () => {
                         <td
                           onMouseEnter={(e) => {
                             setShowTooltip([e.pageX + 10, e.pageY + 10]);
-                            setTooltipData(
-                              statisticsTableQuery.data.graphData.find((x) => x.session === y.session)?.values[i]
-                            );
+                            setTooltipData(statisticsTableQuery.data.graphData.find((x) => x.id === y.id)?.values[i]);
                           }}
                           onMouseMove={(e) => {
                             setShowTooltip([e.pageX + 10, e.pageY + 10]);
