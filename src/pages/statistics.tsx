@@ -134,7 +134,7 @@ const StatisticsPage: NextPage = () => {
 
       const y = d3
         .scaleLinear()
-        .domain(d3.extent(data, (d) => d.queueLength) as [number, number])
+        .domain([0, d3.max(data, (d) => d.queueLength) as number])
         .range([height, 0]);
 
       svg.append("g").call(d3.axisLeft(y).ticks(5));
