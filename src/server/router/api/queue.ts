@@ -32,7 +32,7 @@ export const queueRouter = createRouter()
   .mutation("addMeToQueue", {
     input: z.object({
       sessionId: z.string().regex(/^[a-fA-F0-9]{24}$/),
-      row: z.number().min(-1).max(10).int(),
+      row: z.number().min(-1).max(25).int(),
       location: z.string(),
       language: z.string(),
       callURL: z.string(),
