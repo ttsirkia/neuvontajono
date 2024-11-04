@@ -254,6 +254,36 @@ const ManageSessionProjectorPage: NextPageWithLayout = () => {
   }, [currentPicture, isProjectorConf, sessionDataQuery.data]);
 
   // ************************************************************************************************
+  // Lock the screen to prevent it from going to sleep while the projector view is active
+  // Ignores type issues with TypeScript by using any
+  useEffect(() => {
+    let wakeLock: any;
+    const acquire = async () => {
+      try {
+        wakeLock = await (navigator as any).wakeLock.request("screen");
+      } catch (ex) {
+        console.log(ex);
+      }
+    };
+
+    if ("wakeLock" in navigator) {
+      acquire();
+    }
+
+    const visibilityHandler = async () => {
+      if (wakeLock !== null && document.visibilityState === "visible") {
+        acquire();
+      }
+    };
+    document.addEventListener("visibilitychange", visibilityHandler);
+
+    return () => {
+      if (wakeLock) wakeLock.release();
+      document.removeEventListener("visibilitychange", visibilityHandler);
+    };
+  }, []);
+
+  // ************************************************************************************************
 
   const handleUserKeyPress = useCallback(
     (e: KeyboardEvent) => {
